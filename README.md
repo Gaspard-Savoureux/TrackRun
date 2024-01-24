@@ -3,7 +3,7 @@
 ## Table of contents
 
 uml folder should contain the uml diagrams.
-Please finish all the use cases, class diagrams and all releveant diagrams before starting the objecto oriented code.
+Please finish all the use cases, class diagrams and all releveant diagrams before starting the object oriented code.
 Please use Visual paradigm to edit the diagrams.
 Here is the link to download the software: [Visual Paradigm](https://logitheque.uqam.ca/logiciel/)
 
