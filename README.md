@@ -1,14 +1,29 @@
 # TrackRun
 
-## Table of contents
+## TODO
 
-uml folder should contain the uml diagrams.
-Please finish all the use cases, class diagrams and all releveant diagrams before starting the object oriented code.
-Please use Visual paradigm to edit the diagrams.
-Here is the link to download the software: [Visual Paradigm](https://logitheque.uqam.ca/logiciel/)
+For UML 
+
+- [ ] Use case diagram for application
+- [ ] Class diagram for application
+- [ ] Class diagram for database
+- [ ] Sequence diagram for login
+- [ ] Sequence diagram for register
+- [ ] Sequence diagram for create run
+
+For Database
+
+- [ ] Create database
+- [ ] Add example data
+
+Add any convenient TODOs here (The ones above are just examples)
+
+Please use [Visual Paradigm](https://logitheque.uqam.ca/logiciel/visualparadigm/) for UML diagrams
+
 
 ## Description
-Moniteur d'activité physique
+
+![trackrun](./misc/images/trackrun.png)
 
 ## Badges
 On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
