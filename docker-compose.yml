@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest #TODO: use version on vm
+    container_name: tse-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: your_root_password
+      MYSQL_DATABASE: your_database_name
+      MYSQL_USER: your_mysql_user
+      MYSQL_PASSWORD: your_mysql_password
+    volumes:
+      - tse_mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  tse_mysql_data:
