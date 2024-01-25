@@ -14,10 +14,6 @@ install_dependencies:
   stage: install
   script:
     - npm install
-  only:
-    - main
-    - ymlModification
-    - develop
 
 build_frontend:
   stage: build
@@ -35,10 +31,6 @@ test_frontend:
   stage: test
   script:
     - npm run test
-  only:
-    - main
-    - ymlModification
-    - develop
 
 # kaniko prevents running docker in docker. Equivalent of docker build + docker push
 # https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
