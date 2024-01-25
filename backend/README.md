@@ -194,12 +194,11 @@ import { body } from "express-validator";
 import { createUser } from "../controllers/UserController";
 
 const router = express.Router();
-const route = "/user";
 
 // Noter qu'il est possible de remplacer post par
 // get, put, path, delete et possiblement d'autre
 router.post(
-  route + "/create", //http://localhost:5001/user/create
+  "/create", //http://localhost:5001/user/create
   [body("username").isString(), body("password").isString()], //validation des champs données dans le body avec express-validator.
   createUser // Le contrôleur qui va créer un nouvel utilisateur.
 );
