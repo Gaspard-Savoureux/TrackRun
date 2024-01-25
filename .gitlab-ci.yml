@@ -9,6 +9,7 @@ stages:
   - install
   - build
   - test
+  - package
 
 install_dependencies:
   stage: install
