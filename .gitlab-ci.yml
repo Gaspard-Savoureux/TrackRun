@@ -14,7 +14,7 @@ install_dependencies:
   stage: install
   script:
     - cd frontend
-    - npm install
+    - npm install --fetch-timeout=120000
   artifacts:
     paths:
     - frontend
