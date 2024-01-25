@@ -12,15 +12,21 @@ stages:
 
 install_dependencies:
   stage: install
+  script:
+    - cd frontend
+    - npm install
   artifacts:
     paths:
     - frontend
-  script:
-    - npm install
+  only:
+    - main
+    - ymlModification
+    - develop
 
 build_frontend:
   stage: build
   script:
+    - cd frontend
     - npm run build
   artifacts:
     paths:
