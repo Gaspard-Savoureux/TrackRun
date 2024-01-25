@@ -1,4 +1,4 @@
-image: node:20.11.0-alpine3.18
+image: node:21-alpine3.18
 
 stages:
   - build
@@ -9,6 +9,7 @@ build_frontend:
   script:
     - cd frontend
     - npm ci
+    - npm run format-check
 
 # kaniko prevents running docker in docker. Equivalent of docker build + docker push
 # https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
