@@ -1,9 +1,5 @@
 image: node:21-alpine3.18
 
-stages:
-  - build
-  - package
-
 build_frontend:
   stage: build
   script:
@@ -14,7 +10,7 @@ build_frontend:
 # kaniko prevents running docker in docker. Equivalent of docker build + docker push
 # https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
 package_frontend:
-  stage: package
+  extends: .build_frontend
   image:
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
     entrypoint: [""]
