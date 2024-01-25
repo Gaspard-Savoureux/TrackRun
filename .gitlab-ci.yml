@@ -2,6 +2,12 @@ stages:
   - build
   - package
 
+build_frontend:
+  stage: build
+  script:
+    - cd frontend
+    - npm ci
+
 # kaniko prevents running docker in docker. Equivalent of docker build + docker push
 # https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
 package_frontend:
