@@ -22,7 +22,7 @@ build_frontend:
     - npm run build
   artifacts:
     paths:
-    - frontend/build
+    - frontend
   only:
     - main
     - ymlModification
