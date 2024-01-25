@@ -1,16 +1,49 @@
 image: node:21-alpine3.18
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - frontend/node_modules/
+
+stages:
+  - install
+  - build
+  - test
+
+install_dependencies:
+  stage: install
+  script:
+    - npm install
+  only:
+    - main
+    - ymlModification
+    - develop
+
 build_frontend:
   stage: build
   script:
-    - cd frontend
-    - npm ci
-    - npm run format-check
+    - npm run build
+  artifacts:
+    paths:
+    - frontend/build
+  only:
+    - main
+    - ymlModification
+    - develop
+
+test_frontend:
+  stage: test
+  script:
+    - npm run test
+  only:
+    - main
+    - ymlModification
+    - develop
 
 # kaniko prevents running docker in docker. Equivalent of docker build + docker push
 # https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
 package_frontend:
-  extends: .build_frontend
+  stage: package
   image:
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
     entrypoint: [""]
