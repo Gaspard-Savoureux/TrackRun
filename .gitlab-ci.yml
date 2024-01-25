@@ -4,7 +4,6 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - frontend/node_modules/
-
 stages:
   - install
   - build
@@ -13,6 +12,9 @@ stages:
 
 install_dependencies:
   stage: install
+  artifacts:
+    paths:
+    - frontend
   script:
     - npm install
 
