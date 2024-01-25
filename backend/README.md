@@ -251,7 +251,7 @@ Exemple de documentation http://localhost:5001/api-docs/#/user/post_user_create:
  *        description: Server Error
  */
 router.post(
-  route + "/create",
+  "/create",
   [body("username").isString(), body("password").isString()],
   createUser
 );
