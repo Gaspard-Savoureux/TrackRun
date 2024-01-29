@@ -3,7 +3,3 @@
 
 # IntelliJ
 .idea/
-
-#lock
-package-lock.json
-```

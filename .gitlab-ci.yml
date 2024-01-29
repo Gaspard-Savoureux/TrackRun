@@ -1,16 +1,14 @@
 image: node:20.11.0-alpine3.18
 
 stages:
-  - init
   - build
   - package
 
-build_init:
-  stage: init
-  script:
-    - npm config set proxy null
-    - npm config set https-proxy null
-    - npm config set registry http://registry.npmjs.org/
+before_script:
+  - npm config set proxy null
+  - npm config set https-proxy null
+  - npm config set registry http://registry.npmjs.org/
+
 
 build_frontend:
   stage: build
