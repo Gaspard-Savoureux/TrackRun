@@ -4,6 +4,12 @@ stages:
   - build
   - package
 
+before_script:
+  - npm config set proxy null
+  - npm config set https-proxy null
+  - npm config set registry http://registry.npmjs.org/
+
+
 build_frontend:
   stage: build
   script:
