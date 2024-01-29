@@ -1,4 +1,4 @@
-image: node:21-alpine3.18
+image: node:18-bullseye-slim
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
