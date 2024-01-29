@@ -7,7 +7,7 @@ stages:
 
 build_init:
   stage: init
-  scrip:
+  script:
     - npm config set proxy null
     - npm config set https-proxy null
     - npm config set registry http://registry.npmjs.org/
