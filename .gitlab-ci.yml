@@ -5,7 +5,7 @@ stages:
   - build
   - package
 
-build_init
+build_init:
   stage: init
   scrip:
     - npm config set proxy null
