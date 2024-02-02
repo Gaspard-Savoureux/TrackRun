@@ -24,6 +24,7 @@ Please use [Visual Paradigm](https://logitheque.uqam.ca/logiciel/visualparadigm/
 ## Description
 
 ![trackrun](./misc/images/trackrun.png)
+![functionalitites](./misc/images/functionalities.png)
 
 ## Badges
 On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
