@@ -1,0 +1,6 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ${IMAGE_REPO}/frontend:latest
+    container_name: tse-frontend

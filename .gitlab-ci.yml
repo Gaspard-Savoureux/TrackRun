@@ -3,16 +3,14 @@ image: node:20.11.0-alpine3.18
 stages:
   - build
   - package
-
-before_script:
-  - npm config set proxy null
-  - npm config set https-proxy null
-  - npm config set registry http://registry.npmjs.org/
-
+  - deploy
 
 build_frontend:
   stage: build
   script:
+    - npm config set proxy null
+    - npm config set https-proxy null
+    - npm config set registry https://registry.npmjs.org/
     - cd frontend
     - npm ci
 
@@ -29,6 +27,22 @@ package_frontend:
       /kaniko/executor
       --context "${CI_PROJECT_DIR}/frontend"
       --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}:latest"
+      --destination "${CI_REGISTRY_IMAGE}/frontend:latest"
   only:
     - main
+
+deploy:
+  # Utiliser la même image de base que pour Node pour augmenter les chances d'avoir déjà celle-ci sur le runner GitLab.
+  image: debian:bullseye-slim
+  stage: deploy
+  script:
+    - apt-get update && apt-get install --no-install-recommends -y openssh-client
+    - eval $(ssh-agent)
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh -oStrictHostKeyChecking=no $SSH_USER@$VM_IP_ADDRESS "docker ps"
+  only:
+    - main
+
