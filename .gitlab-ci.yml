@@ -36,6 +36,7 @@ deploy:
   image: debian:bullseye-slim
   stage: deploy
   script:
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin <<<$CI_REGISTRY_PASSWORD
     - apt-get update && apt-get install --no-install-recommends -y openssh-client
     - eval $(ssh-agent)
     - chmod 400 "$SSH_PRIVATE_KEY"
