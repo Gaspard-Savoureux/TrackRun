@@ -33,10 +33,9 @@ stages:
 
 deploy:
   # Utiliser la même image de base que pour Node pour augmenter les chances d'avoir déjà celle-ci sur le runner GitLab.
-  image: docker:latest
+  image: debian:bullseye-slim
   stage: deploy
   script:
-    - echo $CI_REGISTRY_PASSWORD | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
     - apt-get update && apt-get install --no-install-recommends -y openssh-client
     - eval $(ssh-agent)
     - chmod 400 "$SSH_PRIVATE_KEY"
@@ -54,8 +53,9 @@ deploy:
       EOF
     - scp deployment/docker-compose.yml $SSH_USER@$VM_IP_ADDRESS:tse
 #    - ssh $SSH_USER@$VM_IP_ADDRESS 'cd tse && source .env && echo $CI_REGISTRY_USER && echo $CI_JOB_TOKEN'
-#    - ssh $SSH_USER@$VM_IP_ADDRESS 'echo $CI_REGISTRY_PASSWORD | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin'
     - ssh $SSH_USER@$VM_IP_ADDRESS 'cd "tse" && docker compose up --detach --remove-orphans'
+#    - ssh $SSH_USER@$VM_IP_ADDRESS 'echo $CI_REGISTRY_PASSWORD | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin'
+#    - ssh $SSH_USER@$VM_IP_ADDRESS 'cd "tse" && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && docker compose up --detach --remove-orphans'
 #    - ssh $SSH_USER@$VM_IP_ADDRESS 'cd "tse" && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && docker compose up --detach --remove-orphans'
   only:
     - main
