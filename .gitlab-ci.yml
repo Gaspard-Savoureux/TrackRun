@@ -48,6 +48,7 @@ deploy:
       IMAGE_REPO=${CI_REGISTRY_IMAGE}
       CI_REGISTRY_USER=${CI_REGISTRY_USER}
       CI_JOB_TOKEN=${CI_JOB_TOKEN}
+      CI_REGISTRY=${CI_REGISTRY}
       
       EOF
     - scp deployment/docker-compose.yml $SSH_USER@$VM_IP_ADDRESS:tse
