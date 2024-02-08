@@ -50,7 +50,8 @@ deploy:
       
       EOF
     - scp deployment/docker-compose.yml $SSH_USER@$VM_IP_ADDRESS:tse
-    - ssh $SSH_USER@$VM_IP_ADDRESS 'echo $CI_JOB_TOKEN | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin'
+#    - ssh $SSH_USER@$VM_IP_ADDRESS 'echo $CI_JOB_TOKEN | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin'
+    - ssh $SSH_USER@$VM_IP_ADDRESS 'echo $CI_JOB_TOKEN'
 #    - ssh $SSH_USER@$VM_IP_ADDRESS 'cd "tse" && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && docker compose up --detach --remove-orphans'
 #    - ssh $SSH_USER@$VM_IP_ADDRESS 'cd "tse" && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && docker compose up --detach --remove-orphans'
   only:
