@@ -36,7 +36,7 @@ deploy:
   image: docker:latest
   stage: deploy
   script:
-    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin <<<$CI_REGISTRY_PASSWORD
+    - echo $CI_REGISTRY_PASSWORD | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
     - apt-get update && apt-get install --no-install-recommends -y openssh-client
     - eval $(ssh-agent)
     - chmod 400 "$SSH_PRIVATE_KEY"
