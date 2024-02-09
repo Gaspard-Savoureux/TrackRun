@@ -35,18 +35,22 @@ deploy:
   # Utiliser la même image de base que pour Node pour augmenter les chances d'avoir déjà celle-ci sur le runner GitLab.
   image: debian:bullseye-slim
   stage: deploy
-  script:
-    - apt-get update && apt-get install --no-install-recommends -y openssh-client
-    - eval $(ssh-agent)
+  before_script:
+    - "command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )"
+    - eval $(ssh-agent -s)
     - chmod 400 "$SSH_PRIVATE_KEY"
     - ssh-add "$SSH_PRIVATE_KEY"
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - ssh -oStrictHostKeyChecking=no $SSH_USER@$VM_IP_ADDRESS "pwd"
+    - ssh-keyscan $VM_IP_ADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  script:
+    - ssh $SSH_USER@$VM_IP_ADDRESS "pwd"
     - |
       ssh $SSH_USER@$VM_IP_ADDRESS 'cat >tse/.env' <<EOF
       IMAGE_REPO=${CI_REGISTRY_IMAGE}
-      
+
       EOF
     - scp deployment/docker-compose.yml $SSH_USER@$VM_IP_ADDRESS:tse
     - ssh $SSH_USER@$VM_IP_ADDRESS 'cd "tse" && docker compose up --detach --remove-orphans'
