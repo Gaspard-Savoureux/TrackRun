@@ -1,0 +1,8 @@
+node_modules
+coverage
+src/db/migrations/*
+test.restbook
+package-lock.json
+
+# dotenv environment variable
+.env
