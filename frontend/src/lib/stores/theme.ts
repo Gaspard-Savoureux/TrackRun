@@ -1,4 +1,4 @@
-import type { Theme } from '$lib/types/theme';
+import { Theme } from '$lib/types/theme';
 import { writable } from 'svelte/store';
 
-export const theme = writable<Theme>('system');
+export const theme = writable<Theme>(Theme.System);

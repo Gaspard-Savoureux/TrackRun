@@ -1,15 +1,18 @@
 import type { LayoutServerLoad } from './$types';
-import type { Theme } from '$lib/types/theme';
-import { theme } from '$lib/stores/theme';
+import { Theme } from '$lib/types/theme';
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
-  const themeCookie: string | undefined = cookies.get('theme');
+  const themeCookieValue: string | undefined = cookies.get('theme');
 
-  if (themeCookie != undefined) {
-    theme.set(themeCookie as Theme);
+  let theme = Theme.System;
+  if (themeCookieValue) {
+    const themeName = themeCookieValue[0].toUpperCase() + themeCookieValue.slice(1);
+    if (themeName in Theme) {
+      theme = Theme[themeName as keyof typeof Theme];
+    }
   }
 
   return {
-    theme: themeCookie,
+    theme,
   };
 };
