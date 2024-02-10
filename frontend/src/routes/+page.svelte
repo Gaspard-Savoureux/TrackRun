@@ -6,3 +6,9 @@
 
 <h1>It works!</h1>
 <img src={data.imageSrc} alt="dog" />
+
+<style>
+	h1 {
+		color: var(--color-background);
+	}
+</style>
