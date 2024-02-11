@@ -3,6 +3,7 @@ import express from 'express';
 
 /***  Routers ***/
 import user from './routes/user';
+import stub from './routes/stub';
 /****************/
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(express.json());
 
 /**** Routes ****/
 app.use('/user', user);
+app.use('/', stub)
 /****************/
 
 export default app;

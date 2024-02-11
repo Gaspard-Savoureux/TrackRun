@@ -1,8 +1,16 @@
 version: '3.8'
 
 services:
-  backend:
+  frontend:
     image: ${IMAGE_REPO}/frontend:latest
     container_name: tse-frontend
     ports:
       - "3000:3000"
+
+  backend:
+    image: ${IMAGE_REPO}/backend:latest
+    container_name: tse-backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "5001:5001"
