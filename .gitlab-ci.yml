@@ -14,6 +14,15 @@ build_frontend:
     - cd frontend
     - npm ci
 
+build_backend:
+  stage: build
+  script:
+    - npm config set proxy null
+    - npm config set https-proxy null
+    - npm config set registry https://registry.npmjs.org/
+    - cd backend
+    - npm ci
+
 # kaniko prevents running docker in docker. Equivalent of docker build + docker push
 # https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
 package_frontend:
@@ -30,6 +39,28 @@ package_frontend:
       --destination "${CI_REGISTRY_IMAGE}/frontend:latest"
   only:
     - main
+
+# kaniko prevents running docker in docker. Equivalent of docker build + docker push
+# https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
+package_backend:
+  stage: package
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  script:
+    - cd backend
+    - echo "PORT=5001" > .env
+    - echo "DB_URL=$DB_URL" >> .env
+    - echo "SECRET=$DB_SECRET" >> .env
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"},\"$CI_DEPENDENCY_PROXY_SERVER\":{\"auth\":\"$(printf "%s:%s" ${CI_DEPENDENCY_PROXY_USER} "${CI_DEPENDENCY_PROXY_PASSWORD}" | base64 | tr -d '\n')\"}}}" >/kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}/backend"
+      --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/backend:latest"
+  only:
+    - main
+
 
 deploy:
   # Utiliser la même image de base que pour Node pour augmenter les chances d'avoir déjà celle-ci sur le runner GitLab.

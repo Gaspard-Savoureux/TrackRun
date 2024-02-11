@@ -6,9 +6,9 @@ services:
     container_name: tse-mysql
     environment:
       MYSQL_ROOT_PASSWORD: your_root_password
-      MYSQL_DATABASE: your_database_name
-      MYSQL_USER: your_mysql_user
-      MYSQL_PASSWORD: your_mysql_password
+      MYSQL_DATABASE: tse_db
+      MYSQL_USER: tse_user
+      MYSQL_PASSWORD: tse_tse
     volumes:
       - tse_mysql_data:/var/lib/mysql
     ports:
