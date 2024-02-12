@@ -19,13 +19,6 @@ afterAll(async () => {
 
 describe('POST /auth', () => {
 
-
-  // const res = await request(app).post(route).send(user);
-
-  // test('should create a new user', async () => {
-  //   expect(res.status).toBe(201);
-  // });
-
   test('credentials error when invalid name', async () => {
     const res = await request(app)
       .post(route)
