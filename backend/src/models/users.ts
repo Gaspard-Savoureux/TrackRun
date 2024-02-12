@@ -9,3 +9,5 @@ export const users = mysqlTable('users', {
 }, (users) => ({
   nameIndex: uniqueIndex('username_idx').on(users.username),
 }));
+
+export type User = typeof users.$inferInsert;
