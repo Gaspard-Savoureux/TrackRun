@@ -1,12 +1,24 @@
 # Backend
 
-## Premier pas
+## Prérequis
 
-#### Prérequis:
-
+### Node
 - https://nodejs.org/en prendre la version 20.11 (versions gérables avec `nvm`)
 
-#### Recommandés (très facultatif):
+### MySQL
+Pour le MySQL local, vous avez 2 options: **(ne faites pas les deux!)**
+
+**Option 1: Utiliser `docker`**
+   - installer `docker` et le lancer : https://www.docker.com/products/docker-desktop/
+   - `docker compose up` depuis la **racine** du projet pour lancer un container mysql
+   - utiliser le `.env` fourni (voir instructions plus bas)
+
+**Option 2: Utiliser directement MySQL**
+   - installer directement `mysql`: https://dev.mysql.com/downloads/installer/
+   - configurer mysql et lancer le serveur local
+   - creer un `.env` en fonction de votre configuration (voir instructions plus bas)
+
+### Recommandés (très facultatif):
 
 - vscode. Vous pouvez ajouter un fichier `.vscode/settings.json` à la racine du projet avec le contenu suivant pour formater quand vous sauvegardez:
 
@@ -20,7 +32,7 @@
 }
 ```
 
-#### Installation
+## Installation
 
 > **Très important** !
 
@@ -34,6 +46,14 @@ DB_URL=mysql://user:password@host:port/database # uri de connexion
 # exemple developpement local:
 # DB_URL=mysql://touriste:expirer@localhost:3306/sportapp
 SECRET=nimportequellescaractères # Pour hasher les mots de passes
+```
+
+Si vous avez utilisé `docker` pour `mysql`(option 1), voici le contenu du fichier `.env` à créer:
+
+```bash
+PORT=5001
+DB_URL=mysql://tse_user:tse_tse@localhost:3306/tse_db
+SECRET=nimportequellescaractères
 ```
 
 Pour lancer le backend:
