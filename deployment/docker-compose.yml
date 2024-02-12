@@ -14,3 +14,8 @@ services:
       - "host.docker.internal:host-gateway"
     ports:
       - "5001:5001"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
