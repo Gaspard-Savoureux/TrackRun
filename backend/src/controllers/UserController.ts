@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { User, users } from '../models/users';
 import { validationResult } from 'express-validator';
 import { db } from '../db/db';
@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   // Validate the request
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -14,14 +14,14 @@ export const createUser = async (req: Request, res: Response) => {
   }
 
   try {
-    // Le mot de passe doit être hasher ceci est juste un exemple
+  // Le mot de passe doit être hasher ceci est juste un exemple
     const { username, password } = req.body;
-    const userExist = await db.select()
+    const [ userExist ]: User[] = await db.select()
       .from(users)
       .where(eq(users.username, username));
         
     // Check if username already taken
-    if (userExist.length !== 0) {
+    if (userExist) {
       return res.status(409).json({ error: 'A user already has that name' });
     }
 
@@ -32,13 +32,13 @@ export const createUser = async (req: Request, res: Response) => {
     await db.insert(users).values([{ username, password: hashedPassword }]);
     return res.status(201).json({ message: 'user added succesfully'});
   } catch (error) {
-    return res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // TODO add userExist to check if username is taken before the user has to submit is request to create a new user
 
-export const authenticateUser = async (req: Request, res: Response) => {
+export const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
   // TODO à mettre dans middleware
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -70,6 +70,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
 
     return res.status(200).json({ token });
   } catch (error) {
-    return res.status(500).json({ error: 'Internal server error' });
+    // return res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
