@@ -18,23 +18,14 @@ const router = express.Router();
  *      content:
  *        application/json:
  *          schema:
- *            type: object
- *            properties:
- *              username:
- *                type: string
- *                description: The username of a user
- *                example: jean-papa
- *              password:
- *                type: string
- *                description: The password of a user
- *                example: 1234
+ *            $ref: '#/components/schemas/User'
  *    responses:
- *      201:
- *        description: New user created
+ *      200:
+ *        description: Succesfull Login
  *      400:
  *        description: Bad Request
  *      401:
- *        description: Wrong credentials
+ *        description: Wrong Credentials
  *      500:
  *        description: Server Error
  */
