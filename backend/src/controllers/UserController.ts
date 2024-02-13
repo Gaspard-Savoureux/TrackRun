@@ -1,17 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { User, users } from '../models/users';
-import { validationResult } from 'express-validator';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
-  // Validate the request
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array()});
-  }
 
   try {
   // Le mot de passe doit être hasher ceci est juste un exemple
@@ -39,11 +33,6 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 // TODO add userExist to check if username is taken before the user has to submit is request to create a new user
 
 export const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
-  // TODO à mettre dans middleware
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array()});
-  }
 
   try {
     // Le mot de passe doit être hasher ceci est juste un exemple
@@ -70,7 +59,6 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
 
     return res.status(200).json({ token });
   } catch (error) {
-    // return res.status(500).json({ error: 'Internal server error' });
     next(error);
   }
 };

@@ -1,6 +1,7 @@
 import express  from 'express';
 import { body } from 'express-validator';
 import { authenticateUser } from '../controllers/UserController';
+import { expressValidator } from '../middlewares/validation';
 
 const router = express.Router();
 
@@ -34,6 +35,7 @@ router.post('/auth',
     body('username').isString(),
     body('password').isString()
   ],
+  expressValidator,
   authenticateUser
 );
 
