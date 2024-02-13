@@ -8,8 +8,9 @@ import { eq } from 'drizzle-orm/sql';
 const user = {username: 'test-user', password: '1234'};
 const route : string = '/auth';
   
-beforeAll(() => {
-  return request(app).post(route).send(user);
+beforeAll(async () => {
+  await db.delete(users).where(eq(users.username, 'test-user'));
+  return request(app).post('/user/create').send(user); // TODO à modifier, moins qu'idéal
 });
 
 afterAll(async () => {
@@ -19,6 +20,14 @@ afterAll(async () => {
 
 describe('POST /auth', () => {
 
+  test('Succesfully returns a token', async () => {
+    const res = await request(app)
+      .post(route)
+      .send(user)
+      .set('Content-Type', 'application/json');
+    expect(res.statusCode).toEqual(200);
+  });
+  
   test('credentials error when invalid name', async () => {
     const res = await request(app)
       .post(route)

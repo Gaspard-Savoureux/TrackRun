@@ -68,7 +68,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
     const secret: jwt.Secret = process.env.SECRET as string;
     const token = jwt.sign(payload, secret, { expiresIn: '1h'});
 
-    return res.json({ token });
+    return res.status(200).json({ token });
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
