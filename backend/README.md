@@ -3,20 +3,24 @@
 ## Prérequis
 
 ### Node
+
 - https://nodejs.org/en prendre la version 20.11 (versions gérables avec `nvm`)
 
 ### MySQL
+
 Pour le MySQL local, vous avez 2 options: **(ne faites pas les deux!)**
 
 **Option 1: Utiliser `docker`**
-   - installer `docker` et le lancer : https://www.docker.com/products/docker-desktop/
-   - `docker compose up` depuis la **racine** du projet pour lancer un container mysql
-   - utiliser le `.env` fourni (voir instructions plus bas)
+
+- installer `docker` et le lancer : https://www.docker.com/products/docker-desktop/
+- `docker compose up` depuis la **racine** du projet pour lancer un container mysql
+- utiliser le `.env` fourni (voir instructions plus bas)
 
 **Option 2: Utiliser directement MySQL**
-   - installer directement `mysql`: https://dev.mysql.com/downloads/installer/
-   - configurer mysql et lancer le serveur local
-   - creer un `.env` en fonction de votre configuration (voir instructions plus bas)
+
+- installer directement `mysql`: https://dev.mysql.com/downloads/installer/
+- configurer mysql et lancer le serveur local
+- creer un `.env` en fonction de votre configuration (voir instructions plus bas)
 
 ### Recommandés (très facultatif):
 
@@ -358,4 +362,100 @@ Tests:       3 passed, 3 total
 Snapshots:   0 total
 Time:        2.15 s, estimated 3 s
 Ran all test suites matching /__tests__\/routes\/user.test.ts/i.
+```
+
+---
+
+### Middlewares
+
+Les middlewares servent à ajouter des processus intermédiaires sur une route. L'explication est pas claire, mais pas de souci je vais vous montrer des exemples.
+
+Les middlewares sont situés dans le dossier `src/middlewares`.
+
+#### Authorisation
+
+Pour éviter d'avoir à valider les permissions sur une route à chaque fois que nous établissons une nouvelle route nous pouvons ajouter un middleware d'autorisation.
+
+Voici une route qui ne dispose pas de protection, soit n'importe qui peut y accéder.:
+
+```ts
+app.use("/route-to-protect", (req: Request, res: Response) => {
+  return res.json({ msg: "Je suis accessible par tous" });
+});
+```
+
+Pour protéger la route:
+
+```ts
+app.use("/protected-route", verifyUserToken, (req: Request, res: Response) => {
+  return res.json({
+    msg: `La route est maintenant accessible que lorsque vous êtes authentifié. L'ID de l'utilisateur est ${req.user?.userId}`,
+  });
+});
+```
+
+Noter que le type d'authentification est un simple bearer token. Soit l'entête Authorization doit contenir un token précédé de `Bearer `:
+
+```http
+POST http://localhost:5001/protected-route
+Content-Type: application/json
+Authorization: Bearer <token ici>
+
+{
+    "username": "Jean-papa",
+    "password": "1234"
+}
+```
+
+> exemple de token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcwNzg0MDI4MywiZXhwIjoxNzA3ODQzODgzfQ.fkmVip9QtEOcluK-ZYjeKkkDUheaN845lzSLONjx89E
+
+#### Validation
+
+Beaucoup plus simple que le middleware précédent. Si vous avez une chaîne de validateurs avec express-validator, il suffit tous simplement d'ajouter le middleware:
+
+1. Après la chaîne de validateurs.
+2. Avant le controller
+
+Vous n'avez qu'à placer le middleware tel quel:
+
+```ts
+router.post(
+  "/create",
+  [body("username").isString(), body("password").isString()], // La chaîne de validateurs
+  expressValidator, // AJOUTER ICI Le middleware
+  createUser // Le controller
+);
+```
+
+#### Gestion d'erreur
+
+Encore plus simple que précédent. Le middleware est déjà déclaré dans `app.ts`, vous n'avez pas à l'ajouter dans vos routes. Quand vous faites un `try-catch`. Vous n'avez qu'à passer `error` à `next`.
+
+Soit si nous
+
+```ts
+export const createUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction // À ajouter si vous voulez que le validateur fonctionne
+) => {
+  try {
+    const { username, password } = req.body;
+    const [userExist]: User[] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
+
+    if (userExist) {
+      return res.status(409).json({ error: "A user already has that name" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await db.insert(users).values([{ username, password: hashedPassword }]);
+    return res.status(201).json({ message: "user added succesfully" });
+  } catch (error) {
+    next(error); // ICI on passe l'erreur et le middleware s'en charge
+  }
+};
 ```
