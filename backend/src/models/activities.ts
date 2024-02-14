@@ -2,7 +2,7 @@ import { int, varchar, double, datetime, text, json, mysqlTable } from 'drizzle-
 
 export const activities = mysqlTable('activities', {
   id: int('id').primaryKey().autoincrement(),
-  user_id: int('user_id'), // Foreign key to users table
+  user_id: int('user_id'),
   name: varchar('name', { length: 256 }),
   city: varchar('city', { length: 100 }),
   type: varchar('type', { length: 50 }),
