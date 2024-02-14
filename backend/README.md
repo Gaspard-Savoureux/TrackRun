@@ -384,7 +384,7 @@ app.use("/route-to-protect", (req: Request, res: Response) => {
 });
 ```
 
-Pour protéger la route:
+Pour protéger la route, il faut ajouter `verifyUserToken`:
 
 ```ts
 app.use("/protected-route", verifyUserToken, (req: Request, res: Response) => {
