@@ -7,11 +7,11 @@ import { eq } from 'drizzle-orm/sql';
 const user = {username: 'test-user', password: '1234'};
 
 beforeAll(() => {
-  return db.delete(users).where(eq(users.username, 'test-user'));
+  return db.delete(users).where(eq(users.username, user.username));
 });
 
 afterAll(async () => {
-  await db.delete(users).where(eq(users.username, 'test-user'));
+  await db.delete(users).where(eq(users.username, user.username));
   return closeDbConnection();
 });
 
