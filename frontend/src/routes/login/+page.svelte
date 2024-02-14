@@ -1,7 +1,14 @@
-<form method="POST">
+<script lang="ts">
+  import { enhance } from '$app/forms';
+
+  export let form;
+</script>
+
+<form method="POST" action="?/login" use:enhance>
+  {#if form?.success === false}<p>{form?.message}</p>{/if}
   <label>
-    Email
-    <input type="email" name="email" />
+    Username
+    <input type="text" name="username" value={form?.username ?? ''} />
   </label>
   <label>
     Password
