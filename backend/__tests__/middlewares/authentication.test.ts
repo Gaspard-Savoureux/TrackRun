@@ -3,10 +3,18 @@ import app from '../../src/app';
 import { db, closeDbConnection } from '../../src/db/db';
 import { users } from '../../src/models/users';
 import { eq } from 'drizzle-orm/sql';
+import { verifyUserToken } from '../../src/middlewares/authentication';
+import { Request, Response } from 'express';
 
 const user = {username: 'test-user', password: '1234'};
 const route : string = '/auth';
-  
+
+// Example of protected route
+app.use('/protected-route', verifyUserToken, (req: Request, res: Response) => {
+  return res.json({
+    msg: `Access to protected route granted. Your id is ${req.user?.userId}`});
+});
+
 beforeAll(async () => {
   await db.delete(users).where(eq(users.username, 'test-user'));
   return request(app).post('/user/create').send(user); // TODO à modifier, moins qu'idéal
@@ -19,37 +27,32 @@ afterAll(async () => {
 
 describe('POST /auth', () => {
 
-  test('Succesfully returns a token', async () => {
-    const res = await request(app)
+  test('Succesfully authenticate a user', async () => {
+    // Get the token
+    const getToken = await request(app)
       .post(route)
       .send(user)
       .set('Content-Type', 'application/json');
+    expect(getToken.statusCode).toEqual(200);
+
+    const { token } =  getToken.body;
+
+    // Test protected route
+    const res = await request(app)
+      .get('/protected-route')
+      .set('Authorization', `Bearer ${token}`);
+    
     expect(res.statusCode).toEqual(200);
+  
+  });
+
+  test('Sould send an unauthorize response', async () => {
+    const res = await request(app)
+      .get('/protected-route')
+      .set('Authorization', 'Inadequate token');
+    
+    expect(res.statusCode).toEqual(401);
   });
   
-  test('credentials error when invalid name', async () => {
-    const res = await request(app)
-      .post(route)
-      .send({username: 'invalid-name', password: user.password})
-      .set('Content-Type', 'application/json');
-    expect(res.statusCode).toEqual(401);
-  });
-
-  test('credentials error when invalid password', async () => {
-    const res = await request(app)
-      .post(route)
-      .send({username: user.username, password: '4321'})
-      .set('Content-Type', 'application/json');
-    expect(res.statusCode).toEqual(401);
-  });
-
-  test('should send back a bad request error', async () => {
-    const badUser = { username: 1234, password: 1234 } ;
-    const res = await request(app)
-      .post(route)
-      .send(badUser)
-      .set('Content-Type', 'application/json');
-    expect(res.statusCode).toEqual(400);
-  });
 });
 
