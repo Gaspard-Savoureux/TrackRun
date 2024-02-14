@@ -20,15 +20,13 @@ export const actions: object = {
       username,
     });
 
-    // TODO test password length/validity
-
     const res = await fetch(`${BACKEND_URL}:${BACKEND_PORT}/auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
 
-    if (res.status === 401) return fail(401, {
+    if (res.status === 400 || res.status === 401) return fail(res.status, {
       success: false,
       message: 'Invalid credentials',
       username,
@@ -41,7 +39,7 @@ export const actions: object = {
         path: '/',
         httpOnly: true,
         sameSite: 'strict',
-        // process.env.NODE_ENV === 'production',
+        // secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60, // 1h
       });
 
