@@ -10,7 +10,8 @@ beforeAll(() => {
   return db.delete(users).where(eq(users.username, 'test-user'));
 });
 
-afterAll(() => {
+afterAll(async () => {
+  await db.delete(users).where(eq(users.username, 'test-user'));
   return closeDbConnection();
 });
 
