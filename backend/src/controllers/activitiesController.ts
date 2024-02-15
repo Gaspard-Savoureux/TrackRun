@@ -3,6 +3,7 @@ import { activities } from '../models/activities';
 import { validationResult } from 'express-validator';
 import { db } from '../db/db';
 
+// TODO faire de plus ample vérification sur les données d'un activité
 export const createActivity = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
