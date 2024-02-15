@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import {NextFunction, Request, Response} from 'express';
 import { activities } from '../models/activities';
 import { validationResult } from 'express-validator';
 import { db } from '../db/db';
 
 // TODO faire de plus ample vérification sur les données d'un activité
-export const createActivity = async (req: Request, res: Response) => {
+export const createActivity = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -20,7 +20,6 @@ export const createActivity = async (req: Request, res: Response) => {
 
     return res.status(201).json({ message: 'Activity added successfully' });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
