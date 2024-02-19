@@ -18,13 +18,6 @@ Pour que eslint fonctionne dans les fichiers `.svelte`, vous devez ajouter les l
 
 ## Installation
 
-Créez un fichier `.env` dans le répoertoire `frontend/` et mettez y le contenu suivant:
-
-```
-BACKEND_URL=http://localhost
-BACKEND_PORT=5001
-```
-
 Ouvrez un terminal dans le répertoire `frontend/` du projet et tapez les commandes suivantes pour installer les dépendances puis faire rouler le projet en mode développement.
 
 ```sh
