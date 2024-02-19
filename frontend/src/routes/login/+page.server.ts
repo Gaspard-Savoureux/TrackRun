@@ -1,6 +1,6 @@
 import { redirect, fail } from '@sveltejs/kit';
 import type { RequestEvent } from '../$types';
-import { BACKEND_PORT, BACKEND_URL } from '$env/static/private';
+import { API_URL } from '../../constants';
 
 export const actions: object = {
   login: async ({ cookies, fetch, request }: RequestEvent) => {
@@ -20,7 +20,7 @@ export const actions: object = {
       username,
     });
 
-    const res = await fetch(`${BACKEND_URL}:${BACKEND_PORT}/auth`, {
+    const res = await fetch(`${API_URL}/auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
