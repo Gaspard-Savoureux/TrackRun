@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 
 /***  Routers ***/
 import user from './routes/user';
@@ -13,6 +14,13 @@ import ErrorHandler  from './middlewares/errorHandling';
 const app = express();
 
 app.use(express.json());
+
+// allow different origin for development
+if(process.env.NODE_ENV !== 'production') {
+    app.use(cors({
+        origin: 'http://localhost:5173'
+    }));
+}
 
 /**** Routes ****/
 app.use(auth);
