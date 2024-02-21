@@ -15,6 +15,28 @@ Pour le MySQL local, vous avez 2 options: **(ne faites pas les deux!)**
 - installer `docker` et le lancer : https://www.docker.com/products/docker-desktop/
 - `docker compose up` depuis la **racine** du projet pour lancer un container mysql
 - utiliser le `.env` fourni (voir instructions plus bas)
+- Si un Mac Apple Silicon chip est utilisé, le changement suivant se doit d'être appliquer dans le fichier `docker-compose-yml` a la source du projet.
+```yaml
+version: '3.8'
+
+services:
+  mysql:
+    platform: linux/amd64
+    image: mysql:8.0.36-debian
+    container_name: tse-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: your_root_password
+      MYSQL_DATABASE: tse_db
+      MYSQL_USER: tse_user
+      MYSQL_PASSWORD: tse_tse
+    volumes:
+      - tse_mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  tse_mysql_data:
+```
 
 **Option 2: Utiliser directement MySQL**
 
