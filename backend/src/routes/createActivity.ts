@@ -1,4 +1,3 @@
-
 import express from 'express';
 import { body } from 'express-validator';
 import { createActivity } from '../controllers/activitiesController';
@@ -6,28 +5,53 @@ import { expressValidator } from '../middlewares/validation';
 
 const router = express.Router();
 
-
 /**
  * @swagger
  * /activity:
  *  post:
- *    tags:
- *    - creationActivity
- *    summary: Creation of a new activity
- *    description: Route for the creation of a new activity
- *    requestBody:
- *      required: true
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/User'
- *    responses:
- *      200:
- *        description: Creation of activity successful
- *      400:
- *        description: Wrong data
- *      500:
- *        description: Server Error
+ *   tags:
+ *    - name: Activity
+ *   summary: Create activity
+ *   description: Create activity
+ *   requestBody:
+ *    content:
+ *     application/json:
+ *      schema:
+ *       type: object
+ *       required:
+ *        - name
+ *        - type
+ *        - date
+ *       properties:
+ *        name:
+ *         type: string
+ *         description: The name of the activity
+ *        city:
+ *         type: string
+ *         description: The city of the activity
+ *        type:
+ *         type: string
+ *         description: The type of workout
+ *        date:
+ *         type: string
+ *         description: The activity date
+ *        totalDuration:
+ *         type: number
+ *         description: Time in second
+ *        totalDistance:
+ *         type: number
+ *         description: Distance in kilometer
+ *        comment:
+ *         type: string
+ *         description: Comment
+ *        segment:
+ *         type: string
+ *         description: Data of workout
+ *   responses:
+ *    200:
+ *     description: Success
+ *    400:
+ *     description: Error
  */
 router.post('/activity',
   [
