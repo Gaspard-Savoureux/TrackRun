@@ -2,7 +2,6 @@ version: '3.8'
 
 services:
   mysql:
-    platform: linux/amd64
     image: mysql:8.0.36-debian
     container_name: tse-mysql
     environment:
