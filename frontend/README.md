@@ -11,13 +11,14 @@ Pour que eslint fonctionne dans les fichiers `.svelte`, vous devez ajouter les l
 ```json
 "eslint.validate": [
     "javascript",
+    "typescript",
     "svelte"
 ]
 ```
 
 ## Installation
 
-Ouvrez un terminal dans le répertoire du projet et tapez les commandes suivantes pour installer les dépendances puis faire rouler le projet en mode développement.
+Ouvrez un terminal dans le répertoire `frontend/` du projet et tapez les commandes suivantes pour installer les dépendances puis faire rouler le projet en mode développement.
 
 ```sh
 npm install
@@ -34,7 +35,7 @@ npm run lint # ne devrait pas donner d'erreur ou de warnings
 
 ## Structure du projet
 
-Dans le cadre de notre projet les "components" iront dans le répertoire `src/components` et les types iront dans le répertoire `src/types`. Le reste de la structure reste fidèle à la structure de base de SvelteKit. Si jamais on utilise des tests unitaires, ceux-ci iront dans un répertoire `test`.
+Dans le cadre de notre projet les "components" iront dans le répertoire `src/components` et les types iront dans le répertoire `src/types`. Le reste de la structure reste fidèle à la structure de base de SvelteKit. Si jamais on utilise des tests unitaires, ceux-ci iront dans un répertoire `src/test`.
 
 ## Références
 
