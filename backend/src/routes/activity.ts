@@ -5,6 +5,7 @@ import { expressValidator } from '../middlewares/validation';
 
 const router = express.Router();
 
+//TODO complété les erreurs 401 et 500
 /**
  * @swagger
  * /activity:
@@ -48,9 +49,13 @@ const router = express.Router();
  *         type: string
  *         description: Data of workout
  *   responses:
- *    200:
+ *    201:
  *     description: Success
  *    400:
+ *     description: Error
+ *    401:
+ *     description: Error
+ *    500:
  *     description: Error
  */
 router.post('/activity',
