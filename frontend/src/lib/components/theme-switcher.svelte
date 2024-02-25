@@ -3,7 +3,7 @@
   import type { FormEventHandler } from 'svelte/elements';
 
   const handleChange: FormEventHandler<HTMLSelectElement> = (event) => {
-    document.cookie = `theme=${event.currentTarget.value}`;
+    document.cookie = `theme=${event.currentTarget.value}; path=/; SameSite=Lax`;
   };
 </script>
 
