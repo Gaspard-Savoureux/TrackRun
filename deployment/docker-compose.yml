@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  reverse_proxy:
+    image: ${IMAGE_REPO}/reverse_proxy:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+    logging: *default-logging
+
   frontend:
     image: ${IMAGE_REPO}/frontend:latest
     container_name: tse-frontend
@@ -15,7 +25,4 @@ services:
     ports:
       - "5001:5001"
 
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
+
