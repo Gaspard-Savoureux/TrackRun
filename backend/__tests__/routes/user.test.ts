@@ -1,18 +1,19 @@
 import request from 'supertest';
 import app from '../../src/app';
-import { db, closeDbConnection } from '../../src/db/db';
-import { users } from '../../src/models/users';
-import { eq } from 'drizzle-orm/sql';
 
 const user = {username: 'test-user', password: '1234'};
 
+jest.mock('../../src/models/users', () => ({
+  getUserByUsername: jest.fn()
+    .mockImplementationOnce(() => undefined)
+    .mockImplementationOnce(() => ({id: 1, ...user})),
+  insertUser: jest.fn().mockReturnValue(''),
+}));
+
 beforeAll(() => {
-  return db.delete(users).where(eq(users.username, user.username));
 });
 
 afterAll(async () => {
-  await db.delete(users).where(eq(users.username, user.username));
-  return closeDbConnection();
 });
 
 describe('User routes', () => {
@@ -21,7 +22,11 @@ describe('User routes', () => {
     const route : string = '/user/create';
 
     test('should create a new user', async () => {
-      const res = await request(app).post(route).send(user);
+      const res = await request(app)
+        .post(route)
+        .send(user)
+        .set('Content-Type', 'application/json');
+        
       expect(res.status).toBe(201);
     });
 
