@@ -113,6 +113,7 @@ deploy:
     - |
       ssh $SSH_USER@$VM_IP_ADDRESS 'cat >tse/.env' <<EOF
       IMAGE_REPO=${CI_REGISTRY_IMAGE}
+      VERSION=${VERSION}
 
       EOF
     - scp deployment/docker-compose.yml $SSH_USER@$VM_IP_ADDRESS:tse

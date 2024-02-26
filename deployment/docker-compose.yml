@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   reverse_proxy:
-    image: ${IMAGE_REPO}/reverse_proxy:latest
+    image: ${IMAGE_REPO}/reverse_proxy:${VERSION}
     ports:
       - "80:80"
     depends_on:
@@ -11,13 +11,13 @@ services:
     restart: always
 
   frontend:
-    image: ${IMAGE_REPO}/frontend:latest
+    image: ${IMAGE_REPO}/frontend:${VERSION}
     container_name: tse-frontend
     ports:
       - "3000:3000"
 
   backend:
-    image: ${IMAGE_REPO}/backend:latest
+    image: ${IMAGE_REPO}/backend:${VERSION}
     container_name: tse-backend
     extra_hosts:
       - "host.docker.internal:host-gateway"
