@@ -98,6 +98,8 @@ deploy:
   # Utiliser la même image de base que pour Node pour augmenter les chances d'avoir déjà celle-ci sur le runner GitLab.
   image: debian:bullseye-slim
   stage: deploy
+  extends:
+    - .deploy_common
   before_script:
     - "command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )"
     - eval $(ssh-agent -s)
