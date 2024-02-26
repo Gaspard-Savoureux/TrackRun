@@ -1,11 +1,8 @@
-import dotenv from 'dotenv';
 import app from './app';
 
 // Documentations
 import swaggerJsDoc, { Options } from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-
-dotenv.config();
 
 const port = process.env.PORT || 3000;
 
