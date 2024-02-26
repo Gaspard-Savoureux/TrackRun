@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   reverse_proxy:
-    image: nginx:latest
+    image: ${IMAGE_REPO}/reverse_proxy:latest
     ports:
       - "80:80"
     depends_on:
