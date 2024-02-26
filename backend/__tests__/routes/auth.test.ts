@@ -1,20 +1,20 @@
 import request from 'supertest';
 import app from '../../src/app';
-import { db, closeDbConnection } from '../../src/db/db';
-import { users } from '../../src/models/users';
-import { eq } from 'drizzle-orm/sql';
 
 const user = {username: 'test-user', password: '1234'};
 const route : string = '/auth';
   
+jest.mock('../../src/models/users', () => ({
+  getUserByUsername: jest.fn()
+    .mockImplementationOnce(() => ({id: 1, username: user.username, password: '$2a$12$ikGtdR2h5m/9z5k6eonOLOu/1Uu6RGiOtoX1d2DQ7Tt/CRZAidTX.'}))
+    .mockImplementationOnce(() => {}),
+  insertUser: jest.fn().mockReturnValue(''),
+}));
+
 beforeAll(async () => {
-  await db.delete(users).where(eq(users.username, 'test-user'));
-  return request(app).post('/user/create').send(user); // TODO à modifier, moins qu'idéal
 });
 
 afterAll(async () => {
-  await db.delete(users).where(eq(users.username, 'test-user'));
-  return closeDbConnection();
 });
 
 describe('POST /auth', () => {
