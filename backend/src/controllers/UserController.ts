@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { User, getUserById, getUserByUsername, insertUser } from '../models/users';
+import { User } from '../models/users';
+import { getUserById, getUserByUsername, insertUser } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -9,7 +10,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   // Le mot de passe doit être hasher ceci est juste un exemple
     const { username, password } = req.body;
 
-    const userExist: User = await getUserByUsername(username);
+    const userExist: User | undefined = await getUserByUsername(username);
 
     // Check if username already taken
     if (userExist) {
@@ -34,7 +35,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
   try {
     // Le mot de passe doit être hasher ceci est juste un exemple
     const { username, password } = req.body;
-    const user: User = await getUserByUsername(username);
+    const user: User | undefined = await getUserByUsername(username);
 
     // User does not exist
     if (!user) {
@@ -59,7 +60,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
-    const user: User = await getUserById(userId);
+    const user: User | undefined = await getUserById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'No corresponding user' });

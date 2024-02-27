@@ -1,6 +1,4 @@
 import { int, mysqlTable, uniqueIndex, varchar } from 'drizzle-orm/mysql-core';
-import { db } from '../db/db';
-import { eq } from 'drizzle-orm';
 
 /**
  * @swagger
@@ -30,29 +28,3 @@ export const users = mysqlTable('users', {
 }));
 
 export type User = typeof users.$inferInsert;
-
-export const getUserByUsername = async (username: string) : Promise<User> => {
-  const [ user ] = await db.select()
-    .from(users)
-    .where(eq(users.username, username))
-    .limit(1);
-  return user;
-};
-
-export const getUserById = async (id: number) : Promise<User> => {
-  const [ user ] = await db.select()
-    .from(users)
-    .where(eq(users.id, id))
-    .limit(1);
-  return user;
-};
-
-export const insertUser = async (user: User) => {
-  return await db.insert(users).values([{...user}]);
-};
-
-// Ajouter sans m'en rendre compte
-// export const deleteUserById = async (id: number) => {
-//   return await db.delete(users)
-//     .where(eq(users.id, id));
-// };
