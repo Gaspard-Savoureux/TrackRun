@@ -2,19 +2,17 @@ import request from 'supertest';
 import app from '../../src/app';
 
 const user = {username: 'test-user', password: '1234'};
+const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMzLCJpYXQiOjE3MDkwNTA5OTB9.06MlfRValeODxFKUrNKNXiYaZMtlZD1I5nry4O8Lh-Y';
 
 jest.mock('../../src/models/users', () => ({
   getUserByUsername: jest.fn()
     .mockImplementationOnce(() => undefined)
     .mockImplementationOnce(() => ({id: 1, ...user})),
   insertUser: jest.fn().mockReturnValue(''),
+  getUserById: jest.fn()
+    .mockImplementationOnce(() => ({id: 1, ...user}))
+    .mockImplementationOnce(() => undefined),
 }));
-
-beforeAll(() => {
-});
-
-afterAll(async () => {
-});
 
 describe('User routes', () => {
 
@@ -48,4 +46,21 @@ describe('User routes', () => {
     });
   });
 
+  describe('GET /user', () => {
+    test('should obtain informations successfully', async () => {
+      const res = await request(app)
+        .get('/user')
+        .set('Authorization', token);
+      expect(res.statusCode).toEqual(200);
+    });
+
+    test('sould not be able to find a corresponding user', async () => {
+      const invalidToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMzLCJpYXQiOjE3MDkwNTA5OTB9.06MlfRValeODxFKUrNKNXiYaZMtlZD1I5nry4O8Lh-Y';
+
+      const res = await request(app)
+        .get('/user')
+        .set('Authorization', invalidToken);
+      expect(res.statusCode).toEqual(404);
+    });
+  });
 });
