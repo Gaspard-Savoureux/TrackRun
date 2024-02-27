@@ -64,8 +64,6 @@ router.post('/create',
  *    responses:
  *      200:
  *        description: Information obtained successfully
- *      400:
- *        description: Bad Request
  *      404:
  *        description: No corresponding user found
  *      500:
