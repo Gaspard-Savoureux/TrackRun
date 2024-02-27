@@ -29,6 +29,8 @@ export const users = mysqlTable('users', {
   nameIndex: uniqueIndex('username_idx').on(users.username),
 }));
 
+export type User = typeof users.$inferInsert;
+
 export const getUserByUsername = async (username: string) : Promise<User> => {
   const [ user ] = await db.select()
     .from(users)
@@ -37,8 +39,20 @@ export const getUserByUsername = async (username: string) : Promise<User> => {
   return user;
 };
 
+export const getUserById = async (id: number) : Promise<User> => {
+  const [ user ] = await db.select()
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+  return user;
+};
+
 export const insertUser = async (user: User) => {
   return await db.insert(users).values([{...user}]);
 };
 
-export type User = typeof users.$inferInsert;
+// Ajouter sans m'en rendre compte
+// export const deleteUserById = async (id: number) => {
+//   return await db.delete(users)
+//     .where(eq(users.id, id));
+// };

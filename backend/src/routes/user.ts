@@ -1,8 +1,9 @@
 
 import express  from 'express';
 import { body } from 'express-validator';
-import { createUser } from '../controllers/UserController';
+import { createUser, getUser } from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
+import { verifyUserToken } from '../middlewares/authentication';
 
 const router = express.Router();
 
@@ -47,5 +48,7 @@ router.post('/create',
   expressValidator,
   createUser
 );
+
+router.get('/', verifyUserToken, getUser);
 
 export default router;
