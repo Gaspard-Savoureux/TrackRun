@@ -24,6 +24,20 @@ build_backend:
     - cd backend
     - npm ci
 
+test_frontend:
+  stage: test
+  script:
+    - cd frontend
+    - npm ci
+    - npx vitest --run
+
+lint_frontend:
+  stage: test
+  script:
+    - cd frontend
+    - npm ci
+    - npm run lint
+
 test_integration_backend:
   stage: test
   allow_failure: true #FIXME: remove when tests are fixed!
