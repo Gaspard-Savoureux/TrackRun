@@ -5,32 +5,34 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:svelte/recommended'
+    'plugin:svelte/recommended',
   ],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2020,
-    extraFileExtensions: ['.svelte']
+    extraFileExtensions: ['.svelte'],
   },
   env: {
     browser: true,
     es2017: true,
-    node: true
+    node: true,
   },
   overrides: [
     {
       files: ['*.svelte'],
       parser: 'svelte-eslint-parser',
       parserOptions: {
-        parser: '@typescript-eslint/parser'
-      }
-    }
+        parser: '@typescript-eslint/parser',
+      },
+    },
   ],
   rules: {
     'indent': [2, 2],
     'eol-last': [2, 'always'],
+    'eqeqeq': [2, 'always'],
+    'comma-dangle': [2, 'always-multiline'],
     'key-spacing': [2],
     'semi': [2, 'always'],
     'space-infix-ops': [2],
