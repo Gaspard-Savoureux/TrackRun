@@ -15,6 +15,7 @@ const router = express.Router();
  *    - user
  *    summary: Create user
  *    description: Route to create a new user
+ *    security: []
  *    requestBody:
  *      required: true
  *      content:
@@ -49,6 +50,27 @@ router.post('/create',
   createUser
 );
 
+
+/**
+ * @swagger
+ * /user:
+ *  get:
+ *    tags:
+ *    - user
+ *    summary: Get user data
+ *    description: Route to get the data of a user using its token
+ *    security:
+ *      - BearerAuth: []
+ *    responses:
+ *      200:
+ *        description: Information obtained successfully
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: No corresponding user found
+ *      500:
+ *        description: Server Error
+ */
 router.get('/', verifyUserToken, getUser);
 
 export default router;
