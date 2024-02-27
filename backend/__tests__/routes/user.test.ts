@@ -87,19 +87,43 @@ describe('User routes', () => {
       expect(res.statusCode).toEqual(200);
     });
 
+    // Techniquement pas sensé être possible, mais je garde de côté au cas où j'ai pas penser à une scénario
+    // test('#5: should not be able to find a corresponding user', async () => {
 
-    test('#5: should not be able to find a corresponding user', async () => {
+    //   // Example the user has been deleted and you still possess a existing token 
+    //   jest.spyOn(actions, 'getUserByUsername')
+    //     .mockImplementationOnce(() => Promise.resolve(returnedUser))
+    //     .mockImplementationOnce(() => Promise.resolve(undefined));
+    //   jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(undefined));
+
+    //   const getToken = await request(app)
+    //     .post('/auth')
+    //     .send(user)
+    //     .set('Content-Type', 'application/json');
+
+    //   const { token } = getToken.body;
+    //   const invalidToken = `Bearer ${token}`;
+    //   // Token does have an id but no user have the id.
+    //   // const invalidToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMzLCJpYXQiOjE3MDkwNTA5OTB9.06MlfRValeODxFKUrNKNXiYaZMtlZD1I5nry4O8Lh-Y';
+
+    //   const res = await request(app)
+    //     .get('/user')
+    //     .set('Authorization', invalidToken);
+    //   console.log(res.error);
+    //   expect(res.statusCode).toEqual(404);
+    // });
+
+    test('#5: should not have the permissions to access data', async () => {
 
       jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(undefined));
       jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(undefined));
 
-      // Token does have an id but no user have the id.
-      const invalidToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMzLCJpYXQiOjE3MDkwNTA5OTB9.06MlfRValeODxFKUrNKNXiYaZMtlZD1I5nry4O8Lh-Y';
+      const invalidToken = 'Bearer invalid';
 
       const res = await request(app)
         .get('/user')
         .set('Authorization', invalidToken);
-      expect(res.statusCode).toEqual(401); // return 401 if the user try to access an inexisting user
+      expect(res.statusCode).toEqual(401);
     });
   });
 });

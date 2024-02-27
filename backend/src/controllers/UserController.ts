@@ -53,7 +53,6 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
 
     return res.status(200).json({ token });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
