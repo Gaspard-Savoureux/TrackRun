@@ -2,15 +2,15 @@ import request from 'supertest';
 import app from '../../src/app';
 import { verifyUserToken } from '../../src/middlewares/authentication';
 import { Request, Response } from 'express';
+import { User } from '../../src/models/users';
+import bcrypt from 'bcrypt';
+import * as actions from '../../src/services/user.services';
 
-const user = {username: 'test-user', password: '1234'};
+const user = {username: 'test-user1', password: '1234'};
 const route : string = '/auth';
 
-jest.mock('../../src/models/users', () => ({
-  getUserByUsername: jest.fn()
-    .mockImplementation(() => ({id: 1, username: user.username, password: '$2a$12$ikGtdR2h5m/9z5k6eonOLOu/1Uu6RGiOtoX1d2DQ7Tt/CRZAidTX.'})),
-  insertUser: jest.fn().mockReturnValue(''),
-}));
+// the value returned by the mocked functions getUserByUsername and getUserById
+let returnedUser: User;
 
 // Example of protected route
 app.use('/protected-route', verifyUserToken, (req: Request, res: Response) => {
@@ -18,14 +18,15 @@ app.use('/protected-route', verifyUserToken, (req: Request, res: Response) => {
     msg: `Access to protected route granted. Your id is ${req.user?.userId}`});
 });
 
-beforeAll(async () => {
-});
+jest.mock('../../src/services/user.services');
 
-afterAll(async () => {
+beforeAll(async () => {
+  const hashedPassword = await bcrypt.hash(user.password, 10);
+  returnedUser = {id: 1, username: user.username, password: hashedPassword};
 });
 
 describe('POST /auth', () => {
-
+  jest.spyOn(actions, 'getUserByUsername').mockImplementation(() => Promise.resolve(returnedUser));
   test('Succesfully authenticate a user', async () => {
     // Get the token
     const getToken = await request(app)
