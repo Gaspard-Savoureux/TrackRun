@@ -1,20 +1,17 @@
 import type { PageLoad } from './$types';
-import {API_URL} from "../constants";
+import {API_URL} from '../constants';
 
-export const load: PageLoad = async ({ fetch }) => {
-  const res = await fetch('https://dog.ceo/api/breeds/image/random');
-  const data: DogApiResponse = await res.json();
-
+export const load: PageLoad = async ({ data, fetch }) => {
   let backendData;
   try {
     const response = await fetch(API_URL);
     backendData = await response.text();
-  } catch (error: any) {
+  } catch (error: unknown) {
     backendData = `Make sure your backend is running! Request failed with error: ${error}`;
   }
 
   return {
-    imageSrc: data.message,
-    backendData: backendData,
+    backendData,
+    message: data.message,
   };
 };
