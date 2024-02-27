@@ -7,13 +7,13 @@ import { User } from '../../src/models/users';
 
 
 const user = {username: 'test-user', password: '1234'};
+
+// the value returned by the mocked functions getUserByUsername and getUserById
 let returnedUser: User;
 
 
 beforeAll(async () => {
   const hashedPassword = await bcrypt.hash(user.password, 10);
-
-  // the value returned by the mocked functions getUserByUsername and getUserById
   returnedUser = {id: 1, username: user.username, password: hashedPassword};
 });
 
@@ -90,6 +90,7 @@ describe('User routes', () => {
 
     test('#5: should not be able to find a corresponding user', async () => {
 
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(undefined));
       jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(undefined));
 
       // Token does have an id but no user have the id.
@@ -98,7 +99,7 @@ describe('User routes', () => {
       const res = await request(app)
         .get('/user')
         .set('Authorization', invalidToken);
-      expect(res.statusCode).toEqual(404);
+      expect(res.statusCode).toEqual(401); // return 401 if the user try to access an inexisting user
     });
   });
 });

@@ -21,7 +21,7 @@ export const verifyUserToken = (req: Request, res: Response, next: NextFunction)
   const token = authHeaders.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.SECRET as string) as userPayload;
+    const decoded = jwt.verify(token, process.env.SECRET as string || 'petit_secret') as userPayload;
     req.user = decoded;
     
     next();

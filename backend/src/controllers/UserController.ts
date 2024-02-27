@@ -48,11 +48,12 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
     }
 
     const payload = {userId: user.id};
-    const secret: jwt.Secret = process.env.SECRET as string;
+    const secret: jwt.Secret = process.env.SECRET as string || 'petit_secret';
     const token = jwt.sign(payload, secret, { expiresIn: '1h'});
 
     return res.status(200).json({ token });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
