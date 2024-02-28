@@ -1,7 +1,7 @@
 
 import express  from 'express';
 import { body } from 'express-validator';
-import { createUser, getUser } from '../controllers/UserController';
+import { createUser, deleteUser, getUser } from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 
@@ -51,6 +51,7 @@ router.post('/create',
 );
 
 
+// TODO add response body for 200
 /**
  * @swagger
  * /user:
@@ -70,5 +71,7 @@ router.post('/create',
  *        description: Server Error
  */
 router.get('/', verifyUserToken, getUser);
+
+router.delete('/', verifyUserToken, deleteUser);
 
 export default router;
