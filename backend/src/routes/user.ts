@@ -1,8 +1,9 @@
 
 import express  from 'express';
 import { body } from 'express-validator';
-import { createUser } from '../controllers/UserController';
+import { createUser, getUser } from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
+import { verifyUserToken } from '../middlewares/authentication';
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ const router = express.Router();
  *    - user
  *    summary: Create user
  *    description: Route to create a new user
+ *    security: []
  *    requestBody:
  *      required: true
  *      content:
@@ -47,5 +49,26 @@ router.post('/create',
   expressValidator,
   createUser
 );
+
+
+/**
+ * @swagger
+ * /user:
+ *  get:
+ *    tags:
+ *    - user
+ *    summary: Get user data
+ *    description: Route to get the data of a user using its token
+ *    security:
+ *      - BearerAuth: []
+ *    responses:
+ *      200:
+ *        description: Information obtained successfully
+ *      404:
+ *        description: No corresponding user found
+ *      500:
+ *        description: Server Error
+ */
+router.get('/', verifyUserToken, getUser);
 
 export default router;
