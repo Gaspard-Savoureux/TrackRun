@@ -15,12 +15,20 @@ import 'express';
  * 
  */
 export type userPayload = {
-  userId: string; 
+  userId: number; 
   [key: string]: JwtPayload | string;
 
 }; 
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: userPayload;
+// declare module 'express-serve-static-core' {
+//   interface Request {
+//     user?: userPayload;
+//   }
+// }
+
+declare global {
+  namespace Express {
+    export interface Request {
+      user?: userPayload;
+    }
   }
 }

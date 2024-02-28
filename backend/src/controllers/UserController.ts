@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { User, getUserByUsername, insertUser } from '../models/users';
+import { User } from '../models/users';
+import { getUserById, getUserByUsername, insertUser } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -9,7 +10,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   // Le mot de passe doit être hasher ceci est juste un exemple
     const { username, password } = req.body;
 
-    const userExist: User = await getUserByUsername(username);
+    const userExist: User | undefined = await getUserByUsername(username);
 
     // Check if username already taken
     if (userExist) {
@@ -28,14 +29,13 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-// TODO add userExist to check if username is taken before the user has to submit is request to create a new user
 
 export const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     // Le mot de passe doit être hasher ceci est juste un exemple
     const { username, password } = req.body;
-    const user: User = await getUserByUsername(username);
+    const user: User | undefined = await getUserByUsername(username);
 
     // User does not exist
     if (!user) {
@@ -48,7 +48,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
     }
 
     const payload = {userId: user.id};
-    const secret: jwt.Secret = process.env.SECRET as string;
+    const secret: jwt.Secret = process.env.SECRET as string || 'petit_secret';
     const token = jwt.sign(payload, secret, { expiresIn: '1h'});
 
     return res.status(200).json({ token });
@@ -56,3 +56,43 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
     next(error);
   }
 };
+
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const user: User | undefined = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'No corresponding user' });
+    }
+
+    delete user.password;
+    delete user.id;
+
+    return res.status(200).json({ user });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// Je l'ai fait par accident
+// export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const userId = req.user?.userId as number;
+//     const user: User = await getUserById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({ error: 'Nothing to delete' });
+//     }
+
+//     await deleteUserById(userId);
+
+//     return res.status(200).json({ message: 'User successfully deleted' });
+
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
