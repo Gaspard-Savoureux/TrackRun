@@ -10,13 +10,13 @@ export const actions: object = {
 
     if (!username) return fail(400, {
       success: false,
-      message: 'Missing username',
+      message: 'Please enter a username',
       username,
     });
 
     if (!password) return fail(400, {
       success: false,
-      message: 'Missing password',
+      message: 'Please enter a password',
       username,
     });
 
@@ -28,7 +28,7 @@ export const actions: object = {
 
     if (res.status === 400 || res.status === 401) return fail(res.status, {
       success: false,
-      message: 'Invalid credentials',
+      message: 'Your credentials are invalid',
       username,
     });
 
