@@ -72,6 +72,32 @@ router.post('/create',
  */
 router.get('/', verifyUserToken, getUser);
 
+/**
+ * @swagger
+ * /user:
+ *  delete:
+ *    tags:
+ *    - user
+ *    summary: Delete a user
+ *    description: Delete a user based on its token.
+ *    security:
+ *      - BearerAuth: []
+ *    responses:
+ *      200:
+ *        description: User successfully deleted
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: User successfully deleted
+ *      404:
+ *        description: No corresponding user found
+ *      500:
+ *        description: Server Error
+ */
 router.delete('/', verifyUserToken, deleteUser);
 
 export default router;
