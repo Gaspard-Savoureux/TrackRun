@@ -31,6 +31,14 @@ const router = express.Router();
  *                type: string
  *                description: The password of a user
  *                example: 1234
+ *              email:
+ *                type: string
+ *                description: The email of a user
+ *                example: jeanpapa@gmail.com
+ *              name: 
+ *                type: string
+ *                description: The name of a user
+ *                example: jean-papa Juanpadre
  *    responses:
  *      201:
  *        description: New user created
@@ -44,7 +52,9 @@ const router = express.Router();
 router.post('/create', 
   [
     body('username').isString(),
-    body('password').isString()
+    body('password').isString().isLength({min: 1, max: 72}),
+    body('email').isString().isEmail(),
+    body('name').isString()
   ],
   expressValidator,
   createUser
