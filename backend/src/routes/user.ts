@@ -1,7 +1,7 @@
 
 import express  from 'express';
 import { body } from 'express-validator';
-import { createUser, getUser } from '../controllers/UserController';
+import { createUser, getUser, updateUser } from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 
@@ -70,5 +70,56 @@ router.post('/create',
  *        description: Server Error
  */
 router.get('/', verifyUserToken, getUser);
+
+/**
+ * @swagger
+ * /user/{userId}:
+ *  put:
+ *    tags:
+ *    - user
+ *    summary: Update user data
+ *    description: Route to update the data of a user using its ID
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *      - in: path
+ *        name: userId
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The ID of the user to update
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              username:
+ *                type: string
+ *                description: The username of a user
+ *                example: jean-papa
+ *              password:
+ *                type: string
+ *                description: The password of a user
+ *                example: 1234
+ *    responses:
+ *      200:
+ *        description: User updated successfully
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: No corresponding user found
+ *      500:
+ *        description: Server Error
+ */
+router.put('/:userId', verifyUserToken,
+  [
+    body('username').optional().isString(),
+    body('password').optional().isString()
+  ],
+  expressValidator,
+  updateUser
+);
 
 export default router;
