@@ -22,8 +22,7 @@ export const insertUser = async (user: User) => {
   return await db.insert(users).values([{...user}]);
 };
 
-// Ajouter sans m'en rendre compte
-// export const deleteUserById = async (id: number) => {
-//   return await db.delete(users)
-//     .where(eq(users.id, id));
-// };
+export const deleteUserById = async (id: number) => {
+  return await db.delete(users)
+    .where(eq(users.id, id));
+};
