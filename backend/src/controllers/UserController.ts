@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { User } from '../models/users';
-import { getUserById, getUserByUsername, insertUser } from '../services/user.services';
+import { User, users } from '../models/users';
+import { getUserById, getUserByUsername, insertUser, updateUserById } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -85,12 +85,23 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
       return res.status(404).json({ error: 'No corresponding user' });
     }
 
-    const { username, password } = req.body;
+    const { username, password, age, height, weight, sex, description } = req.body;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    let updateData: Partial<User> = {};
 
-    await insertUser({ username, password: hashedPassword });
+    if (username) updateData.username = username;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updateData.password = hashedPassword;
+    }
+    if (age) updateData.age = age;
+    if (height) updateData.height = height;
+    if (weight) updateData.weight = weight;
+    if (sex) updateData.sex = sex;
+    if (description) updateData.description = description;
 
+    await updateUserById(userId, updateData);
+    
     return res.status(200).json({ message: 'User successfully updated' });
 
   } catch (error) {
