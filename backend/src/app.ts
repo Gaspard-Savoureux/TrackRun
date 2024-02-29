@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import user from './routes/user';
 import stub from './routes/stub';
 import auth from './routes/auth';
+import activity from './routes/activity';
 /****************/
 
 /*** Middlewares ***/
@@ -29,6 +30,8 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(auth);
 app.use('/user', user);
 app.use('/', stub);
+app.use('/activity', activity);
+
 
 // Needs to be last
 app.use(ErrorHandler);
