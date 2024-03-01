@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { User, users } from '../models/users';
-import { deleteUserById, getUserById, getUserByUsername, insertUser, updateUserById } from '../services/user.services';
+import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 

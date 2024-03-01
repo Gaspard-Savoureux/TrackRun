@@ -1,44 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="16" failures="2" errors="0" time="3.182">
-  <testsuite name="activity creation" errors="0" failures="2" skipped="0" timestamp="2024-02-29T20:58:47" time="1.948" tests="2">
-    <testcase classname="activity creation should create a new user" name="activity creation should create a new user" time="0.002">
-      <failure>Error: Unknown column &apos;users.id&apos; in &apos;where clause&apos;
-    at PromisePool.query (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/mysql2/promise.js:356:22)
-    at MySql2PreparedQuery.execute (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/src/mysql2/session.ts:85:18)
-    at QueryPromise.execute (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/src/mysql-core/query-builders/delete.ts:152:25)
-    at QueryPromise.then (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/src/query-promise.ts:31:15)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)</failure>
+<testsuites name="jest tests" tests="16" failures="0" errors="0" time="3.572">
+  <testsuite name="activity creation" errors="0" failures="0" skipped="2" timestamp="2024-03-01T16:25:07" time="2.919" tests="2">
+    <testcase classname="activity creation should create a new user" name="activity creation should create a new user" time="0">
+      <skipped/>
     </testcase>
     <testcase classname="activity creation should create a new activity in the database" name="activity creation should create a new activity in the database" time="0">
-      <failure>Error: Unknown column &apos;users.id&apos; in &apos;where clause&apos;
-    at PromisePool.query (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/mysql2/promise.js:356:22)
-    at MySql2PreparedQuery.execute (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/src/mysql2/session.ts:85:18)
-    at QueryPromise.execute (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/src/mysql-core/query-builders/delete.ts:152:25)
-    at QueryPromise.then (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/src/query-promise.ts:31:15)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)</failure>
-    </testcase>
-    <testcase classname=" Test execution failure: could be caused by test hooks like &apos;afterAll&apos;." name=" Test execution failure: could be caused by test hooks like &apos;afterAll&apos;." time="0">
-      <failure>{&quot;message&quot;:&quot;&quot;,&quot;stack&quot;:&quot;Error: Unknown column &apos;users.id&apos; in &apos;where clause&apos;\n    at PromisePool.query (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/mysql2/promise.js:356:22)\n    at MySql2PreparedQuery.execute (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/src/mysql2/session.ts:85:18)\n    at QueryPromise.execute (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/src/mysql-core/query-builders/delete.ts:152:25)\n    at QueryPromise.then (/home/aymene/Documents/inm5151+inf6150/touristes-de-salon-expires/backend/node_modules/src/query-promise.ts:31:15)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)&quot;}</failure>
+      <skipped/>
     </testcase>
   </testsuite>
-  <testsuite name="Tests of protected route" errors="0" failures="0" skipped="0" timestamp="2024-02-29T20:58:47" time="2.021" tests="2">
-    <testcase classname="Tests of protected route Succesfully authenticate a user" name="Tests of protected route Succesfully authenticate a user" time="0.08">
-    </testcase>
-    <testcase classname="Tests of protected route Sould send an unauthorize response" name="Tests of protected route Sould send an unauthorize response" time="0.002">
-    </testcase>
-  </testsuite>
-  <testsuite name="POST /auth" errors="0" failures="0" skipped="0" timestamp="2024-02-29T20:58:47" time="2.07" tests="4">
-    <testcase classname="POST /auth Succesfully returns a token" name="POST /auth Succesfully returns a token" time="0.084">
+  <testsuite name="POST /auth" errors="0" failures="0" skipped="0" timestamp="2024-03-01T16:25:07" time="3.075" tests="4">
+    <testcase classname="POST /auth Succesfully returns a token" name="POST /auth Succesfully returns a token" time="0.075">
     </testcase>
     <testcase classname="POST /auth credentials error when invalid name" name="POST /auth credentials error when invalid name" time="0.003">
     </testcase>
-    <testcase classname="POST /auth credentials error when invalid password" name="POST /auth credentials error when invalid password" time="0.002">
+    <testcase classname="POST /auth credentials error when invalid password" name="POST /auth credentials error when invalid password" time="0.003">
     </testcase>
     <testcase classname="POST /auth should send back a bad request error" name="POST /auth should send back a bad request error" time="0.002">
     </testcase>
   </testsuite>
-  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2024-02-29T20:58:47" time="2.449" tests="8">
-    <testcase classname=" #1: should create a new user" name=" #1: should create a new user" time="0.07">
+  <testsuite name="Tests of protected route" errors="0" failures="0" skipped="0" timestamp="2024-03-01T16:25:07" time="3.123" tests="2">
+    <testcase classname="Tests of protected route Succesfully authenticate a user" name="Tests of protected route Succesfully authenticate a user" time="0.102">
+    </testcase>
+    <testcase classname="Tests of protected route Sould send an unauthorize response" name="Tests of protected route Sould send an unauthorize response" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2024-03-01T16:25:07" time="3.344" tests="8">
+    <testcase classname=" #1: should create a new user" name=" #1: should create a new user" time="0.104">
     </testcase>
     <testcase classname=" #2: should send back a conflict error" name=" #2: should send back a conflict error" time="0.004">
     </testcase>
@@ -46,13 +33,13 @@
     </testcase>
     <testcase classname=" #4: should send back a conflict error" name=" #4: should send back a conflict error" time="0.003">
     </testcase>
-    <testcase classname=" #5: should send back a bad request error" name=" #5: should send back a bad request error" time="0.003">
+    <testcase classname=" #5: should send back a bad request error" name=" #5: should send back a bad request error" time="0.002">
     </testcase>
-    <testcase classname=" #4: should obtain informations successfully" name=" #4: should obtain informations successfully" time="0.057">
+    <testcase classname=" #4: should obtain informations successfully" name=" #4: should obtain informations successfully" time="0.055">
     </testcase>
-    <testcase classname=" #5: should not have the permissions to access data" name=" #5: should not have the permissions to access data" time="0.003">
+    <testcase classname=" #5: should not have the permissions to access data" name=" #5: should not have the permissions to access data" time="0.002">
     </testcase>
-    <testcase classname=" #6: should delete user successfully" name=" #6: should delete user successfully" time="0.056">
+    <testcase classname=" #6: should delete user successfully" name=" #6: should delete user successfully" time="0.055">
     </testcase>
   </testsuite>
 </testsuites>

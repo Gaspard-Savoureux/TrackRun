@@ -1,4 +1,3 @@
-
 import express from 'express';
 import { body } from 'express-validator';
 import { createUser, getUser, deleteUser, updateUser } from '../controllers/UserController';
@@ -113,20 +112,20 @@ router.get('/', verifyUserToken, getUser);
  *                type: string
  *                description: The password of a user
  *                example: 1234
- *             age:
- *              type: integer
- *             description: The age of a user
- *            example: 30
- *            height:
- *             type: number
- *            format: float
- *        description: The height of a user in cm
- *       example: 180.5
- *      weight:
- *       type: number
- *     format: float
- *   description: The weight of a user in kg
- * example: 75.5
+ *              age:
+ *                type: integer
+ *                description: The age of a user
+ *                example: 30
+ *              height:
+ *                type: number
+ *                format: float
+ *                description: The height of a user in cm
+ *                example: 180.5
+ *              weight:
+ *                type: number
+ *                format: float
+ *                description: The weight of a user in kg
+ *                example: 75.5
  * 
  *    responses:
  *      201:

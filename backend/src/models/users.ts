@@ -41,7 +41,10 @@ import { int, mysqlTable, uniqueIndex, varchar, float } from 'drizzle-orm/mysql-
 export const users = mysqlTable('users', {
   id: int('id').primaryKey().autoincrement(),
   username: varchar('username', { length: 256 }),
-  password: varchar('password', { length: 256 }),
+  password: varchar('password', { length: 72 }),
+  email: varchar('email', { length: 256 }),
+  name: varchar('name', { length: 256 }),
+
   age: int('age'),
   height: float('height'),
   weight: float('weight'),
