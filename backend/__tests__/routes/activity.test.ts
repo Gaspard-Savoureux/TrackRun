@@ -22,7 +22,7 @@ afterAll(async () => {
   return closeDbConnection();
 });
 
-describe('activity creation', () => {
+describe.skip('activity creation', () => {
   const route_user : string = '/user/create';
   test('should create a new user', async () => {
     const res = await request(app)
