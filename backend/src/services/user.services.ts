@@ -1,6 +1,7 @@
 import { db } from '../db/db';
 import { User, users } from '../models/users';
 import { eq } from 'drizzle-orm';
+import {activities} from "../models/activities";
 
 export const getUserByUsername = async ( username: string) : Promise<User | undefined> => {
   const [ user ] = await db.select()
@@ -21,6 +22,12 @@ export const getUserById = async (id: number) : Promise<User | undefined> => {
 export const insertUser = async (user: User) => {
   return await db.insert(users).values([{...user}]);
 };
+
+export const getUserActivities = async (userId: number) => {
+  return await db.select()
+    .from(activities)
+    .where(eq(activities.user_id, userId))
+}
 
 // Ajouter sans m'en rendre compte
 // export const deleteUserById = async (id: number) => {
