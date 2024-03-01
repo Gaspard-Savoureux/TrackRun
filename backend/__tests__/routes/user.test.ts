@@ -6,16 +6,35 @@ import { beforeEach, describe } from 'node:test';
 import { User } from '../../src/models/users';
 
 
-const user = {username: 'test-user', password: '1234'};
+// Base user should always work
+const user = {username: 'test-user', password: '1234', email: 'testing@gmail.com', name : 'Test User'};
 
-// the value returned by the mocked functions getUserByUsername and getUserById
+// this user as the same name
+const user1 = {username: 'test-user', password: '4567', email: 'usertesting@gmail.com', name: 'Test User the 2nd'};
+
+// this user has the same email
+const user2 = {username: 'testing user', password: '4567',email: 'testing@gmail.com', name: 'Test User the 3nd'};
+
+
 let returnedUser: User;
+let returnedUser1: User;
+let returnedUser2: User;
+
+
+
+
 
 jest.mock('../../src/services/user.services');
 
 beforeAll(async () => {
   const hashedPassword = await bcrypt.hash(user.password, 10);
   returnedUser = {id: 1, username: user.username, password: hashedPassword};
+
+  const hashedPassword1 = await bcrypt.hash(user1.password, 10);
+  returnedUser1 = {id: 2, username: user1.username, password: hashedPassword1, email: user1.email, name: user1.name};
+
+  const hashedPassword2 = await bcrypt.hash(user2.password, 10);
+  returnedUser2 = {id: 3, username: user2.username, password: hashedPassword2, email: user2.email, name: user2.name};
 });
 
 
@@ -42,7 +61,7 @@ describe('User routes', () => {
 
 
 
-  
+    // Conflict errors : Sharing same unique ressource (email and name) 
     test('#2: should send back a conflict error', async () => {
       jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(returnedUser));
 
@@ -53,7 +72,34 @@ describe('User routes', () => {
       expect(res.statusCode).toEqual(409);
     });
 
-    test('#3: should send back a bad request error', async () => {
+
+    // Conflict errors : Sharing same unique ressource (name) 
+    test('#3: should send back a conflict error', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+      const res = await request(app)
+        .post(route)
+        .send(user1)
+        .set('Content-Type', 'application/json');
+      expect(res.statusCode).toEqual(409);
+    });
+
+
+    // Conflict errors : Sharing same unique ressource (email) 
+    test('#4: should send back a conflict error', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+      const res = await request(app)
+        .post(route)
+        .send(user2)
+        .set('Content-Type', 'application/json');
+      expect(res.statusCode).toEqual(409);
+    });
+
+
+
+
+    test('#5: should send back a bad request error', async () => {
       const badUser = { username: 1234, password: 1234 } ;
       const res = await request(app)
         .post(route)
@@ -64,6 +110,10 @@ describe('User routes', () => {
 
 
   });
+
+
+
+
 
   describe('GET /user', () => {
 

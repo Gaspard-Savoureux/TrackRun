@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { User, users } from '../models/users';
-import { deleteUserById, getUserById, getUserByUsername, insertUser, updateUserById } from '../services/user.services';
+import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -8,20 +8,27 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 
   try {
   // Le mot de passe doit être hasher ceci est juste un exemple
-    const { username, password } = req.body;
+    const { username, password, email, name} = req.body;
 
     const userExist: User | undefined = await getUserByUsername(username);
+    const emailExist : User | undefined = await getUserByEmail(email);
 
     // Check if username already taken
     if (userExist) {
       return res.status(409).json({ error: 'A user already has that name' });
     }
 
+    // Check if email is already used
+    if (emailExist){
+      return res.status(409).json({error: 'A user already has that email'})
+    }
+
+
     // hashing the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert the new user in the db
-    insertUser({ username, password: hashedPassword });
+    insertUser({ username, password: hashedPassword, email, name });
 
     return res.status(201).json({ message: 'user added succesfully'});
   } catch (error) {

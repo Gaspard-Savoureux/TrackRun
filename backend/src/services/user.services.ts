@@ -18,6 +18,15 @@ export const getUserById = async (id: number) : Promise<User | undefined> => {
   return user;
 };
 
+export const getUserByEmail = async (email: string) : Promise<User | undefined> =>{
+  const [ user ] = await db.select()
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
+  return user;
+}
+
+
 export const insertUser = async (user: User) => {
   return await db.insert(users).values([{...user}]);
 };
