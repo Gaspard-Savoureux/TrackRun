@@ -84,8 +84,6 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
         }
       }
     }
-    console.log(searchedActivities);
-    console.log(userActivities);
 
     return res.status(200).json(searchedActivities);
   } catch (error) {
