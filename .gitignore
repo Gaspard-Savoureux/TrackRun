@@ -3,3 +3,6 @@
 
 # IntelliJ
 .idea/
+
+# Visual Code
+.vscode

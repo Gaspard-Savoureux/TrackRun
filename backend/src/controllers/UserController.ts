@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { User } from '../models/users';
-import { getUserById, getUserByUsername, insertUser } from '../services/user.services';
+import { User, users } from '../models/users';
+import { deleteUserById, getUserById, getUserByUsername, insertUser, updateUserById } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -76,23 +76,55 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const user: User | undefined = await getUserById(userId);
 
-// Je l'ai fait par accident
-// export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const userId = req.user?.userId as number;
-//     const user: User = await getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'No corresponding user' });
+    }
 
-//     if (!user) {
-//       return res.status(404).json({ error: 'Nothing to delete' });
-//     }
+    const { username, password, age, height, weight, sex, description } = req.body;
 
-//     await deleteUserById(userId);
+    let updateData: Partial<User> = {};
 
-//     return res.status(200).json({ message: 'User successfully deleted' });
+    if (username) updateData.username = username;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updateData.password = hashedPassword;
+    }
+    if (age) updateData.age = age;
+    if (height) updateData.height = height;
+    if (weight) updateData.weight = weight;
+    if (sex) updateData.sex = sex;
+    if (description) updateData.description = description;
 
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    await updateUserById(userId, updateData);
+    
+    return res.status(201).json({ message: 'User successfully updated' });
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const user: User | undefined = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'Nothing to delete' });
+    }
+
+    await deleteUserById(userId);
+
+    return res.status(200).json({ message: 'User successfully deleted' });
+
+  } catch (error) {
+    next(error);
+  }
+};
 

@@ -1,4 +1,4 @@
-import { int, mysqlTable, uniqueIndex, varchar } from 'drizzle-orm/mysql-core';
+import { int, mysqlTable, uniqueIndex, varchar, float } from 'drizzle-orm/mysql-core';
 
 /**
  * @swagger
@@ -15,14 +15,38 @@ import { int, mysqlTable, uniqueIndex, varchar } from 'drizzle-orm/mysql-core';
  *           type: string
  *           description: The password of a user
  *           example: voici mon mot de passe
- * 
+ *         age:
+ *           type: integer
+ *           description: The age of a user
+ *           example: 30
+ *         height:
+ *           type: number
+ *           format: float
+ *           description: The height of a user in cm
+ *           example: 180.5
+ *         weight:
+ *           type: number
+ *           format: float
+ *           description: The weight of a user in kg
+ *           example: 75.5
+ *         sex:
+ *           type: string
+ *           description: The sex of a user
+ *           example: male
+ *         description:
+ *           type: string
+ *           description: The description of a user
+ *           example: A brief description about the user
  */
-// https://orm.drizzle.team/docs/sql-schema-declaration
 export const users = mysqlTable('users', {
   id: int('id').primaryKey().autoincrement(),
   username: varchar('username', { length: 256 }),
-  password: varchar('password', { length: 256 })
-  // TODO complete
+  password: varchar('password', { length: 256 }),
+  age: int('age'),
+  height: float('height'),
+  weight: float('weight'),
+  sex: varchar('sex', { length: 6 }),
+  description: varchar('description', { length: 1024 }),
 }, (users) => ({
   nameIndex: uniqueIndex('username_idx').on(users.username),
 }));
