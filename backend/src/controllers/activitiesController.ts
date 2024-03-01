@@ -67,24 +67,27 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
     const userId = req.user?.userId as number;
     const user: User | undefined = await getUserById(userId);
     const searchedInformation = req.query.search as string;
-    const userActivities = await getUserActivities(userId);
-    const searchedActivities: { activities: any[] } = {
+    let userActivities = await getUserActivities(userId);
+    let searchedActivities: { activities: any[] } = {
       activities: []
     };
     if (!user) {
       return res.status(404).json({ error: 'No corresponding user' });
     }
+    if (userActivities) {
+      for (let activity of userActivities) {
+        if (activity.name.includes(searchedInformation) || activity.type.includes(searchedInformation)
+          || activity.comment && activity.comment.includes(searchedInformation)
+          || activity.city && activity.city.includes(searchedInformation)) {
+          searchedActivities.activities.push(activity);
 
-    for(let activity of userActivities) {
-      if (activity.name.includes(searchedInformation) ||activity.type.includes(searchedInformation)
-            || activity.comment && activity.comment.includes(searchedInformation)
-            || activity.city && activity.city.includes(searchedInformation)) {
-        searchedActivities.activities.push(activity);
-
+        }
       }
     }
+    console.log(searchedActivities);
+    console.log(userActivities);
 
-    return res.status(200).json({ searchedActivities });
+    return res.status(200).json(searchedActivities);
   } catch (error) {
     console.log(error);
     next(error);

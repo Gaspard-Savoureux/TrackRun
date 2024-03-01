@@ -106,7 +106,6 @@ describe('get specified activities', () => {
       .get(`${route_creation}?search=Morning`)
       .set('Authorization', `Bearer ${token}`)
 
-    console.log(res.error);
     expect(res.statusCode).toEqual(200);
   });
 
