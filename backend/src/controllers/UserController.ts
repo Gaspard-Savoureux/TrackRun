@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { User, users } from '../models/users';
-import { getUserById, getUserByUsername, insertUser, updateUserById } from '../services/user.services';
+import { deleteUserById, getUserById, getUserByUsername, insertUser, updateUserById } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -102,7 +102,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
     await updateUserById(userId, updateData);
     
-    return res.status(200).json({ message: 'User successfully updated' });
+    return res.status(201).json({ message: 'User successfully updated' });
 
   } catch (error) {
     next(error);
@@ -110,22 +110,21 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 }
 
 
-// Je l'ai fait par accident
-// export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const userId = req.user?.userId as number;
-//     const user: User = await getUserById(userId);
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const user: User | undefined = await getUserById(userId);
 
-//     if (!user) {
-//       return res.status(404).json({ error: 'Nothing to delete' });
-//     }
+    if (!user) {
+      return res.status(404).json({ error: 'Nothing to delete' });
+    }
 
-//     await deleteUserById(userId);
+    await deleteUserById(userId);
 
-//     return res.status(200).json({ message: 'User successfully deleted' });
+    return res.status(200).json({ message: 'User successfully deleted' });
 
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+  } catch (error) {
+    next(error);
+  }
+};
 
