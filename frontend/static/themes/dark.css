@@ -1,3 +1,13 @@
 :root {
-  --color-background: black;
+  --blue: hsl(212, 100%, 32%);
+  --blue-darker: hsl(212, 100%, 20%);
+  --danger: rgb(201, 28, 28);
+  --bg-1: rgb(27, 27, 29);
+  --bg-2: rgb(37, 37, 37);
+  --bg-3: rgb(46, 46, 46);
+  --text: rgb(232, 230, 227);
+  --text-button: rgb(232, 230, 227);
+  --text-light: rgb(95, 95, 95);
+  --link: hsl(212, 100%, 42%);
+  --link-hover: hsl(212, 100%, 30%);
 }
