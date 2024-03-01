@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from '../../src/app';
 import bcrypt from 'bcrypt';
 import * as actions from '../../src/services/user.services';
-import { beforeEach } from 'node:test';
+import { beforeEach, describe } from 'node:test';
 import { User } from '../../src/models/users';
 
 
@@ -11,13 +11,12 @@ const user = {username: 'test-user', password: '1234'};
 // the value returned by the mocked functions getUserByUsername and getUserById
 let returnedUser: User;
 
+jest.mock('../../src/services/user.services');
 
 beforeAll(async () => {
   const hashedPassword = await bcrypt.hash(user.password, 10);
   returnedUser = {id: 1, username: user.username, password: hashedPassword};
 });
-
-jest.mock('../../src/services/user.services');
 
 
 beforeEach(() => {
@@ -69,8 +68,8 @@ describe('User routes', () => {
   describe('GET /user', () => {
 
     test('#4: should obtain informations successfully', async () => {
-      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(returnedUser));
-      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
 
       const getToken = await request(app)
         .post('/auth')
@@ -124,6 +123,31 @@ describe('User routes', () => {
         .get('/user')
         .set('Authorization', invalidToken);
       expect(res.statusCode).toEqual(401);
+    });
+  });
+
+  describe('DELETE /user', () => {
+    test('#6: should delete user successfully', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+
+      // No clue why I need to call these before in order to work.
+      actions.getUserByUsername('string');
+      actions.getUserById(1);
+
+      const getToken = await request(app)
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+      const res = await request(app)
+        .delete('/user')
+        .set('Authorization', validToken);
+
+      expect(res.statusCode).toEqual(200);
     });
   });
 });

@@ -4,7 +4,7 @@ import app from './app';
 import swaggerJsDoc, { Options } from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5001;
 
 /**** Documentation setup ****/
 const swaggerOptions : Options  = {
