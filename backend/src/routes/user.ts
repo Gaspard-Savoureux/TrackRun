@@ -116,7 +116,11 @@ router.get('/', verifyUserToken, getUser);
 router.put('/:userId', verifyUserToken,
   [
     body('username').optional().isString(),
-    body('password').optional().isString()
+    body('password').optional().isString(),
+    body('age').optional().isNumeric(),
+    body('height').optional().isNumeric(),
+    body('weight').optional().isNumeric,
+    body('description').optional().isString()
   ],
   expressValidator,
   updateUser
