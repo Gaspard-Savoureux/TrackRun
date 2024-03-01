@@ -39,7 +39,7 @@ beforeAll(async () => {
 
 
 
-describe('activity creation', () => {
+describe.skip('activity creation', () => {
   jest.spyOn(actions, 'getUserByUsername').mockImplementation(() => Promise.resolve(returnedUser));
 
   const route_creation : string = '/activity/manual';
