@@ -6,3 +6,6 @@ test.restbook
 # dotenv environment variable
 .env
 dist/
+
+# test juint
+__tests__/junit.xml
