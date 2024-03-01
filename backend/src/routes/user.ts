@@ -133,16 +133,8 @@ router.get('/', verifyUserToken, getUser);
  *      404:
  *        description: No corresponding user found
  */
-router.put('/:userId', verifyUserToken,
-  [
-    body('username').optional().isString(),
-    body('password').optional().isString(),
-    body('age').optional().isNumeric(),
-    body('height').optional().isNumeric(),
-    body('weight').optional().isNumeric,
-    body('description').optional().isString()
-  ],
-  expressValidator,
+router.put('/:userId',
+  verifyUserToken,
   updateUser
 );
 

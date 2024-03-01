@@ -200,4 +200,62 @@ describe('User routes', () => {
       expect(res.statusCode).toEqual(200);
     });
   });
+
+
+  describe('PUT /userId', () => {
+    test('#7: should update user successfully', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+
+      const getToken = await request(app)
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+      const res = await request(app)
+        .put('/user/1')
+        .send({ username: 'new-username' })
+        .set('Authorization', validToken);
+
+      expect(res.statusCode).toEqual(201);
+    });
+
+    test('#8: should not be able to update user', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(undefined));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(undefined));
+
+      const invalidToken = 'Bearer invalid';
+
+      const res = await request(app)
+        .put('/user/1')
+        .send({ username: 'new-username' })
+        .set('Authorization', invalidToken);
+      expect(res.statusCode).toEqual(401);
+    });
+
+    test('#9: should not be able to update user', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+
+      const getToken = await request(app)
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+      const res = await request(app)
+        .put('/user/2')
+        .send({ username: 'new-username' })
+        .set('Authorization', validToken);
+      expect(res.statusCode).toEqual(401);
+    });
+
+  });
+
+
 });
