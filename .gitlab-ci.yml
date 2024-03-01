@@ -40,7 +40,6 @@ lint_frontend:
 
 test_integration_backend:
   stage: test
-  allow_failure: true #FIXME: remove when tests are fixed!
   coverage: /Statements\s+:\s(\d+.?\d+)%/
   variables:
     MYSQL_DATABASE: tse_db
@@ -66,7 +65,7 @@ test_integration_backend:
         - backend/__tests__/junit.xml
       coverage_report:
           coverage_format: cobertura
-          path: backend/__tests__/coverage/cobertura-coverage.xml
+          path: backend/coverage/cobertura-coverage.xml
 
 .deploy_common:
   before_script:
