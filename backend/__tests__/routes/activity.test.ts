@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 import { verifyUserToken } from '../../src/middlewares/authentication';
 import {Request, Response} from 'express';
 import * as actions from '../../src/services/user.services';
-import {error} from "drizzle-kit/cli/views";
 
 const user = {username: 'test-user', password: '1234'};
 const activity = {
@@ -71,7 +70,7 @@ describe('get all activities', () => {
 
   test('should recover all activities information in the database', async () => {
     jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
-     getToken = await request(app)
+    getToken = await request(app)
       .post('/auth')
       .send(user)
       .set('Content-Type', 'application/json');
@@ -81,7 +80,7 @@ describe('get all activities', () => {
 
     const res = await request(app)
       .get(route_creation)
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toEqual(200);
   });
@@ -104,7 +103,7 @@ describe('get specified activities', () => {
 
     const res = await request(app)
       .get(`${route_creation}?search=Morning`)
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toEqual(200);
   });
