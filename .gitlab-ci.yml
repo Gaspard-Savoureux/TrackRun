@@ -58,6 +58,10 @@ test_integration_backend:
     - npm run generate
     - npm run migrate
     - npm run test
+    - apt-get update && apt-get install -y jq  # Install jq, required for bash script
+    - chmod +x __tests__/scripts/user.test.sh  
+    - cd __tests__/scripts
+    - ./user.test.sh  
 
   artifacts:
     reports:
