@@ -1,22 +1,28 @@
 <script lang="ts">
     interface Activite {
       nom: string;
-      distance: string;
-      duree: string;
+      ville: string;
+      typeActivite: 'Course' | 'Vélo';
       date: string;
+      duree: string;
+      distance: string;
+      comment: string;
     }
   
-    // Utilise `const` ici car `activites` n'est pas réassignée, seulement modifiée.
     const activites: Activite[] = [];
     let nom = '';
-    let distance = '';
-    let duree = '';
+    let ville = '';
+    let typeActivite: 'Course' | 'Vélo' = 'Course';
     let date = '';
+    let duree = '';
+    let distance = '';
+    let comment = '';
   
     function ajouterActivite() {
-      console.log({ nom, distance, duree, date }); // Pour déboguer
-      activites.push({ nom, distance, duree, date });
-      nom = distance = duree = date = ''; // Réinitialise les champs après l'ajout
+      console.log({ nom, ville, typeActivite, date, duree, distance, comment}); // Pour déboguer
+      activites.push({ nom, ville, typeActivite, date, duree, distance, comment });
+      nom = ville = date = duree = distance = comment = ''; // Réinitialise les champs après l'ajout
+      typeActivite = 'Course';
     }
 
     </script>
@@ -24,15 +30,27 @@
 <form on:submit|preventDefault={ajouterActivite}>
     <label for="nom">Nom de l'activité:</label>
     <input id="nom" type="text" bind:value={nom} required>
+
+    <label for="ville">Ville:</label>
+    <input id="ville" type="text" bind:value={ville} required>
   
-    <label for="distance">Distance:</label>
-    <input id="distance" type="text" bind:value={distance} required>
+    <label for="typeActivite">Type d'activité:</label>
+    <select id="typeActivite" bind:value={typeActivite} required>
+      <option value="Course">Course</option>
+      <option value="Vélo">Vélo</option>
+    </select>
+
+    <label for="date">Date:</label>
+    <input id="date" type="date" bind:value={date} required>
   
     <label for="duree">Durée:</label>
     <input id="duree" type="text" bind:value={duree} required>
-  
-    <label for="date">Date:</label>
-    <input id="date" type="date" bind:value={date} required>
+
+    <label for="distance">Distance:</label>
+    <input id="distance" type="text" bind:value={distance} required>
+
+    <label for="comment">Commentaires:</label>
+    <input id="comment" type="text" bind:value={comment} required>
   
     <button type="submit">Ajouter l'activité</button>
   </form>
