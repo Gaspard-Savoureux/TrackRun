@@ -85,7 +85,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.params.userId as unknown as number;
+    const userId = req.user?.userId as number;
     const user: User | undefined = await getUserById(userId);
 
     if (!user) {
