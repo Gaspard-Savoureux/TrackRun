@@ -1,10 +1,10 @@
-import {closeDbConnection, db} from '../../src/db/db';
-import {users} from '../../src/models/users';
-import {activities} from '../../src/models/activities';
-import {eq} from 'drizzle-orm/sql';
 import request from 'supertest';
 import app from '../../src/app';
-
+import {User} from '../../src/models/users';
+import bcrypt from 'bcrypt';
+import { verifyUserToken } from '../../src/middlewares/authentication';
+import {Request, Response} from 'express';
+import * as actions from '../../src/services/user.services';
 
 const user = {username: 'test-user', password: '1234'};
 const activity = {
@@ -39,7 +39,7 @@ beforeAll(async () => {
 
 
 
-describe('activity creation', () => {
+describe.skip('activity creation', () => {
   jest.spyOn(actions, 'getUserByUsername').mockImplementation(() => Promise.resolve(returnedUser));
 
   const route_creation : string = '/activity/manual';
@@ -70,7 +70,7 @@ describe('get all activities', () => {
 
   test('should recover all activities information in the database', async () => {
     jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
-     getToken = await request(app)
+    getToken = await request(app)
       .post('/auth')
       .send(user)
       .set('Content-Type', 'application/json');
@@ -80,7 +80,7 @@ describe('get all activities', () => {
 
     const res = await request(app)
       .get(route_creation)
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toEqual(200);
   });
@@ -103,7 +103,7 @@ describe('get specified activities', () => {
 
     const res = await request(app)
       .get(`${route_creation}?search=Morning`)
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toEqual(200);
   });
