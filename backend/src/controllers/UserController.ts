@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { User, users } from '../models/users';
+import { User } from '../models/users';
 import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -19,8 +19,8 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     }
 
     // Check if email is already used
-    if (emailExist){
-      return res.status(409).json({error: 'A user already has that email'})
+    if (emailExist) {
+      return res.status(409).json({error: 'A user already has that email'});
     }
 
 
@@ -94,7 +94,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
     const { username, password, age, height, weight, sex, description } = req.body;
 
-    let updateData: Partial<User> = {};
+    const updateData: Partial<User> = {};
 
     if (username) updateData.username = username;
     if (password) {
@@ -114,7 +114,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
   } catch (error) {
     next(error);
   }
-}
+};
 
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
