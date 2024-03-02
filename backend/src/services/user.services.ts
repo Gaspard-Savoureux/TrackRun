@@ -1,6 +1,7 @@
 import { db } from '../db/db';
 import { User, users } from '../models/users';
 import { eq } from 'drizzle-orm';
+import {activities} from "../models/activities";
 
 export const getUserByUsername = async ( username: string) : Promise<User | undefined> => {
   const [ user ] = await db.select()
@@ -41,3 +42,9 @@ export const deleteUserById = async (id: number) => {
   return await db.delete(users)
     .where(eq(users.id, id));
 };
+
+export const getUserActivities = async (userId: number) => {
+  return await db.select()
+    .from(activities)
+    .where(eq(activities.user_id, userId))
+}
