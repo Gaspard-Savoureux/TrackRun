@@ -5,13 +5,14 @@ import bcrypt from 'bcrypt';
 import { verifyUserToken } from '../../src/middlewares/authentication';
 import {Request, Response} from 'express';
 import * as actions from '../../src/services/user.services';
+import {error} from "drizzle-kit/cli/views";
 
 const user = {username: 'test-user', password: '1234'};
 const activity = {
   name: 'test',
   city: 'San Francisco',
   type: 'Running',
-  // date: '2024-02-28 15:45:00.123456',
+  date: '2024-02-28 15:45:00.123456',
   durationTotal: 30,
   distanceTotal: 7.5,
   comment: 'Felt good!',
@@ -61,6 +62,51 @@ describe.skip('activity creation', () => {
 
     console.log(res.error); // Log the exact error message
     expect(res.statusCode).toBe(201);
+  });
+
+});
+
+describe('get all activities', () => {
+  const route_creation : string = '/activity/getActivity';
+
+  test('should recover all activities information in the database', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+     getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } =  getToken.body;
+
+
+    const res = await request(app)
+      .get(route_creation)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.statusCode).toEqual(200);
+  });
+
+});
+
+describe('get specified activities', () => {
+  const route_creation : string = '/activity/getSpecifiedActivities';
+
+
+  test('should recover searched activities', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_creation}?search=Morning`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.statusCode).toEqual(200);
   });
 
 });
