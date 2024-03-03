@@ -11,7 +11,7 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
     const user: User | undefined = await getUserById(userId);
 
     if (!user) {
-      // Can only happen in very tight race condition since token was validated
+      // Can only happen in very tight race condition OR if token was forged
       // Maybe it should be removed, confusing
       return res.status(404).json({ error: 'No corresponding user' });
     }
