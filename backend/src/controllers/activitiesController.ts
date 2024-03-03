@@ -1,8 +1,9 @@
 import {NextFunction, Request, Response} from 'express';
 import { activities } from '../models/activities';
 import { db } from '../db/db';
-import {User} from '../models/users';
-import {getUserActivities, getUserById} from '../services/user.services';
+import { User } from '../models/users';
+import { getUserById } from '../services/user.services';
+import {getUserActivities} from '../services/activity.services';
 
 export const createActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
