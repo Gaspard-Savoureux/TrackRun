@@ -7,7 +7,7 @@ import { User } from '../../src/models/users';
 
 
 // Base user should always work
-const user = {username: 'test-user', password: '1234', email: 'testing@gmail.com', name : 'Test User'};
+const user = {username: 'test-user', password: '1234', email: 'testing@gmail.com', name: 'Test User'};
 
 // this user as the same name
 const user1 = {username: 'test-user', password: '4567', email: 'usertesting@gmail.com', name: 'Test User the 2nd'};
@@ -44,8 +44,8 @@ beforeEach(() => {
 
 describe('User routes', () => {
 
-  describe('POST /user/create', () => {
-    const route : string = '/user/create';
+  describe('POST /user', () => {
+    const route : string = '/user';
 
     test('#1: should create a new user', async () => {
       jest.spyOn(actions, 'getUserByUsername')

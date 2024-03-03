@@ -16,7 +16,8 @@ const swaggerOptions : Options  = {
       description: 'Backend documentation for a sport application',
     },
     servers: [
-      { url: `http://localhost:${port}`, description: 'Development serveur' }
+      { url: `http://localhost:${port}`, description: 'Development serveur' },
+      { url: 'http://tse.info.uqam.ca/api/', description: 'Production serveur' }
     ] // Susceptible de changer
   },
   apis: ['**/*.ts'] // NOTE doit absolument être ça
