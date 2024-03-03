@@ -1,4 +1,5 @@
 import { int, varchar, datetime, text, mysqlTable, mysqlEnum } from 'drizzle-orm/mysql-core';
+import {relations } from 'drizzle-orm'
 import { users } from './users';
 import { activities } from './activities';
 
@@ -25,7 +26,7 @@ import { activities } from './activities';
  *         type:
  *           type: string
  *           description: The type of the activity
- *           example: Run
+ *           example: Running
  *         date:
  *           type: string
  *           format: date-time
@@ -50,11 +51,24 @@ import { activities } from './activities';
  */
 export const planned_activities = mysqlTable('planned_activities', {
   id: int('id').primaryKey().autoincrement(),
-  user_id: int('user_id').references(() => users.id).notNull(),  
-  type: mysqlEnum('type', ['Running', 'Biking', 'Walking']).notNull(), // TO FIX: For activities, string is used instead
+  user_id: int('user_id').notNull(),  
+  type: mysqlEnum('type', ['Running', 'Biking', 'Walking']).notNull(),
   date: datetime('date').notNull(),
   duration: int('duration').notNull(),
   name: varchar('name', { length: 256 }),
   comment: text('comment'),
-  activity_id: int('activity_id').references(() => activities.id)
+  activity_id: int('activity_id').references(() => activities.id) // Make relation instead
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+    planned_activities: many(planned_activities),
+}));
+
+export const planActRelations = relations(planned_activities, ({ one }) => ({
+    user: one(users, {
+        fields: [planned_activities.user_id],
+        references: [users.id],
+    }),
+}));
+
+export type PlannedActivity = typeof planned_activities.$inferInsert;

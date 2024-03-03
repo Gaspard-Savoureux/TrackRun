@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 
 /***  Routers ***/
 import user from './routes/user';
+import planned_activities from './routes/planned_activity';
 import stub from './routes/stub';
 import auth from './routes/auth';
 import activity from './routes/activity';
@@ -29,6 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
 /**** Routes ****/
 app.use(auth);
 app.use('/user', user);
+app.use('/plannedactivities', planned_activities);
 app.use('/', stub);
 app.use('/activity', activity);
 
