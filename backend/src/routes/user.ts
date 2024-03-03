@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /user/create:
+ * /user:
  *  post:
  *    tags:
  *    - user
@@ -48,7 +48,7 @@ const router = express.Router();
  *      500:
  *        description: Server Error
  */
-router.post('/create',
+router.post('/',
   [
     body('username').isString(),
     body('password').isString().isLength({min: 1, max: 72}),
@@ -73,6 +73,40 @@ router.post('/create',
  *    responses:
  *      200:
  *        description: Information obtained successfully
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *               username:
+ *                 type: string
+ *                 example: jean-papa
+ *               password:
+ *                 type: string
+ *                 description: The password of a user
+ *                 example: voici mon mot de passe
+ *               age:
+ *                 type: integer
+ *                 description: The age of a user
+ *                 example: 30
+ *               height:
+ *                 type: number
+ *                 format: float
+ *                 description: The height of a user in cm
+ *                 example: 180.5
+ *               weight:
+ *                 type: number
+ *                 format: float
+ *                 description: The weight of a user in kg
+ *                 example: 75.5
+ *               sex:
+ *                 type: string
+ *                 description: The sex of a user
+ *                 example: male
+ *               description:
+ *                 type: string
+ *                 description: Description of a user
+ *                 example: Timothé le 6e du nom, aime les oranges
  *      404:
  *        description: No corresponding user found
  *      500:
