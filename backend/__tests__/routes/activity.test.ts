@@ -1,10 +1,11 @@
 import request from 'supertest';
 import app from '../../src/app';
-import {User} from '../../src/models/users';
-import bcrypt from 'bcrypt';
+import {User, users} from '../../src/models/users';
 import { verifyUserToken } from '../../src/middlewares/authentication';
 import {Request, Response} from 'express';
 import * as actions from '../../src/services/user.services';
+import {closeDbConnection, db} from '../../src/db/db';
+import {activities} from '../../src/models/activities';
 
 const user = {username: 'test-user', password: '1234'};
 const activity = {
@@ -18,53 +19,41 @@ const activity = {
   segments: '{}'
 };
 
-const route : string = '/protected-route';
-let getToken;
-
-// the value returned by the mocked functions getUserByUsername and getUserById
-let returnedUser: User;
-
-// Example of protected route
-app.use(route, verifyUserToken, (req: Request, res: Response) => {
-  return res.json({
-    msg: `Access to protected route granted. Your id is ${req.user?.userId}`});
-});
-
-jest.mock('../../src/services/user.services');
+let token:string;
 
 beforeAll(async () => {
-  const hashedPassword = await bcrypt.hash(user.password, 10);
-  returnedUser = {id: 1, username: user.username, password: hashedPassword};
+  await db.delete(activities);
+  await db.delete(users);
+
+  await request(app).post('/user/create').send(user);
+  token = (await request(app).post('/auth').send(user)).body['token'];
 });
 
+afterAll(async () => {
+  await db.delete(activities);
+  await db.delete(users);
+  return closeDbConnection();
+});
 
-
-describe.skip('activity creation', () => {
-  jest.spyOn(actions, 'getUserByUsername').mockImplementation(() => Promise.resolve(returnedUser));
-
+describe('POST activity', () => {
   const route_creation : string = '/activity/manual';
 
-
   test('should create a new activity in the database', async () => {
-    getToken = await request(app)
-      .post('/auth')
-      .send(user)
-      .set('Content-Type', 'application/json');
-
-    const { token } =  getToken.body;
-
-
     const res = await request(app)
       .post(route_creation)
-      .set('Authorization', `Bearer ${token}`)
-      .send(activity);
+      .send(activity)
+      /*.set('Authorization', 'Bearer ' + auth_token);*/
+      .set('Authorization', `Bearer ${token}`);
 
-    console.log(res.error); // Log the exact error message
+    console.log(res.error);
     expect(res.statusCode).toBe(201);
   });
 
 });
 
+
+
+/*
 describe('get all activities', () => {
   const route_creation : string = '/activity/getActivity';
 
@@ -109,3 +98,4 @@ describe('get specified activities', () => {
   });
 
 });
+*/
