@@ -30,11 +30,10 @@ const router = express.Router();
  *    401:
  *     description: Error
  *    500:
- *     description: Error
+ *     description: Error server
  */
 router.post('/manual',
   [
-//    body('user_id').isInt().notEmpty().withMessage('id du user'),
     body('name').isString().notEmpty().withMessage('Name is required'),
     body('city').isString().withMessage('City, optional'),
     body('type').isString().notEmpty().withMessage('Type of workout is required'),
