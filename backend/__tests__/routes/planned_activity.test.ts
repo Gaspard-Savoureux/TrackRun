@@ -6,19 +6,15 @@ import request from 'supertest';
 import app from '../../src/app';
 import { except } from 'drizzle-orm/mysql-core';
 
-const user = {username: 'test-user', password: '1234'};
+const user = {username: 'test-user', password: '1234', email: 'test@test.com', name: 'Test'};
 var auth_token:string;
-
-async function create_planned_activities() {
-    
-}
 
 beforeAll(async () => {
   // Cleans DB
   await db.delete(planned_activities);
   await db.delete(users);
   // Create user
-  await request(app).post('/user/create').send(user);
+  await request(app).post('/user').send(user);
   // Get auth token
   auth_token = (await request(app).post('/auth').send(user)).body['token'];
 });
@@ -63,7 +59,7 @@ describe('GET PlannedActivities', () => {
           //Dates might fail depending on timezones
           "type": "Running",
           "duration": 3600,
-          })]
-        });
-      })
-    });
+        })]
+      });
+  })
+});
