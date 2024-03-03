@@ -1,7 +1,7 @@
 import { db } from '../db/db';
 import { User, users } from '../models/users';
 import { eq } from 'drizzle-orm';
-import {activities} from "../models/activities";
+import {activities} from '../models/activities';
 
 export const getUserByUsername = async ( username: string) : Promise<User | undefined> => {
   const [ user ] = await db.select()
@@ -19,13 +19,13 @@ export const getUserById = async (id: number) : Promise<User | undefined> => {
   return user;
 };
 
-export const getUserByEmail = async (email: string) : Promise<User | undefined> =>{
+export const getUserByEmail = async (email: string) : Promise<User | undefined> => {
   const [ user ] = await db.select()
     .from(users)
     .where(eq(users.email, email))
     .limit(1);
   return user;
-}
+};
 
 
 export const insertUser = async (user: User) => {
@@ -46,5 +46,5 @@ export const deleteUserById = async (id: number) => {
 export const getUserActivities = async (userId: number) => {
   return await db.select()
     .from(activities)
-    .where(eq(activities.user_id, userId))
-}
+    .where(eq(activities.user_id, userId));
+};
