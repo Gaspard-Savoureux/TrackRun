@@ -14,11 +14,9 @@ beforeAll(async () => {
   await db.delete(planned_activities);
   await db.delete(users);
   // Create user
-  console.log(await request(app).post('/user').send(user));
+  await request(app).post('/user').send(user);
   // Get auth token
-  var body = (await request(app).post('/auth').send(user)).body;
-  console.log(body);
-  auth_token = body['token'];
+  auth_token = (await request(app).post('/auth').send(user)).body['token'];
 });
 
 afterAll(async () => {
@@ -56,6 +54,7 @@ describe('GET PlannedActivities', () => {
     const res = await request(app)
       .get(route)
       .set('Authorization', 'Bearer ' + auth_token);
+
       expect(res.body).toEqual({
         'plannedActivities': [expect.objectContaining({
           //Dates might fail depending on timezones
