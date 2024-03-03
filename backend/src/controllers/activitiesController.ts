@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response} from 'express';
 import { activities } from '../models/activities';
 import { db } from '../db/db';
-import {User} from "../models/users";
-import {getUserActivities, getUserById} from "../services/user.services";
+import {User} from '../models/users';
+import {getUserActivities, getUserById} from '../services/user.services';
 
 // TODO faire de plus ample vérification sur les données d'un activité
 export const createActivity = async (req: Request, res: Response, next: NextFunction) => {
@@ -61,21 +61,21 @@ export const getActivity = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-
+// TODO do a research for the distance range, duration range, and date range
 export const getSpecifiedActivities = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
     const user: User | undefined = await getUserById(userId);
     const searchedInformation = req.query.search as string;
-    let userActivities = await getUserActivities(userId);
-    let searchedActivities: { activities: any[] } = {
+    const userActivities = await getUserActivities(userId);
+    const searchedActivities: { activities: any[] } = {
       activities: []
     };
     if (!user) {
       return res.status(404).json({ error: 'No corresponding user' });
     }
     if (userActivities) {
-      for (let activity of userActivities) {
+      for (const activity of userActivities) {
         if (activity.name.includes(searchedInformation) || activity.type.includes(searchedInformation)
           || activity.comment && activity.comment.includes(searchedInformation)
           || activity.city && activity.city.includes(searchedInformation)) {
