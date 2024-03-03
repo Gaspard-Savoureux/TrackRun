@@ -1,6 +1,6 @@
 import {int, varchar, double, datetime, text, json, mysqlTable, mysqlEnum} from 'drizzle-orm/mysql-core';
 import {users} from './users';
-import {date} from 'drizzle-orm/pg-core';
+import {relations} from 'drizzle-orm';
 
 /**
  * @swagger
@@ -61,7 +61,7 @@ import {date} from 'drizzle-orm/pg-core';
  */
 export const activities = mysqlTable('activities', {
   id: int('id').primaryKey().autoincrement(),
-  user_id: int('user_id').references(() => users.id).notNull(),
+  user_id: int('user_id').notNull(),
   name: varchar('name', { length: 256 }).notNull(),
   city: varchar('city', { length: 100 }).default(''),
   type: mysqlEnum('type', ['Running', 'Biking', 'Walking']).notNull(),
@@ -72,4 +72,13 @@ export const activities = mysqlTable('activities', {
   segments: json('segments').default({})
 });
 
+export const usersRelations = relations(users, ({ many }) => ({
+  activities: many(activities),
+}));
 
+export const planActRelations = relations(activities, ({ one }) => ({
+  user: one(users, {
+    fields: [activities.user_id],
+    references: [users.id],
+  }),
+}));
