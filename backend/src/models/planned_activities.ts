@@ -25,7 +25,7 @@ import { activities } from './activities';
  *         type:
  *           type: string
  *           description: The type of the activity
- *           example: Run
+ *           example: Running
  *         date:
  *           type: string
  *           format: date-time
@@ -58,3 +58,5 @@ export const planned_activities = mysqlTable('planned_activities', {
   comment: text('comment'),
   activity_id: int('activity_id').references(() => activities.id)
 });
+
+export type PlannedActivities = typeof planned_activities.$inferInsert;

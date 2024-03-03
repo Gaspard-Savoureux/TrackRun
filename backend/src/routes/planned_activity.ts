@@ -7,21 +7,14 @@ const router = express.Router();
 
 /**
  * @swagger
- * /{userId}/plannedactivities:
+ * /plannedactivities:
  *  get:
  *    tags:
  *    - planned_activities
- *    summary: Get planned activities of user
- *    description: Route to get the planned activities of a user using its ID
+ *    summary: Get planned activities of current user
+ *    description: Route to get the planned activities of a logged user
  *    security:
  *      - BearerAuth: []
- *    parameters:
- *      - in: path
- *        name: userId
- *        schema:
- *          type: string
- *        required: true
- *        description: The ID of the user from which to get the planned activities
  *    responses:
  *      200:
  *        description: Information obtained successfully
@@ -30,7 +23,7 @@ const router = express.Router();
  *      500:
  *        description: Server Error
  */
-router.get('/:userId/plannedactivities', verifyUserToken, getPlannedActivities);
+router.get('/', verifyUserToken, getPlannedActivities);
 
 
 
