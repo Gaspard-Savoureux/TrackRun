@@ -33,6 +33,7 @@ describe('GET PlannedActivities', () => {
       .get(route);
     expect(res.status).toBe(401);
   });
+
   test('Should return empty set', async () => {
     const res = await request(app)
       .get(route)
@@ -53,7 +54,7 @@ describe('GET PlannedActivities', () => {
     const res = await request(app)
       .get(route)
       .set('Authorization', 'Bearer ' + auth_token);
-      //expect(res.body).toMatchObject({'plannedActivities': []});
+
       expect(res.body).toEqual({
         'plannedActivities': [expect.objectContaining({
           //Dates might fail depending on timezones
