@@ -33,6 +33,7 @@ describe('GET PlannedActivities', () => {
       .get(route);
     expect(res.status).toBe(401);
   });
+  
   test('Should return empty set', async () => {
     const res = await request(app)
       .get(route)

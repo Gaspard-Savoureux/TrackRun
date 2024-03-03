@@ -17,7 +17,30 @@ const router = express.Router();
  *      - BearerAuth: []
  *    responses:
  *      200:
- *        description: Information obtained successfully
+ *        description: List of planned activities
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                type: object
+ *                properties:
+ *                  id:
+ *                    type: integer
+ *                  type:
+ *                    type: string  
+ *                  date:
+ *                    type: string
+ *                    format: date-time
+ *                    example: 2024-02-26 16:30:00
+ *                  duration:
+ *                    type: integer
+ *                  name:
+ *                    type: string
+ *                  comment:
+ *                    type: string
+ *                  activity_id:
+ *                    type: integer           
  *      404:
  *        description: No corresponding user found
  *      500:
