@@ -256,6 +256,26 @@ describe('User routes', () => {
     });
   });
 
+  test('#10: should be able to update username and password', async () => {
+    jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
 
+    actions.getUserByUsername('string');
+    actions.getUserById(1);
+
+    const getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const res = await request(app)
+      .put('/user/1')
+      .send({ username: 'new-username', password: 'new-password' })
+      .set('Authorization', validToken);
+    expect(res.statusCode).toEqual(201);
+  });
 
 });
