@@ -161,16 +161,19 @@ router.get('/', verifyUserToken, getUser);
  *        description: No corresponding user found
  */
 router.put('/',
-  verifyUserToken,
   [
     body('username').optional().isString(),
-    body('password').optional().isString(),
-    body('age').optional().isNumeric(),
-    body('height').optional().isNumeric(),
-    body('weight').optional().isNumeric,
-    body('description').optional().isString()
+    body('password').optional().isString().isLength({ min: 1, max: 72 }),
+    body('email').optional().isString().isEmail(),
+    body('name').optional().isString(),
+    body('age').optional().isInt(),
+    body('height').optional().isFloat(),
+    body('weight').optional().isFloat(),
+    body('sex').optional().isString().isLength({ min: 1, max: 6 }),
+    body('description').optional().isString().isLength({ min: 1, max: 1024 })
   ],
   expressValidator,
+  verifyUserToken,
   updateUser
 );
 
