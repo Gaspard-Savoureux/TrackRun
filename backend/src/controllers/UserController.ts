@@ -109,7 +109,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
     await updateUserById(userId, updateData);
     
-    return res.status(201).json({ message: 'User successfully updated' });
+    return res.status(200).json({ message: 'User successfully updated' });
 
   } catch (error) {
     next(error);

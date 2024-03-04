@@ -178,7 +178,7 @@ router.get('/', verifyUserToken, getUser);
  *                example: Timothé le 6e du nom, aime les oranges
  * 
  *    responses:
- *      201:
+ *      200:
  *        description: User updated successfully
  *      404:
  *        description: No corresponding user found
