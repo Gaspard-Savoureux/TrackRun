@@ -1,6 +1,37 @@
 import type { RequestEvent } from '../$types';
 import { redirect, fail } from '@sveltejs/kit';
 
+enum ErrorCode {
+  MissingNom,
+  MissingVille,
+  MissingTypeActivite,
+  MissingDate,
+  MissingDuree,
+  MissingDistance,
+  MissingComment
+}
+
+function getErrorMessage(errorCode: ErrorCode): string {
+  switch (errorCode) {
+  case ErrorCode.MissingNom:
+    return 'Veuillez entrer le nom de l\'activité.';
+  case ErrorCode.MissingVille:
+    return 'Veuillez entrer la ville.';
+  case ErrorCode.MissingTypeActivite:
+    return 'Veuillez sélectionner le type d\'activité.';
+  case ErrorCode.MissingDate:
+    return 'Veuillez entrer la date de l\'activité.';
+  case ErrorCode.MissingDuree:
+    return 'Veuillez entrer la durée de l\'activité.';
+  case ErrorCode.MissingDistance:
+    return 'Veuillez entrer la distance parcourue.';
+  case ErrorCode.MissingComment:
+    return 'Veuillez entrer un commentaire.';
+  default:
+    return 'Une erreur inconnue s\'est produite.';
+  }
+}
+
 interface Activite {
   nom: string;
   ville: string;
@@ -24,8 +55,6 @@ export const actions: object = {
         message: 'Veuillez remplir tous les champs du formulaire',
       });
     }
-
-    activites.push(activiteData);
 
     redirect(302, '/activite');
   },
