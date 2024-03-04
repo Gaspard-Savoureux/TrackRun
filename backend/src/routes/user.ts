@@ -51,7 +51,7 @@ const router = express.Router();
 router.post('/',
   [
     body('username').isString(),
-    body('password').isString().isLength({min: 1, max: 72}),
+    body('password').isString().isLength({ min: 1, max: 72 }),
     body('email').isString().isEmail(),
     body('name').isString()
   ],
@@ -121,7 +121,7 @@ router.get('/', verifyUserToken, getUser);
  *    tags:
  *    - user
  *    summary: Update user data
- *    description: Route to update the data of a user using its ID
+ *    description: Route to update the data of a user using its ID. All fields are optional, but at least one must be provided.
  *    security:
  *      - BearerAuth: []
  *    parameters:
@@ -146,6 +146,14 @@ router.get('/', verifyUserToken, getUser);
  *                type: string
  *                description: The password of a user
  *                example: 1234
+ *              email:
+ *                type: string
+ *                description: The email of a user
+ *                example: jeanpapa@gmail.com
+ *              name: 
+ *                type: string
+ *                description: The name of a user
+ *                example: jean-papa Juanpadre
  *              age:
  *                type: integer
  *                description: The age of a user
@@ -160,6 +168,14 @@ router.get('/', verifyUserToken, getUser);
  *                format: float
  *                description: The weight of a user in kg
  *                example: 75.5
+ *              sex:
+ *                type: string
+ *                description: The sex of a user
+ *                example: male
+ *              description:
+ *                type: string
+ *                description: Description of a user
+ *                example: Timothé le 6e du nom, aime les oranges
  * 
  *    responses:
  *      201:
@@ -167,14 +183,18 @@ router.get('/', verifyUserToken, getUser);
  *      404:
  *        description: No corresponding user found
  */
-router.put('/:userId', verifyUserToken,
+router.put('/:userId',
+  verifyUserToken,
   [
     body('username').optional().isString(),
-    body('password').optional().isString(),
-    body('age').optional().isNumeric(),
-    body('height').optional().isNumeric(),
-    body('weight').optional().isNumeric,
-    body('description').optional().isString()
+    body('password').optional().isString().isLength({ min: 1, max: 72 }),
+    body('email').optional().isString().isEmail(),
+    body('name').optional().isString(),
+    body('age').optional().isInt(),
+    body('height').optional().isFloat(),
+    body('weight').optional().isFloat(),
+    body('sex').optional().isString().isLength({ min: 1, max: 6 }),
+    body('description').optional().isString().isLength({ min: 1, max: 1024 })
   ],
   expressValidator,
   updateUser
