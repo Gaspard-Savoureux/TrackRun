@@ -58,6 +58,8 @@ export const users = mysqlTable('users', {
   weight: float('weight'),
   sex: varchar('sex', { length: 6 }),
   description: varchar('description', { length: 1024 }),
+
+  trainerId: int('trainerId'),
 }, (users) => ({
   nameIndex: uniqueIndex('username_idx').on(users.username),
 }));
