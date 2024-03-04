@@ -22,7 +22,7 @@ export const actions: object = {
 
     // Other validation to include...
 
-    const res = await fetch(`${API_URL}/register`, {
+    const res = await fetch(`${API_URL}/user`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
