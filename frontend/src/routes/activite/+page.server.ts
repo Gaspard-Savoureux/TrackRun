@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import type { RequestEvent } from '../$types';
 import { redirect, fail } from '@sveltejs/kit';
 
