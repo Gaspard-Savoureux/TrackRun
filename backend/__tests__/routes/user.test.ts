@@ -216,11 +216,11 @@ describe('User routes', () => {
       const validToken = `Bearer ${token}`;
 
       const res = await request(app)
-        .put('/user/1')
+        .put('/user')
         .send({ username: 'new-username' })
         .set('Authorization', validToken);
 
-      expect(res.statusCode).toEqual(201);
+      expect(res.statusCode).toEqual(200);
     });
 
     test('#8: should not be able to update user', async () => {
@@ -230,7 +230,7 @@ describe('User routes', () => {
       const invalidToken = 'Bearer invalid';
 
       const res = await request(app)
-        .put('/user/1')
+        .put('/user')
         .send({ username: 'new-username' })
         .set('Authorization', invalidToken);
       expect(res.statusCode).toEqual(401);
@@ -249,7 +249,7 @@ describe('User routes', () => {
       const validToken = `Bearer ${token}`;
 
       const res = await request(app)
-        .put('/user/2')
+        .put('/user')
         .send({ username: 'new-username' })
         .set('Authorization', validToken);
       expect(res.statusCode).toEqual(401);
