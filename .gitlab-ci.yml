@@ -59,7 +59,6 @@ test_integration_backend:
     - npm run migrate
     - npm run test
 
-
   artifacts:
     reports:
       junit:
