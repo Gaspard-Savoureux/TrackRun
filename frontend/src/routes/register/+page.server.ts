@@ -55,7 +55,7 @@ export const actions: object = {
         maxAge: 60 * 60 * 24 * 7, // 1 week
       });
 
-      return redirect(302, '/'); // Redirect to homepage or dashboard after successful registration
+      return redirect(302, '/login'); // Redirect to homepage or dashboard after successful registration
     }
 
     return fail(500, {
