@@ -116,7 +116,7 @@ router.get('/', verifyUserToken, getUser);
 
 /**
  * @swagger
- * /user/{userId}:
+ * /user:
  *  put:
  *    tags:
  *    - user
@@ -124,13 +124,6 @@ router.get('/', verifyUserToken, getUser);
  *    description: Route to update the data of a user using its ID
  *    security:
  *      - BearerAuth: []
- *    parameters:
- *      - in: path
- *        name: userId
- *        schema:
- *          type: string
- *        required: true
- *        description: The ID of the user to update
  *    requestBody:
  *      required: true
  *      content:
@@ -162,21 +155,25 @@ router.get('/', verifyUserToken, getUser);
  *                example: 75.5
  * 
  *    responses:
- *      201:
+ *      200:
  *        description: User updated successfully
  *      404:
  *        description: No corresponding user found
  */
-router.put('/:userId', verifyUserToken,
+router.put('/',
   [
     body('username').optional().isString(),
-    body('password').optional().isString(),
-    body('age').optional().isNumeric(),
-    body('height').optional().isNumeric(),
-    body('weight').optional().isNumeric,
-    body('description').optional().isString()
+    body('password').optional().isString().isLength({ min: 1, max: 72 }),
+    body('email').optional().isString().isEmail(),
+    body('name').optional().isString(),
+    body('age').optional().isInt(),
+    body('height').optional().isFloat(),
+    body('weight').optional().isFloat(),
+    body('sex').optional().isString().isLength({ min: 1, max: 6 }),
+    body('description').optional().isString().isLength({ min: 1, max: 1024 })
   ],
   expressValidator,
+  verifyUserToken,
   updateUser
 );
 
