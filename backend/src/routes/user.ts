@@ -116,7 +116,7 @@ router.get('/', verifyUserToken, getUser);
 
 /**
  * @swagger
- * /user/{userId}:
+ * /user:
  *  put:
  *    tags:
  *    - user
@@ -124,13 +124,6 @@ router.get('/', verifyUserToken, getUser);
  *    description: Route to update the data of a user using its ID. All fields are optional, but at least one must be provided.
  *    security:
  *      - BearerAuth: []
- *    parameters:
- *      - in: path
- *        name: userId
- *        schema:
- *          type: string
- *        required: true
- *        description: The ID of the user to update
  *    requestBody:
  *      required: true
  *      content:
@@ -183,7 +176,7 @@ router.get('/', verifyUserToken, getUser);
  *      404:
  *        description: No corresponding user found
  */
-router.put('/:userId',
+router.put('/',
   verifyUserToken,
   [
     body('username').optional().isString(),
