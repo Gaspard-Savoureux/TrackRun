@@ -12,3 +12,11 @@
   <option value="light">Light</option>
   <option value="dark">Dark</option>
 </select>
+
+<style>
+  select {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+  }
+</style>
