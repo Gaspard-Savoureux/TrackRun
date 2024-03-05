@@ -9,17 +9,18 @@ import { except } from 'drizzle-orm/mysql-core';
 const user = {username: 'test-user', password: '1234', email: 'test@test.com', name: 'Test'};
 var auth_token:string;
 
-beforeAll(async () => {
+beforeAll( async () => {
   // Cleans DB
   await db.delete(planned_activities);
   await db.delete(users);
   // Create user
-  console.log(await request(app).post('/user').send(user));
+  await request(app).post('/user').send(user);
   // Get auth token
   auth_token = (await request(app).post('/auth').send(user)).body['token'];
+  console.log("Auth token: " + auth_token);
 });
 
-afterAll(async () => {
+afterAll( async () => {
   // Cleans DB
   await db.delete(planned_activities);
   await db.delete(users);
