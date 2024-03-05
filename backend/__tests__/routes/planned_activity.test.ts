@@ -26,7 +26,7 @@ afterAll(async () => {
   return closeDbConnection();
 });
 
-describe.('GET PlannedActivities', () => {
+describe('GET PlannedActivities', () => {
   const route : string = '/plannedactivities';
   test('Should return 401: Unauthorized', async () => {
     const res = await request(app)
