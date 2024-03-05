@@ -66,6 +66,7 @@ export const trainers = mysqlTable('trainers', {
   users: varchar('users', { length: 1024 }),
 }, (trainers) => ({
   nameIndex: uniqueIndex('username_idx').on(trainers.username),
+  emailIndex: uniqueIndex('email_idx').on(trainers.email),
 }));
 
 export type Trainer = typeof trainers.$inferInsert;
