@@ -14,7 +14,7 @@ beforeAll(async () => {
   await db.delete(planned_activities);
   await db.delete(users);
   // Create user
-  await request(app).post('/user').send(user);
+  console.log(await request(app).post('/user').send(user));
   // Get auth token
   auth_token = (await request(app).post('/auth').send(user)).body['token'];
 });
