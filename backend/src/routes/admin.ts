@@ -3,7 +3,7 @@ import express  from 'express';
 import { body, param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 
-import { createTrainer, deleteTrainer, getTrainer } from '../controllers/TrainerController';
+import { createTrainer, deleteTrainer, getTrainer, getTrainers } from '../controllers/TrainerController';
 
 
 const router = express.Router();
@@ -72,6 +72,52 @@ router.post('/trainer',
   createTrainer
 );
 
+
+/**
+ * 
+ * @swagger
+ * /admin/trainers:
+ *   get:
+ *     tags:
+ *       - admin
+ *     security:
+ *       - basicAuth: []
+ *     summary: Get all trainers
+ *     description: get the data of all trainers
+ *     responses:
+ *       200:
+ *         description: Information obtained successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: the id of a user
+ *                     example: 1
+ *                   username:
+ *                     type: string
+ *                     description: The username of the trainer
+ *                     example: momo
+ *                   email:
+ *                     type: string
+ *                     description: The email of the trainer
+ *                     example: maurice@gmail.com
+ *                   name:
+ *                     type: string
+ *                     description: The name of a user
+ *                     example: Maurice Du Plat Lisse
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: No corresponding trainerfound
+ *       500:
+ *         description: Server Internal Error
+ */
+router.get('/trainers', getTrainers);
 
 /**
  * 
@@ -169,6 +215,7 @@ router.delete('/trainer/:trainerId',
   expressValidator,
   deleteTrainer
 );
+
 
 
 // ROUTES A ADD

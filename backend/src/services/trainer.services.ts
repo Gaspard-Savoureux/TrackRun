@@ -26,6 +26,17 @@ export const getTrainerById = async (id: number) : Promise<Trainer | undefined> 
   return trainer;
 };
 
+export const getAllTrainers = async ():Promise<Partial<Trainer>[]>  => {
+  const trainers_list: Partial<Trainer>[] = await db.select({
+    id: trainers.id,
+    username: trainers.username,
+    name: trainers.name,
+    email: trainers.email,
+  }).from(trainers);
+
+  return trainers_list;
+};
+
 export const insertTrainer = async (trainer: Trainer) => {
   return await db.insert(trainers).values([{...trainer}]);
 };

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Trainer} from '../models/trainers';
-import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById } from '../services/trainer.services';
+import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers } from '../services/trainer.services';
 // import { updateUserById, getUserByUsername } from '../services/user.services';
 import bcrypt from 'bcrypt';
 // import jwt from 'jsonwebtoken';
@@ -76,6 +76,23 @@ export const getTrainer = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const getTrainers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const trainer: Trainer[] | undefined = await getAllTrainers();
+
+    if (!trainer) {
+      return res.status(404).json({ error: 'No corresponding trainer' });
+    }
+
+    return res.status(200).json(trainer);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 
 // export const updateTrainer = async (req: Request, res: Response, next: NextFunction) => {
 //   try {
