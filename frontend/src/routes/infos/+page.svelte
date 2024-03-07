@@ -13,19 +13,18 @@
   <h1>Your Informations</h1>
   <div class="column">
     <div class="row">
-      <Item name={'Username'} value={user?.username}></Item>
-      <Item name={'Email'} value={user?.email}></Item>
+      <Item name={'Username'}>{user?.username}</Item>
+      <Item name={'Email'}>{user?.email}</Item>
     </div>
     <div class="row">
-      <Item name={'Age'} value={user?.age}></Item>
-      <Item name={'Sex'} value={user?.sex}></Item>
+      <Item name={'Age'}>{user?.age}</Item>
+      <Item name={'Sex'}>{user?.sex}</Item>
     </div>
     <div class="row">
-      <Item name={'Height'} value={user?.height && user?.height + ' cm'}></Item>
-      <Item name={'Weight'} value={user?.weight && user?.weight + ' kg'}></Item>
+      <Item name={'Height'}>{user?.height && user?.height + ' cm'}</Item>
+      <Item name={'Weight'}>{user?.weight && user?.weight + ' kg'}</Item>
     </div>
-    <Item name={'Description'} value={user?.description} unaligned={user?.description !== null}
-    ></Item>
+    <Item name={'Description'}>{user?.description}</Item>
   </div>
 </section>
 
@@ -44,15 +43,15 @@
     flex-flow: column wrap;
   }
 
-  .row {
-    display: flex;
-    flex-flow: row wrap;
-  }
-
   @media (width >= 500px) {
     .column {
       padding: 2rem;
     }
+  }
+
+  .row {
+    display: flex;
+    flex-flow: row wrap;
   }
 
   h1 {
