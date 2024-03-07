@@ -1,22 +1,31 @@
 <script lang="ts">
   import { theme } from '$lib/stores/theme';
-  import type { FormEventHandler } from 'svelte/elements';
+  import { SunIcon, MoonIcon, BoxIcon } from 'svelte-feather-icons';
+  import { Theme } from '$lib/types/theme';
 
-  const handleChange: FormEventHandler<HTMLSelectElement> = (event) => {
-    document.cookie = `theme=${event.currentTarget.value}; path=/; SameSite=Lax`;
+  const themes_values = Object.values(Theme);
+  let index = 0;
+  const toggleTheme = () => {
+    index = (index + 1) % 3;
+    $theme = themes_values[index];
+    document.cookie = `theme=${$theme}; path=/; SameSite=Lax`;
   };
 </script>
 
-<select on:change={handleChange} bind:value={$theme}>
-  <option value="system">System</option>
-  <option value="light">Light</option>
-  <option value="dark">Dark</option>
-</select>
+<button on:click={toggleTheme}>
+  {#if $theme === Theme.System}
+    <BoxIcon />
+  {:else if $theme === Theme.Dark}
+    <MoonIcon />
+  {:else if $theme === Theme.Light}
+    <SunIcon />
+  {/if}
+</button>
 
 <style>
-  select {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
+  button {
+    align-items: center;
+    border: none;
+    background-color: inherit;
   }
 </style>
