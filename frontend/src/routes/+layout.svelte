@@ -3,6 +3,7 @@
   import { Theme } from '$lib/types/theme';
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import { theme } from '$lib/stores/theme';
+  import Modal from '$lib/components/informative-modal.svelte';
 
   // https://svelte-feathers.codewithshin.com/
   // https://feathericons.com/
@@ -11,6 +12,8 @@
   export let data: LayoutServerData;
 
   theme.set(data.theme);
+
+  let modal: HTMLDialogElement;
 </script>
 
 <svelte:head>
@@ -19,11 +22,23 @@
 </svelte:head>
 
 <div class="navbar">
-  <ThemeSwitcher />
+  <dialog bind:this={modal}>lol</dialog>
+
+  <Modal info="Home" href="/">
+    <div class="nav-item"><HomeIcon /></div>
+  </Modal>
   <div class="pages-icon">
-    <a href="/"><div class="nav-item"><HomeIcon /></div></a>
-    <a href="/profile"><div class="nav-item"><UserIcon /></div></a>
-    <a class="nav-item" href="/logout"><LogOutIcon /></a>
+    <Modal info={`Theme: ${$theme}`}>
+      <div class="nav-item"><ThemeSwitcher /></div>
+    </Modal>
+    <Modal info="Profile" href="/profile">
+      <div class="nav-item"><UserIcon /></div>
+    </Modal>
+    <Modal info="Logout" href="/logout">
+      <div class="nav-item">
+        <LogOutIcon />
+      </div>
+    </Modal>
   </div>
 </div>
 
