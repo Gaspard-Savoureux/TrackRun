@@ -1,16 +1,16 @@
 <script lang="ts">
-  import Item from '$lib/components/item.svelte';
+  import Item from '$lib/components/userinfo-field.svelte';
   export let data;
 
   $: ({ user } = data);
 </script>
 
 <svelte:head>
-  <title>Infos 🤓</title>
+  <title>Profile</title>
 </svelte:head>
 
 <section>
-  <h1>Your Informations</h1>
+  <h1>Your Profile</h1>
   <div class="column">
     <div class="row">
       <Item name={'Username'}>{user?.username}</Item>
