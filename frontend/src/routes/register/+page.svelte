@@ -1,109 +1,94 @@
-<script lang="ts">
-  import { enhance } from "$app/forms";
-  import { writable, derived } from 'svelte/store';
+<script lang='ts'>
+  import { enhance } from '$app/forms';
+  export let form;
 
-  let form = writable({
-    username: '',
-    email: '',
-    password: '',
-    lastname: '',
-    firstname: '',
-    birthdate: ''
-  });
+  let username = form?.username ?? '';
+  let email = form?.email ?? '';
+  let password = '';
+  let lastname = form?.lastname ?? '';
+  let firstname = form?.firstname ?? '';
+  let birthdate = form?.birthdate ?? '';
 
-  let usernameError = writable('');
-  let emailError = writable('');
-  let passwordError = writable('');
-  let lastnameError = writable('');
-  let firstnameError = writable('');
-  let birthdateError = writable('');
+  let errors = {};
 
-  function validateUsername(value: string) {
-    if (value.length < 3) usernameError.set('Le nom d\'utilisateur doit contenir au moins 3 caractères.');
-    else usernameError.set('');
-  }
+  const validateForm = () => {
+    errors = {}; 
 
-  function validateEmail(value: string) {
-    if (!/\S+@\S+\.\S+/.test(value)) emailError.set('L\'email n\'est pas valide.');
-    else emailError.set('');
-  }
 
-  function validatePassword(value: string) {
-    if (value.length < 6) passwordError.set('Le mot de passe doit contenir au moins 6 caractères.');
-    else passwordError.set('');
-  }
+    if (!username.trim()) errors.username = 'Le nom d\'utilisateur est requis.';
 
-  function validateName(value: string, error) {
-    if (value.length === 0) error.set('Ce champ ne peut pas être vide.');
-    else error.set('');
-  }
 
-  function validateDate(value: string) {
-    if (value === '') birthdateError.set('La date de naissance est requise.');
-    else birthdateError.set('');
-  }
+    if (!email.trim()) {
+      errors.email = 'L\'adresse courriel est requise.';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = 'L\'adresse courriel n\'est pas valide.';
+    }
 
-  let isFormValid = derived(
-    [usernameError, emailError, passwordError, lastnameError, firstnameError],
-    ($usernameError, $emailError, $passwordError, $lastnameError, $firstnameError) =>
-      $usernameError === '' && $emailError === '' && $passwordError === '' && $lastnameError === '' && $firstnameError === ''
-  );
+    if (!password.trim()) errors.password = 'Le mot de passe est requis.';
+
+
+    if (!lastname.trim()) errors.lastname = 'Le nom est requis.';
+
+    if (!firstname.trim()) errors.firstname = 'Le prénom est requis.';
+
+
+    if (!birthdate.trim()) errors.birthdate = 'La date de naissance est requise.';
+
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateForm()) return;
+
+  };
 </script>
 
-<svelte:head>
-  <title>Register</title>
-</svelte:head>
+<form class='container' method='POST' action='?/register' on:submit={handleSubmit} use:enhance>
+  {#if form?.success === false}<p>{form?.message}</p>{/if}
 
-<div class="container">
-  <form method="POST" action="?/register" use:enhance>
-    {#if form?.success === false}<p>{form?.message}</p>{/if}
 
-    <label>
-      Nom d'utilisateur
-      <input type="text" name="username" bind:value={$form.username} on:blur={(e) => validateUsername(e.target.value)} />
-      {#if $usernameError}<p class="error">{$usernameError}</p>{/if}
-    </label>
-    
-    <label>
-      Courriel
-      <input type="email" name="email" bind:value={$form.email} on:blur={(e) => validateEmail(e.target.value)} />
-      {#if $emailError}<p class="error">{$emailError}</p>{/if}
-    </label>
+  <label>
+    Nom d'utilisateur
+    <input type='text' name='username' bind:value={username} />
+    {#if errors.username}<p style='color: red;'>{errors.username}</p>{/if}
+  </label>
+  
+  <label>
+    Courriel
+    <input type='email' name='email' bind:value={email} />
+    {#if errors.email}<p style='color: red;'>{errors.email}</p>{/if}
+  </label>
+  
+  <label>
+    Mot de passe
+    <input type='password' name='password' bind:value={password} />
+    {#if errors.password}<p style='color: red;'>{errors.password}</p>{/if}
+  </label>
+  
+  <label>
+    Nom
+    <input type='text' name='lastname' bind:value={lastname} />
+    {#if errors.lastname}<p style='color: red;'>{errors.lastname}</p>{/if}
+  </label>
+  
+  <label>
+    Prénom
+    <input type='text' name='firstname' bind:value={firstname} />
+    {#if errors.firstname}<p style='color: red;'>{errors.firstname}</p>{/if}
+  </label>
+  
+  <label>
+    Date de naissance
+    <input type='date' name='birthdate' bind:value={birthdate} />
+    {#if errors.birthdate}<p style='color: red;'>{errors.birthdate}</p>{/if}
+  </label>  
 
-    <label>
-      Mot de passe
-      <input type="password" name="password" bind:value={$form.password} on:blur={(e) => validatePassword(e.target.value)} />
-      {#if $passwordError}<p class="error">{$passwordError}</p>{/if}
-    </label>
-
-    <label>
-      Nom
-      <input type="text" name="lastname" bind:value={$form.lastname} on:blur={(e) => validateName(e.target.value, lastnameError)} />
-      {#if $lastnameError}<p class="error">{$lastnameError}</p>{/if}
-    </label>
-
-    <label>
-      Prénom
-      <input type="text" name="firstname" bind:value={$form.firstname} on:blur={(e) => validateName(e.target.value, firstnameError)} />
-      {#if $firstnameError}<p class="error">{$firstnameError}</p>{/if}
-    </label>
-
-    <label>
-      Date de naissance
-      <input type="date" name="birthdate" bind:value={$form.birthdate} on:blur={(e) => validateDate(e.target.value)} />
-    </label>
-
-    <button disabled={!$isFormValid}>S'inscrire</button>
-    <a href="/login">Se connecter</a>
-  </form>
-</div>
+  <button type="submit">S'inscrire</button>
+  <a href="/login">Se connecter</a>
+</form>
 
 <style>
- 
-
-  .error {
-    color: red; 
-  }
 
   .container {
     padding: 1rem;
@@ -118,8 +103,6 @@
       padding: 2rem
     }
   }
-
- 
 
   form {
     display: flex;
@@ -162,13 +145,4 @@
   button:hover {
     background-color: var(--blue-darker);
   }
-
-  button:disabled {
-    background-color: #cccccc; 
-    cursor: not-allowed;
-  }
-  
-
- 
 </style>
-

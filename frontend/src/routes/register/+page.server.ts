@@ -20,7 +20,7 @@ export const actions: object = {
       });
     }
 
-    // Other validation to include...
+    
 
     const res = await fetch(`${API_URL}/user`, {
       method: 'POST',
@@ -36,7 +36,7 @@ export const actions: object = {
     });
 
     if (res.status === 400) {
-      const resData = await res.json(); // Assuming the server sends back a JSON with a message
+      const resData = await res.json();
       return fail(res.status, {
         success: false,
         message: resData.message || 'Error during registration',
@@ -44,18 +44,16 @@ export const actions: object = {
     }
 
     if (res.ok) {
-      // Assuming the registration process might automatically log the user in and return a token
       const resData = await res.json();
 
       cookies.set('token', resData.token, {
         path: '/',
         httpOnly: true,
         sameSite: 'strict',
-        // secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 24 * 7, // 1 week
+        maxAge: 60 * 60 * 24 * 7, 
       });
 
-      return redirect(302, '/login'); // Redirect to homepage or dashboard after successful registration
+      return redirect(302, '/login'); 
     }
 
     return fail(500, {
