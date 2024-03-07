@@ -13,18 +13,18 @@
   <h1>Your Profile</h1>
   <div class="column">
     <div class="row">
-      <Item name={'Username'}>{user?.username}</Item>
-      <Item name={'Email'}>{user?.email}</Item>
+      <Item name="Username">{user?.username}</Item>
+      <Item name="Email">{user?.email}</Item>
     </div>
     <div class="row">
-      <Item name={'Age'}>{user?.age}</Item>
-      <Item name={'Sex'}>{user?.sex}</Item>
+      <Item name="Age">{user?.age}</Item>
+      <Item name="Sex">{user?.sex}</Item>
     </div>
     <div class="row">
-      <Item name={'Height'}>{user?.height && user?.height + ' cm'}</Item>
-      <Item name={'Weight'}>{user?.weight && user?.weight + ' kg'}</Item>
+      <Item name="Height">{user?.height && user?.height + ' cm'}</Item>
+      <Item name="Weight">{user?.weight && user?.weight + ' kg'}</Item>
     </div>
-    <Item name={'Description'}>{user?.description}</Item>
+    <Item name="Description">{user?.description}</Item>
   </div>
 </section>
 
