@@ -94,38 +94,35 @@ export const getTrainers = async (req: Request, res: Response, next: NextFunctio
 
 
 
-// export const updateTrainer = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const trainerId = req.trainer?.trainerId as number;
-//     const trainer: Trainer | undefined = await getTrainerById(trainerId);
+export const updateTrainer = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const trainerId  = Number(req.params?.trainerId);
+    const trainer: Trainer | undefined = await getTrainerById(trainerId);
 
-//     if (!trainer) {
-//       return res.status(404).json({ error: 'No corresponding trainer' });
-//     }
+    if (!trainer) {
+      return res.status(404).json({ error: 'No corresponding trainer' });
+    }
 
-//     const { username, password, age, height, weight, sex, description } = req.body;
+    const { username, password, name, email } = req.body;
 
-//     const updateData: Partial<Trainer> = {};
+    const updateData: Partial<Trainer> = {};
 
-//     if (username) updateData.username = username;
-//     if (password) {
-//       const hashedPassword = await bcrypt.hash(password, 10);
-//       updateData.password = hashedPassword;
-//     }
-//     if (age) updateData.age = age;
-//     if (height) updateData.height = height;
-//     if (weight) updateData.weight = weight;
-//     if (sex) updateData.sex = sex;
-//     if (description) updateData.description = description;
+    if (username) updateData.username = username;
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updateData.password = hashedPassword;
+    }
 
-//     await updateTrainerById(trainerId, updateData);
+    await updateTrainerById(trainerId, updateData);
 
-//     return res.status(200).json({ message: 'Trainer successfully updated' });
+    return res.status(200).json({ message: 'Trainer successfully updated' });
 
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 export const deleteTrainer = async (req: Request, res: Response, next: NextFunction) => {

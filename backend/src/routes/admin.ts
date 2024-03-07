@@ -3,7 +3,7 @@ import express  from 'express';
 import { body, param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 
-import { createTrainer, deleteTrainer, getTrainer, getTrainers } from '../controllers/TrainerController';
+import { createTrainer, deleteTrainer, getTrainer, getTrainers, updateTrainer } from '../controllers/TrainerController';
 
 
 const router = express.Router();
@@ -217,9 +217,87 @@ router.delete('/trainer/:trainerId',
 );
 
 
-
-// ROUTES A ADD
-// router.put('/trainers', )
-// router.get('/trainers', );
+/**
+ * 
+ * @swagger
+ * /admin/trainer/{trainerId}:
+ *   put:
+ *     tags:
+ *       - admin
+ *     security:
+ *       - basicAuth: []
+ *     summary: modify a trainer
+ *     description: modify a trainer based on his/her id
+ *     parameters:
+ *       - in: path
+ *         name: trainerId
+ *         schema:
+ *           type: integer
+ *           required: true
+ *           description: the id of a trainer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             oneOf:
+ *               - required: [username]
+ *                 properties:
+ *                   username:
+ *                     type: string
+ *               - required: [name]
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *               - required: [email]
+ *                 properties:
+ *                   email:
+ *                     type: string
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: The username of the trainer
+ *                 example: momo
+ *               password:
+ *                 type: string
+ *                 description: The password of the trainer
+ *                 example: mésopotamie
+ *               email:
+ *                 type: string
+ *                 description: The email of the trainer
+ *                 example: maurice@gmail.com
+ *               name:
+ *                 type: string
+ *                 description: The name of a user
+ *                 example: Maurice Du Plat Lisse
+ *     responses:
+ *       200:
+ *         description: Trainer successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Trainer successfully updated
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: No corresponding trainerfound
+ *       500:
+ *         description: Server Internal Error
+ */
+router.put('/trainer/:trainerId',
+  [
+    param('trainerId').exists().toInt(),
+    body('username').optional().isString(),
+    body('password').optional().isString().isLength({min: 1, max: 72}),
+    body('email').optional().isString().isEmail(),
+    body('name').optional().isString(),
+  ],
+  expressValidator,
+  updateTrainer
+);
 
 export default router;
