@@ -58,24 +58,24 @@ export const createTrainer = async (req: Request, res: Response, next: NextFunct
 //   }
 // };
 
-// export const getTrainer = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const trainerId = req.trainer?.trainerId as number;
-//     const trainer: Trainer | undefined = await getTrainerById(trainerId);
+export const getTrainer = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const trainerId  = Number(req.params?.trainerId);
+    const trainer: Trainer | undefined = await getTrainerById(trainerId);
 
-//     if (!trainer) {
-//       return res.status(404).json({ error: 'No corresponding trainer' });
-//     }
+    if (!trainer) {
+      return res.status(404).json({ error: 'No corresponding trainer' });
+    }
 
-//     delete trainer.password;
-//     delete trainer.id;
+    delete trainer.password;
+    delete trainer.id;
 
-//     return res.status(200).json({ trainer });
+    return res.status(200).json(trainer);
 
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+  } catch (error) {
+    next(error);
+  }
+};
 
 // export const updateTrainer = async (req: Request, res: Response, next: NextFunction) => {
 //   try {

@@ -3,7 +3,7 @@ import express  from 'express';
 import { body, param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 
-import { createTrainer, deleteTrainer } from '../controllers/TrainerController';
+import { createTrainer, deleteTrainer, getTrainer } from '../controllers/TrainerController';
 
 
 const router = express.Router();
@@ -72,6 +72,60 @@ router.post('/trainer',
   createTrainer
 );
 
+
+/**
+ * 
+ * @swagger
+ * /admin/trainer/{trainerId}:
+ *   get:
+ *     tags:
+ *       - admin
+ *     security:
+ *       - basicAuth: []
+ *     summary: get a trainer's data
+ *     description: get the data of a trainer based on his/her id
+ *     parameters:
+ *       - in: path
+ *         name: trainerId
+ *         schema:
+ *           type: integer
+ *           required: true
+ *           description: the id of a trainer
+ *     responses:
+ *       200:
+ *         description: Information obtained successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: The username of the trainer
+ *                   example: momo
+ *                 email:
+ *                   type: string
+ *                   description: The email of the trainer
+ *                   example: maurice@gmail.com
+ *                 name:
+ *                   type: string
+ *                   description: The name of a user
+ *                   example: Maurice Du Plat Lisse
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: No corresponding trainerfound
+ *       500:
+ *         description: Server Internal Error
+ */
+router.get('/trainer/:trainerId',
+  [
+    param('trainerId').exists().toInt(),
+  ],
+  expressValidator,
+  getTrainer
+);
+
 /**
  * 
  * @swagger
@@ -115,6 +169,7 @@ router.delete('/trainer/:trainerId',
   expressValidator,
   deleteTrainer
 );
+
 
 // ROUTES A ADD
 // router.put('/trainers', )
