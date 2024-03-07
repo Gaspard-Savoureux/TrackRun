@@ -1,9 +1,9 @@
 
 import express  from 'express';
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 
-import { createTrainer } from '../controllers/TrainerController';
+import { createTrainer, deleteTrainer } from '../controllers/TrainerController';
 
 
 const router = express.Router();
@@ -71,5 +71,53 @@ router.post('/trainer',
   expressValidator,
   createTrainer
 );
+
+/**
+ * 
+ * @swagger
+ * /admin/trainer/{trainerId}:
+ *   delete:
+ *     tags:
+ *       - admin
+ *     security:
+ *       - basicAuth: []
+ *     summary: delete a trainer
+ *     description: delete a trainer based on his/her id
+ *     parameters:
+ *       - in: path
+ *         name: trainerId
+ *         schema:
+ *           type: integer
+ *           required: true
+ *           description: the id of a trainer
+ *     responses:
+ *       200:
+ *         description: Trainer successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Trainer successfully deleted
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: No corresponding trainerfound
+ *       500:
+ *         description: Server Internal Error
+ */
+router.delete('/trainer/:trainerId',
+  [
+    param('trainerId').exists().toInt(),
+  ],
+  expressValidator,
+  deleteTrainer
+);
+
+// ROUTES A ADD
+// router.put('/trainers', )
+// router.get('/trainers', );
 
 export default router;
