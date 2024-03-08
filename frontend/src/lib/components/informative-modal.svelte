@@ -1,16 +1,11 @@
 <script lang="ts">
   export let href = '#';
   export let info = '';
-
-  let showModal = false;
 </script>
 
-<a {href} on:mouseenter={() => (showModal = true)} on:mouseleave={() => (showModal = false)}>
+<a {href}>
   <slot />
-
-  {#if showModal}
-    <div class="modal">{info}</div>
-  {/if}
+  <div class="modal">{info}</div>
 </a>
 
 <style>
@@ -21,10 +16,15 @@
     background-color: var(--bg-2);
     border-radius: 0.2rem;
     padding: 0.3rem;
+    visibility: hidden;
   }
 
   a:link {
     text-decoration: none;
     color: var(--text);
+  }
+
+  a:hover > .modal {
+    visibility: visible;
   }
 </style>

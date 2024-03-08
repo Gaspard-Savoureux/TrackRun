@@ -3,11 +3,11 @@
   import { SunIcon, MoonIcon, BoxIcon } from 'svelte-feather-icons';
   import { Theme } from '$lib/types/theme';
 
-  const themes_values = Object.values(Theme);
-  let index = 0;
+  const themeValues = Object.values(Theme);
+  let index = themeValues.indexOf($theme);
   const toggleTheme = () => {
-    index = (index + 1) % 3;
-    $theme = themes_values[index];
+    index = (index + 1) % themeValues.length;
+    $theme = themeValues[index];
     document.cookie = `theme=${$theme}; path=/; SameSite=Lax`;
   };
 </script>
@@ -24,8 +24,8 @@
 
 <style>
   button {
-    align-items: center;
-    border: none;
     background-color: inherit;
+    padding: 1rem;
+    border: none;
   }
 </style>
