@@ -110,8 +110,6 @@ router.post('/trainer',
  *                     type: string
  *                     description: The name of a user
  *                     example: Maurice Du Plat Lisse
- *       400:
- *         description: Bad Request
  *       404:
  *         description: No corresponding trainerfound
  *       500:
@@ -166,7 +164,7 @@ router.get('/trainers', getTrainers);
  */
 router.get('/trainer/:trainerId',
   [
-    param('trainerId').exists().toInt(),
+    param('trainerId').exists().isInt(),
   ],
   expressValidator,
   getTrainer
@@ -210,7 +208,7 @@ router.get('/trainer/:trainerId',
  */
 router.delete('/trainer/:trainerId',
   [
-    param('trainerId').exists().toInt(),
+    param('trainerId').exists().isInt(),
   ],
   expressValidator,
   deleteTrainer
@@ -290,7 +288,7 @@ router.delete('/trainer/:trainerId',
  */
 router.put('/trainer/:trainerId',
   [
-    param('trainerId').exists().toInt(),
+    param('trainerId').exists().isInt(),
     body('username').optional().isString(),
     body('password').optional().isString().isLength({min: 1, max: 72}),
     body('email').optional().isString().isEmail(),
