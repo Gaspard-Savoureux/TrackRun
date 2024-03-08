@@ -8,6 +8,7 @@
   export let data: LayoutServerData;
 
   theme.set(data.theme);
+  const noNavPage = ['/login', '/register'];
 </script>
 
 <svelte:head>
@@ -15,7 +16,7 @@
   <link rel="stylesheet" href={`/themes/${$theme}.css`} />
 </svelte:head>
 
-{#if $page.url.pathname !== '/login'}
+{#if !noNavPage.find((url) => url === $page.url.pathname)}
   <Navbar />
 {/if}
 
