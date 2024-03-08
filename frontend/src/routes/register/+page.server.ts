@@ -20,18 +20,17 @@ export const actions: object = {
       });
     }
 
-    
-
+    const name = `${firstname} ${lastname}`;
+   
     const res = await fetch(`${API_URL}/user`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username,
-        email,
         password,
-        lastname,
-        firstname,
-        birthdate,
+        email,
+        name,
+        // birthdate,
       }),
     });
 
@@ -62,3 +61,4 @@ export const actions: object = {
     });
   },
 };
+
