@@ -2,9 +2,8 @@
 
   export let data;
   $: ({plannedActivities} = data);
-  $: pActivities = plannedActivities['plannedActivities'];
   
-
+  
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Normalize today's date
 
@@ -19,7 +18,7 @@
   function getDaysWithActivities() {
     return Array.from({ length: 7 }).map((_, index) => {
       const day = addDays(today, index);
-      const activitiesForDay = pActivities.filter(activity => {
+      const activitiesForDay = plannedActivities.filter(activity => {
         const activityDate = new Date(activity.date);
         activityDate.setHours(0, 0, 0, 0);
         return activityDate.getTime() === day.getTime();
@@ -126,4 +125,6 @@
       {/if}
     {/each}
   </article>
+{:catch error}
+  <p>{error.message}</p>
 {/await}

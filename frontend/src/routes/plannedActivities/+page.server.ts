@@ -1,5 +1,6 @@
 // src/routes/plannedActivities/+page.server.ts
 import {API_URL} from '../../constants';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types'
 import type { PlannedActivity } from '$lib/types/plannedActivity';
 
@@ -13,7 +14,12 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
         method: 'GET',
         headers: { Authorization: `Bearer ${locals.token}` }
     });
-    const plannedActivities: PlannedActivity[] = await res.json();
+    if (!res.ok) {
+        // Should not really happen since user is logged in but you never know
+        return error(404, { message: 'Could not load the ressource'});
+    }
+    let json = await res.json();
+    const plannedActivities: PlannedActivity[] = json.plannedActivities; 
+    console.log(plannedActivities);
     return { plannedActivities } 
-   
 }
