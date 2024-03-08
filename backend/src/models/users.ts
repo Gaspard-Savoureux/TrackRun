@@ -15,14 +15,14 @@ import { int, mysqlTable, uniqueIndex, varchar, float } from 'drizzle-orm/mysql-
  *           type: string
  *           description: The password of a user
  *           example: voici mon mot de passe
- *        email:
- *          type: string
- *          description: The email of a user
- *          example: email@email.com
- *        name:
- *          type: string
- *          description: The name of a user
- *          example: jean-papa Juanpadre
+ *         email:
+ *           type: string
+ *           description: The email of a user
+ *           example: email@email.com
+ *         name:
+ *           type: string
+ *           description: The name of a user
+ *           example: jean-papa Juanpadre
  *         age:
  *           type: integer
  *           description: The age of a user
