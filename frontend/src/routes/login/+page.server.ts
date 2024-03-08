@@ -3,7 +3,7 @@ import type { RequestEvent } from '../$types';
 import { API_URL } from '../../constants';
 
 export const actions: object = {
-  login: async ({ cookies, fetch, request }: RequestEvent) => {
+  default: async ({ cookies, fetch, request, url }: RequestEvent) => {
     const data = await request.formData();
     const username = data.get('username');
     const password = data.get('password');
@@ -43,6 +43,10 @@ export const actions: object = {
         maxAge: 60 * 60, // 1h
       });
 
+      const next = url.searchParams.get('next');
+      if (next) {
+        redirect(302, `/${next.slice(1)}`);
+      }
       redirect(302, '/');
     }
 

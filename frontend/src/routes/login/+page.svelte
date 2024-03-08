@@ -11,7 +11,7 @@
 <section>
   <div class="container">
     <h1>Log in</h1>
-    <form method="POST" action="?/login" use:enhance>
+    <form method="POST" use:enhance>
       <input type="text" placeholder="Enter your username" name="username" value={form?.username ?? ''} />
       <input type="password" placeholder="Enter your password" name="password" />
       {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
