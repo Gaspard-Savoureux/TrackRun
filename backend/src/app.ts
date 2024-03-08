@@ -33,7 +33,7 @@ if (process.env.NODE_ENV !== 'production') {
 /**** Routes ****/
 app.use('/admin', basicAuth({
   users: { 
-    [process.env.ADMIN_NAME as string]: process.env.ADMIN_PASSWORD ?? 'defaultPassword', 
+    [process.env.ADMIN_NAME ?? 'admin' as string]: process.env.ADMIN_PASSWORD ?? 'defaultPassword', 
   }
 }), admin);
 app.use(auth);

@@ -11,7 +11,7 @@ const trainer2 = { username: 'superTrainer', password: 'weird-password', email: 
 let returnedTrainer1: Trainer;
 let returnedTrainer2: Trainer;
 
-const basicAuthCredentials = Buffer.from(`${process.env.ADMIN_NAME}:${process.env.ADMIN_PASSWORD}`).toString('base64');
+const basicAuthCredentials = Buffer.from(`${process.env.ADMIN_NAME ?? 'admin'}:${process.env.ADMIN_PASSWORD || 'defaultPassword'}`).toString('base64');
 
 jest.mock('../../src/services/trainer.services');
 
