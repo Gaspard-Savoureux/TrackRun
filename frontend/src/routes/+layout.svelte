@@ -3,6 +3,7 @@
   import { Theme } from '$lib/types/theme';
   import { theme } from '$lib/stores/theme';
   import Navbar from '$lib/components/navbar.svelte';
+  import { page } from '$app/stores';
 
   export let data: LayoutServerData;
 
@@ -14,6 +15,8 @@
   <link rel="stylesheet" href={`/themes/${$theme}.css`} />
 </svelte:head>
 
-<Navbar />
+{#if $page.url.pathname !== '/login'}
+  <Navbar />
+{/if}
 
 <slot />
