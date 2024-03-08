@@ -18,6 +18,9 @@ export type userPayload = {
   [key: string]: JwtPayload | string;
 };
 
+
+// TODO À valider plus tard, mauvaise branche
+// NOTE on peut probablement l'ajouter à userPayload et faire la validation sur le login
 /**
  * @swagger
  * components:
@@ -29,10 +32,10 @@ export type userPayload = {
  *   type: integer
  *  example: 1
  */
-export type trainerPayload = {
-  trainerId: number;
-  [key: string]: JwtPayload | string;
-};
+// export type trainerPayload = {
+//   trainerId: number;
+//   [key: string]: JwtPayload | string;
+// };
 
 declare global {
   namespace Express {

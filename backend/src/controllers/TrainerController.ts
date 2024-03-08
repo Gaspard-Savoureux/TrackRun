@@ -31,8 +31,7 @@ export const createTrainer = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-
-
+// TODO À valider plus tard, mauvaise branche
 // export const authenticateTrainer = async (req: Request, res: Response, next: NextFunction) => {
 
 //   try {
@@ -143,6 +142,8 @@ export const deleteTrainer = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+
+// TODO À valider plus tard, mauvaise branche
 // export const addUserToTrainer = async (req: Request, res: Response) => {
 //   const { username } = req.body;
 //   const trainerId = req.trainer?.trainerId as number;
