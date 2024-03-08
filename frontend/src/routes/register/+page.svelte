@@ -12,27 +12,23 @@
   let errors = {};
 
   const validateForm = () => {
-    errors = {}; 
+    errors = {};
 
-
-    if (!username.trim()) errors.username = 'Le nom d\'utilisateur est requis.';
-
+    if (!username.trim()) errors.username = 'Username is required.';
 
     if (!email.trim()) {
-      errors.email = 'L\'adresse courriel est requise.';
+      errors.email = 'Email address is required.';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      errors.email = 'L\'adresse courriel n\'est pas valide.';
+      errors.email = 'Email address is not valid.';
     }
 
-    if (!password.trim()) errors.password = 'Le mot de passe est requis.';
+    if (!password.trim()) errors.password = 'Password is required.';
 
+    if (!lastname.trim()) errors.lastname = 'Last name is required.';
 
-    if (!lastname.trim()) errors.lastname = 'Le nom est requis.';
+    if (!firstname.trim()) errors.firstname = 'First name is required.';
 
-    if (!firstname.trim()) errors.firstname = 'Le prénom est requis.';
-
-
-    if (!birthdate.trim()) errors.birthdate = 'La date de naissance est requise.';
+    if (!birthdate.trim()) errors.birthdate = 'Date of birth is required.';
 
     return Object.keys(errors).length === 0;
   };
@@ -40,56 +36,59 @@
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validateForm()) return;
-
   };
 </script>
 
-<form class='container' method='POST' action='?/register' on:submit={handleSubmit} use:enhance>
-  {#if form?.success === false}<p>{form?.message}</p>{/if}
-
+<form
+  class='container'
+  method='POST'
+  action='?/register'
+  on:submit={handleSubmit}
+  use:enhance
+>
+  {#if form?.success === false}<p style='color: red;'>{form?.message}</p>{/if}
 
   <label>
     Nom d'utilisateur
     <input type='text' name='username' bind:value={username} />
     {#if errors.username}<p style='color: red;'>{errors.username}</p>{/if}
   </label>
-  
+
   <label>
     Courriel
     <input type='email' name='email' bind:value={email} />
     {#if errors.email}<p style='color: red;'>{errors.email}</p>{/if}
   </label>
-  
+
   <label>
     Mot de passe
     <input type='password' name='password' bind:value={password} />
     {#if errors.password}<p style='color: red;'>{errors.password}</p>{/if}
   </label>
-  
+
   <label>
     Nom
     <input type='text' name='lastname' bind:value={lastname} />
     {#if errors.lastname}<p style='color: red;'>{errors.lastname}</p>{/if}
   </label>
-  
+
   <label>
     Prénom
     <input type='text' name='firstname' bind:value={firstname} />
     {#if errors.firstname}<p style='color: red;'>{errors.firstname}</p>{/if}
   </label>
-  
+
   <label>
     Date de naissance
     <input type='date' name='birthdate' bind:value={birthdate} />
     {#if errors.birthdate}<p style='color: red;'>{errors.birthdate}</p>{/if}
-  </label>  
+  </label>
 
-  <button type="submit">S'inscrire</button>
-  <a href="/login">Se connecter</a>
+  <button type='submit'>S'inscrire</button>
+  <a href='/login'>Se connecter</a>
 </form>
 
 <style>
-
   .container {
     padding: 1rem;
     max-width: 30rem;
@@ -100,7 +99,7 @@
 
   @media (width >= 500px) {
     .container {
-      padding: 2rem
+      padding: 2rem;
     }
   }
 
@@ -146,4 +145,3 @@
     background-color: var(--blue-darker);
   }
 </style>
-

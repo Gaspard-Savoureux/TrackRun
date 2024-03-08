@@ -22,6 +22,7 @@ export const actions: object = {
 
     const name = `${firstname} ${lastname}`;
    
+    //More arguments will be added to the body
     const res = await fetch(`${API_URL}/user`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -41,6 +42,16 @@ export const actions: object = {
         message: resData.message || 'Error during registration',
       });
     }
+
+    if (res.status === 409) {
+      const resData = await res.json();
+      return fail(res.status, {
+        success: false,
+        message: resData.message || 'Username or email already exists',
+        color: 'red',
+      });
+    }
+
 
     if (res.ok) {
       const resData = await res.json();
