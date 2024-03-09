@@ -1,29 +1,30 @@
 <script lang="ts">
-  import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
-  import { theme } from '$lib/stores/theme';
   import Modal from '$lib/components/informative-modal.svelte';
+  import NavbarItems from './navbar-items.svelte';
 
-  // https://svelte-feathers.codewithshin.com/
-  // https://feathericons.com/
-  import { HomeIcon, LogOutIcon, UserIcon } from 'svelte-feather-icons';
+  import { HomeIcon } from 'svelte-feather-icons';
+  import Navburger from './navburger.svelte';
+
+  let width;
 </script>
 
-<div class="navbar">
-  <Modal info="Home" href="/">
-    <div class="nav-item"><HomeIcon /></div>
-  </Modal>
+<div class="navbar" bind:clientWidth={width}>
   <div class="pages-icon">
-    <Modal info={`Theme: ${$theme}`}>
-      <div class="switcher"><ThemeSwitcher /></div>
-    </Modal>
-    <Modal info="Profile" href="/profile">
-      <div class="nav-item"><UserIcon /></div>
-    </Modal>
-    <Modal info="Logout" href="/logout">
+    <Modal info="Home" href="/">
       <div class="nav-item">
-        <LogOutIcon />
+        <HomeIcon />
       </div>
     </Modal>
+  </div>
+
+  <div class="pages-icon">
+    {#if width >= 500}
+      <NavbarItems />
+    {:else}
+      <Navburger>
+        <NavbarItems />
+      </Navburger>
+    {/if}
   </div>
 </div>
 
@@ -47,8 +48,7 @@
     display: flex;
   }
 
-  .nav-item:hover,
-  .switcher:hover {
+  .nav-item:hover {
     background-color: var(--blue);
   }
 </style>

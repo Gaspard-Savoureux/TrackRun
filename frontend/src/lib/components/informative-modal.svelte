@@ -5,7 +5,9 @@
 
 <a {href}>
   <slot />
-  <div class="modal">{info}</div>
+  {#if info}
+    <div class="modal">{info}</div>
+  {/if}
 </a>
 
 <style>
