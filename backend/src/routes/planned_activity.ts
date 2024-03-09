@@ -1,6 +1,7 @@
 import express from 'express';
 import { getPlannedActivities } from '../controllers/plannedActivitiesController';
 import { verifyUserToken } from '../middlewares/authentication';
+import { deletePlannedActivity } from '../controllers/plannedActivitiesController';
 
 const router = express.Router();
 
@@ -48,6 +49,33 @@ const router = express.Router();
  */
 router.get('/', verifyUserToken, getPlannedActivities);
 
+
+/**
+ * @swagger
+ * /plannedactivities/delete/{activityId}:
+ *  delete:
+ *    tags:
+ *    - planned_activities
+ *    summary: Delete planned activity
+ *    description: Route to delete a planned activity of a logged user
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *      - in: path
+ *        name: activityId
+ *        required: true
+ *        description: The id of the activity to delete
+ *        schema:
+ *          type: integer
+ *    responses:
+ *      200:
+ *        description: Activity deleted successfully
+ *      400:
+ *        description: Invalid activityId
+ *      500:
+ *        description: Server Error
+ */
+router.delete("/delete/:activityId", verifyUserToken, deletePlannedActivity);
 
 
 export default router;

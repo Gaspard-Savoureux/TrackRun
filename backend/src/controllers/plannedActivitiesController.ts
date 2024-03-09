@@ -26,3 +26,23 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
     next(error);
   }
 };
+
+
+export const deletePlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+
+    // Check if activityId is a number
+    const activityId = parseInt(req.params.activityId);
+    if (isNaN(activityId)) {
+      return res.status(400).json({ error: "Invalid activityId" });
+    }
+
+    // delete the activity
+    await db.delete(planned_activities).where(eq(planned_activities.id, activityId));
+    res.status(200).json({ message: "Activity deleted successfully" });
+  
+  } catch (error) {
+    next(error);
+  }
+};
+
