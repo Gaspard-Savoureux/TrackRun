@@ -3,11 +3,13 @@
   import Modal from '$lib/components/informative-modal.svelte';
 
   let active = false;
+  let heightOffset: number;
+  let widthOffset: number;
 </script>
 
-<div class="navburger">
-  <Modal info="Menu">
-    <button class="nav-item" on:click={() => (active = !active)}>
+<div class="navburger" style={`--heigth-offset: ${heightOffset}px`}>
+  <Modal>
+    <button class="nav-item" on:click={() => (active = !active)} bind:clientHeight={heightOffset}>
       {#if active}
         <XIcon />
       {:else}
@@ -15,7 +17,12 @@
       {/if}
     </button>
   </Modal>
-  <div class="navburger-list" class:active>
+  <div
+    class="navburger-list"
+    class:active
+    bind:clientWidth={widthOffset}
+    style={`--width-offset: -${widthOffset}px`}
+  >
     <slot />
   </div>
 </div>
@@ -31,8 +38,15 @@
   .navburger-list {
     background-color: var(--bg-3);
     position: absolute;
-    top: -20rem;
-    transition: top 0.3s ease-in-out;
+    top: var(--heigth-offset);
+    right: var(--width-offset);
+    transition: right 0.3s ease-in-out;
+  }
+
+  .active {
+    top: 0;
+    right: 0;
+    position: relative;
   }
 
   .nav-item {
@@ -45,13 +59,9 @@
     background-color: var(--blue);
   }
 
-  .active {
-    top: 0%;
-    position: relative;
-  }
-
   button {
     border: none;
     background-color: inherit;
+    margin-left: auto;
   }
 </style>

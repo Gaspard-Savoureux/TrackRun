@@ -2,10 +2,11 @@
   import Modal from '$lib/components/informative-modal.svelte';
   import NavbarItems from './navbar-items.svelte';
 
-  import { HomeIcon } from 'svelte-feather-icons';
+  import { ActivityIcon, HomeIcon } from 'svelte-feather-icons';
   import Navburger from './navburger.svelte';
 
-  let width;
+  let width: number; // width in px
+  $: isSmallScreen = width <= 500;
 </script>
 
 <div class="navbar" bind:clientWidth={width}>
@@ -16,13 +17,22 @@
       </div>
     </Modal>
   </div>
-
+  {#if !isSmallScreen}
+    <div class="pages-icon">
+      <Modal info="Activities" href="/activities">
+        <div class="nav-item">
+          <ActivityIcon />
+          <p>Activities</p>
+        </div>
+      </Modal>
+    </div>
+  {/if}
   <div class="pages-icon">
-    {#if width >= 500}
+    {#if !isSmallScreen}
       <NavbarItems />
     {:else}
       <Navburger>
-        <NavbarItems />
+        <NavbarItems {isSmallScreen} />
       </Navburger>
     {/if}
   </div>
@@ -50,5 +60,10 @@
 
   .nav-item:hover {
     background-color: var(--blue);
+  }
+
+  p {
+    position: relative;
+    margin-left: 1rem;
   }
 </style>
