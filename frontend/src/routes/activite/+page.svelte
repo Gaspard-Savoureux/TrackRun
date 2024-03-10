@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { enhance } from '$app/forms';
+
     interface Activite {
       nom: string;
       ville: string;
@@ -17,17 +19,10 @@
     let duree = '';
     let distance = '';
     let comment = '';
-  
-    function ajouterActivite() {
-      console.log({ nom, ville, typeActivite, date, duree, distance, comment}); // Pour déboguer
-      activites.push({ nom, ville, typeActivite, date, duree, distance, comment });
-      nom = ville = date = duree = distance = comment = ''; // Réinitialise les champs après l'ajout
-      typeActivite = 'Course';
-    }
 
     </script>
 
-<form on:submit|preventDefault={ajouterActivite}>
+<form method="POST" action="?/ajouterActivite" use:enhance>
     <label for="nom">Nom de l'activité:</label>
     <input id="nom" type="text" bind:value={nom} required>
 
@@ -52,7 +47,7 @@
     <label for="comment">Commentaires:</label>
     <input id="comment" type="text" bind:value={comment} required>
   
-    <button type="submit">Ajouter l'activité</button>
+    <button class="link" type="submit">Ajouter l'activité</button>
   </form>
   
   {#if activites.length > 0}
