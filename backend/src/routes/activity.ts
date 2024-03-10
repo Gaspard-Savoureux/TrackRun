@@ -49,6 +49,57 @@ router.post('/manual',
   createActivityManual
 );
 
+/**
+ * @swagger
+ * /gpxForm:
+ *  post:
+ *   tags:
+ *    - Activity
+ *   summary: Create activity using GPX file
+ *   description: Create new activity using a GPX file upload
+ *   security:
+ *      - BearerAuth: []
+ *   requestBody:
+ *    content:
+ *     multipart/form-data:
+ *      schema:
+ *       type: object
+ *       properties:
+ *        name:
+ *         type: string
+ *         description: The name of the activity
+ *        type:
+ *         type: string
+ *         enum: [Running, Biking, Walking]
+ *         description: The type of the activity
+ *        comment:
+ *         type: string
+ *         description: Comment on the activity
+ *        file:
+ *         type: string
+ *         format: binary
+ *         description: The GPX file for the activity
+ *   responses:
+ *    201:
+ *     description: Success
+ *    400:
+ *     description: Bad Request
+ *    401:
+ *     description: Unauthorized
+ *    500:
+ *     description: Server Error
+ */
+router.post('/gpxForm',
+  [
+    body('name').isString().notEmpty().withMessage('Name is required'),
+    body('type').isString().notEmpty().withMessage('Type of workout is required'),
+    body('comment').isString().withMessage('Comment is optional'),
+  ],
+
+  verifyUserToken,
+  upload.single('file'),
+  createActivityGPX
+);
 
 /**
  * @swagger
