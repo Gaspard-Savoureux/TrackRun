@@ -49,7 +49,7 @@ function isValidVille(ville: string): boolean {
 }
 
 function isValidTypeActivite(typeActivite: string): boolean {
-  return typeActivite === 'Course' || typeActivite === 'Vélo' || typeActivite === null;
+  return typeActivite === 'Running' || typeActivite === 'Biking' || typeActivite === 'Walking' || typeActivite === null;
 }
 
 function isValidDate(date: string): boolean {

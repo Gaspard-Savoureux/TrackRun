@@ -31,8 +31,9 @@
   
     <label for="typeActivite">Type d'activité:</label>
     <select name="typeActivite" bind:value={typeActivite} required>
-      <option value="Course">Course</option>
-      <option value="Vélo">Vélo</option>
+      <option value="Running">Running</option>
+      <option value="Biking">Biking</option>
+      <option value="Walking">Walking</option>
     </select>
 
     <label for="date">Date:</label>
