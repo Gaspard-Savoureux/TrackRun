@@ -2,7 +2,7 @@
   import type { LayoutServerData } from './$types';
   import { Theme } from '$lib/types/theme';
   import { theme } from '$lib/stores/theme';
-  import Navbar from '$lib/components/navbar.svelte';
+  import Navbar from '$lib/components/Navbar/navbar.svelte';
   import { page } from '$app/stores';
 
   export let data: LayoutServerData;

@@ -25,7 +25,15 @@
 <style>
   button {
     background-color: inherit;
+    align-self: center;
     padding: 1rem;
     border: none;
+  }
+
+  @media (max-width: 500px) {
+    button {
+      padding-right: 100%;
+      margin-right: -86%;
+    }
   }
 </style>

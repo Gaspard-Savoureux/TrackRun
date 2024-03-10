@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { page } from '$app/stores';
+
   export let href = '#';
   export let info = '';
 </script>
 
-<a {href}>
+<a {href} class:active={$page.url.pathname === href}>
   <slot />
   {#if info}
     <div class="modal">{info}</div>
@@ -13,12 +15,27 @@
 <style>
   .modal {
     position: absolute;
-    text-decoration: none;
     color: var(--text);
     background-color: var(--bg-2);
     border-radius: 0.2rem;
     padding: 0.3rem;
     visibility: hidden;
+    overflow: hidden;
+  }
+
+  .active {
+    filter: invert(100%);
+  }
+
+  .active:hover {
+    background-color: var(--bg-3);
+  }
+
+  .active:hover > .modal {
+    visibility: hidden;
+  }
+  a {
+    background-color: var(--bg-3);
   }
 
   a:link {
@@ -27,6 +44,21 @@
   }
 
   a:hover > .modal {
+    top: 4rem;
     visibility: visible;
+    background-color: var(--bg-2);
+    filter: invert(100%);
+  }
+
+  @media (width >= 500px) {
+    a:hover {
+      background-color: var(--blue);
+    }
+  }
+
+  @media (max-width: 500px) {
+    .modal {
+      display: none;
+    }
   }
 </style>
