@@ -1,8 +1,9 @@
 import express from 'express';
 import { body } from 'express-validator';
-import {createActivity, getActivity, getSpecifiedActivities} from '../controllers/activitiesController';
+import { createActivityManual, getActivity, getSpecifiedActivities, createActivityGPX } from '../controllers/activitiesController';
 import { expressValidator } from '../middlewares/validation';
-import {verifyUserToken} from '../middlewares/authentication';
+import { verifyUserToken } from '../middlewares/authentication';
+import { upload } from '../middlewares/uploadActivity';
 
 const router = express.Router();
 
@@ -46,7 +47,53 @@ router.post('/manual',
 
   expressValidator,
   verifyUserToken,
-  createActivity
+  createActivityManual
+);
+
+
+/**
+ * @swagger
+ * /activity/gpxForm:
+ *  post:
+ *   tags:
+ *    - name: Activity
+ *   summary: A route to treat a file
+ *   description: Route use when an activity is creat with a file.
+ *   parameters:
+ *    - in: header
+ *      name: user-token
+ *      schema:
+ *       type: string
+ *      required: true
+ *      description: User token to verify
+ *    - in: formData
+ *      name: file
+ *      type: file
+ *      description: The file to upload.
+ *   security:
+ *    - BearerAuth: []
+ *   requestBody:
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/components/schemas/Activity'
+ *   responses:
+ *    200:
+ *     description: The request was successful.
+ *      content:
+ *       application/json:
+ *        schema:
+ *         type: object
+ *         properties:
+ *          message:
+ *           type: string
+ *    400:
+ *     description: The file provide is either wrong or not GPX or unprovided.
+ */
+router.post('/gpxForm',
+  verifyUserToken,
+  upload.single('file'),
+  createActivityGPX
 );
 
 
