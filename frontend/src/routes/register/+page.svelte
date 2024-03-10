@@ -1,6 +1,8 @@
 <script lang='ts'>
   import { enhance } from '$app/forms';
-  export let form;
+  import type { formDataRegister } from '$lib/types/registerForm.js';
+  import type { registerFields } from '$lib/types/registerForm.js';
+  export let form: formDataRegister;
 
   let username = form?.username ?? '';
   let email = form?.email ?? '';
@@ -9,7 +11,7 @@
   let firstname = form?.firstname ?? '';
   let birthdate = form?.birthdate ?? '';
 
-  let errors = {};
+  let errors: registerFields = {};
 
   const validateForm = () => {
     errors = {};
@@ -33,7 +35,7 @@
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
     if (!validateForm()) return;
   };
@@ -49,43 +51,43 @@
   {#if form?.success === false}<p style='color: red;'>{form?.message}</p>{/if}
 
   <label>
-    Nom d'utilisateur
+    Username
     <input type='text' name='username' bind:value={username} />
     {#if errors.username}<p style='color: red;'>{errors.username}</p>{/if}
   </label>
 
   <label>
-    Courriel
+    Email
     <input type='email' name='email' bind:value={email} />
     {#if errors.email}<p style='color: red;'>{errors.email}</p>{/if}
   </label>
 
   <label>
-    Mot de passe
+    Password
     <input type='password' name='password' bind:value={password} />
     {#if errors.password}<p style='color: red;'>{errors.password}</p>{/if}
   </label>
 
   <label>
-    Nom
+    Last Name
     <input type='text' name='lastname' bind:value={lastname} />
     {#if errors.lastname}<p style='color: red;'>{errors.lastname}</p>{/if}
   </label>
 
   <label>
-    Prénom
+    First Name
     <input type='text' name='firstname' bind:value={firstname} />
     {#if errors.firstname}<p style='color: red;'>{errors.firstname}</p>{/if}
   </label>
 
   <label>
-    Date de naissance
+    Date of Birth
     <input type='date' name='birthdate' bind:value={birthdate} />
     {#if errors.birthdate}<p style='color: red;'>{errors.birthdate}</p>{/if}
   </label>
 
-  <button type='submit'>S'inscrire</button>
-  <a href='/login'>Se connecter</a>
+  <button type='submit'>Sign up</button>
+  <a href='/login'>Login</a>
 </form>
 
 <style>
