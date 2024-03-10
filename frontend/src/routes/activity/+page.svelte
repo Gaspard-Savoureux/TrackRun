@@ -24,28 +24,28 @@
 
 <form method="POST" action="?/ajouterActivite" use:enhance>
     <label for="nom">Nom de l'activité:</label>
-    <input id="nom" type="text" bind:value={nom} required>
+    <input name="nom" type="text" bind:value={nom} required>
 
     <label for="ville">Ville:</label>
-    <input id="ville" type="text" bind:value={ville} required>
+    <input name="ville" type="text" bind:value={ville} required>
   
     <label for="typeActivite">Type d'activité:</label>
-    <select id="typeActivite" bind:value={typeActivite} required>
+    <select name="typeActivite" bind:value={typeActivite} required>
       <option value="Course">Course</option>
       <option value="Vélo">Vélo</option>
     </select>
 
     <label for="date">Date:</label>
-    <input id="date" type="date" bind:value={date} required>
+    <input name="date" type="date" bind:value={date} required>
   
     <label for="duree">Durée:</label>
-    <input id="duree" type="text" bind:value={duree} required>
+    <input name="duree" type="text" bind:value={duree} required>
 
     <label for="distance">Distance:</label>
-    <input id="distance" type="text" bind:value={distance} required>
+    <input name="distance" type="text" bind:value={distance} required>
 
     <label for="comment">Commentaires:</label>
-    <input id="comment" type="text" bind:value={comment} required>
+    <input name="comment" type="text" bind:value={comment} required>
   
     <button class="link" type="submit">Ajouter l'activité</button>
   </form>
