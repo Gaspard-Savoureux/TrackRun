@@ -15,6 +15,17 @@ const router = express.Router();
  *    description: Route to get the planned activities of a logged user
  *    security:
  *      - BearerAuth: []
+ *    parameters:
+ *      - in: query
+ *        name: from
+ *        schema:
+ *          type: string
+ *        description: Filter results that are after the given date in format YYYY-MM-DD
+ *      - in: query
+ *        name: type
+ *        schema:
+ *          type: string
+ *        description: Filter results by the given activity type (Walking, Running, Biking)
  *    responses:
  *      200:
  *        description: List of planned activities
