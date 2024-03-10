@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
+import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from '../$types';
-import { redirect, fail } from '@sveltejs/kit';
+import { API_URL } from '../../constants';
 
 // Enumération des codes d'erreur
 enum ErrorCode {
@@ -38,84 +39,7 @@ function getErrorMessage(errorCode: ErrorCode, variable: string): string {
   }
 }
 
-interface Activite {
-    nom: string;
-    ville: string;
-    typeActivite: 'Course' | 'Vélo';
-    date: string;
-    duree: string;
-    distance: string;
-    comment: string;
-}
-
-const activites: Activite[] = [];
-
-export const actions: object = {
-  ajouterActivite: async ({ request }: RequestEvent) => {
-    const formData = await request.formData();
-    const activiteData = extractActiviteData(formData);
-
-    if (!activiteData) {
-      return fail(400, {
-        success: false,
-        message: getErrorMessage(ErrorCode.Missing, 'nom'), // Utilisation de la fonction getErrorMessage pour obtenir le message d'erreur approprié
-      });
-    }
-
-    activites.push(activiteData);
-
-    redirect(302, '/activite');
-  },
-};
-
-function areRequiredFieldsPresent(nom: string | null, ville: string | null, typeActivite: 'Course' | 'Vélo' | null, date: string | null, duree: string | null, distance: string | null, comment: string | null): boolean {
-  return !!(nom && ville && typeActivite && date && duree && distance && comment);
-}
-
-function validateField(field): boolean {
-  if (!field.validator(field.value)) {
-    fail(400, {
-      success: false,
-      message: getErrorMessage(field.errorCode, field.fieldName),
-    });
-    return false;
-  }
-  return true;
-}
-
-
-function extractActiviteData(formData: FormData): Activite | null {
-  const nom = formData.get('nom') as string ?? '';
-  const ville = formData.get('ville') as string ?? '';
-  const typeActivite = formData.get('typeActivite') as 'Course' | 'Vélo' | null;
-  const date = formData.get('date') as string ?? '';
-  const duree = formData.get('duree') as string ?? '';
-  const distance = formData.get('distance') as string ?? '';
-  const comment = formData.get('comment') as string ?? '';
-
-  if (!areRequiredFieldsPresent(nom, ville, typeActivite, date, duree, distance, comment)) {
-    return null;
-  }
-
-  const fieldsToValidate = [
-    { value: nom, validator: isValidNom, errorCode: ErrorCode.InvalidNom, fieldName: 'nom' },
-    { value: ville, validator: isValidVille, errorCode: ErrorCode.InvalidVille, fieldName: 'ville' },
-    { value: typeActivite, validator: isValidTypeActivite, errorCode: ErrorCode.InvalidTypeActivite, fieldName: 'typeActivite' },
-    { value: date, validator: isValidDate, errorCode: ErrorCode.InvalidDate, fieldName: 'date' },
-    { value: duree, validator: isValidDuree, errorCode: ErrorCode.InvalidDuree, fieldName: 'duree' },
-    { value: distance, validator: isValidDistance, errorCode: ErrorCode.InvalidDistance, fieldName: 'distance' },
-    { value: comment, validator: isValidComment, errorCode: ErrorCode.InvalidComment, fieldName: 'comment' },
-  ];
-
-  for (const field of fieldsToValidate) {
-    if (!validateField(field)) {
-      return null;
-    }
-  }
-
-  return { nom, ville, typeActivite: typeActivite!, date, duree, distance, comment };
-}
-
+//liste des validation
 function isValidNom(nom: string | null): boolean {
   return typeof nom === 'string' && nom.length <= 256;
 }
@@ -124,8 +48,8 @@ function isValidVille(ville: string | null): boolean {
   return typeof ville === 'string' && ville.length <= 100;
 }
 
-function isValidTypeActivite(typeActivite: 'Course' | 'Vélo' | null): boolean {
-  return typeActivite === 'Course' || typeActivite === 'Vélo';
+function isValidTypeActivite(typeActivite: string | null): boolean {
+  return typeActivite === 'Course' || typeActivite === 'Vélo' || typeActivite === null;
 }
 
 function isValidDate(date: string | null): boolean {
@@ -146,3 +70,114 @@ function isValidDistance(distance: string | null): boolean {
 function isValidComment(comment: string | null): boolean {
   return typeof comment === 'string' && comment.length <= 1000;
 }
+
+async function extractFormData(request: Request): Promise<(string | null)[]> {
+  const data = await request.formData();
+  const values = [
+    data.get('nom')?.toString() ?? null,
+    data.get('ville')?.toString() ?? null,
+    data.get('typeActivite')?.toString() ?? null,
+    data.get('date')?.toString() ?? null,
+    data.get('duree')?.toString() ?? null,
+    data.get('distance')?.toString() ?? null,
+    data.get('comment')?.toString() ?? null,
+  ];
+  return values;
+}
+
+//formulaire manuelle
+export const actions: object = {
+  ajouterActivite: async ({ request }: RequestEvent) => {
+    const [nom, ville, typeActivite, date, duree, distance, comment] = await extractFormData(request);
+
+    // Validation des champs
+    if (!isValidNom(nom)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+        fields: { nom },
+      });
+    }
+    if (!isValidVille(ville)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidVille, 'Ville'),
+        fields: { ville },
+      });
+    }
+    if (!isValidTypeActivite(typeActivite)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+        fields: { typeActivite },
+      });
+    }
+    if (!isValidDate(date)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidDate, 'Date'),
+        fields: { date },
+      });
+    }
+    if (!isValidDuree(duree)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
+        fields: { duree },
+      });
+    }
+    if (!isValidDistance(distance)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
+        fields: { distance },
+      });
+    }
+    if (!isValidComment(comment)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
+        fields: { comment },
+      });
+    }
+
+    const activiteData = {
+      nom,
+      ville,
+      typeActivite,
+      date,
+      duree,
+      distance,
+      comment,
+    };
+
+    const res = await fetch(`${API_URL}/activity/manual`, {
+      method: 'POST',
+      body: JSON.stringify({ activiteData }),
+    });
+
+    if (res.status === 400 || res.status === 401) {
+      const errorData = await res.json();
+      return fail(res.status, {
+        success: false,
+        message: errorData.message,
+        fields: errorData.fields,
+      });
+    }
+
+    if (res.ok) {
+      // Si la requête est réussie, redirigez l'utilisateur vers une autre page (par exemple, la page d'accueil)
+      // eslint-disable-next-line no-console
+      console.log('succes!');
+      redirect(302, '/');
+    }
+
+    return {
+      status: 200,
+      body: {
+        success: true,
+        message: 'Activité ajoutée avec succès!',
+      },
+    };
+  },
+};
