@@ -15,7 +15,8 @@ const fileFilter = (req: Express.Request, file: Express.Multer.File, cb: multer.
   if (file.mimetype === 'application/gpx+xml' || (file.mimetype === 'text/xml' && file.originalname.endsWith('.gpx'))) {
     cb(null, true);
   } else {
-    cb(new Error('Please upload only GPX files.'), false);
+    new Error('Please upload only GPX files.');
+    cb(null, false);
   }
 };
 
