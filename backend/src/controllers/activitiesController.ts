@@ -5,6 +5,7 @@ import { User } from '../models/users';
 import { getUserById } from '../services/user.services';
 import { getUserActivities } from '../services/activity.services';
 import * as fs from 'node:fs';
+import GPXParser from './gpxParser';
 
 export const createActivityManual = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -14,6 +15,7 @@ export const createActivityManual = async (req: Request, res: Response, next: Ne
     if (!name || typeof name !== 'string' || name.length < 3 || name.length > 256) {
       return res.status(400).json({ message: 'Name is required and must be between 3 and 256 characters' });
     }
+
 
     // Validation de `city`
     if (city == null) {
@@ -80,6 +82,63 @@ export const createActivityManual = async (req: Request, res: Response, next: Ne
     return res.status(201).json({ message: 'Activity added successfully' });
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+export const createActivityGPX = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    let { name, type, comment} = req.body;
+
+    // Validation de `name`
+    if (!name || typeof name !== 'string' || name.length < 3 || name.length > 256) {
+      return res.status(400).json({ message: 'Name is required and must be between 3 and 256 characters' });
+    }
+    // Validation de `type`
+    const validTypes = ['Running', 'Biking', 'Walking'];
+    if (!type || !validTypes.includes(type)) {
+      return res.status(400).json({ message: `Type is required and must be one of the following: ${validTypes.join(', ')}` });
+    }
+
+    // Validation de `comment`
+    if (comment == null) {
+      comment = ' ';
+    } else if (comment && typeof comment !== 'string') {
+      return res.status(400).json({ message: 'Comment must be a string' });
+    }
+
+    let segments;
+    if (req.file) {
+      const gpxData = fs.readFileSync(req.file.path, 'utf-8');
+      const gpxParser = new GPXParser();
+      segments = gpxParser.parse(gpxData);
+    } else {
+      res.status(400).send('No GPX file uploaded.');
+    }
+
+    const city = null; const date = new Date(); const durationTotal = 0; const distanceTotal = 0;
+
+    const userId = req.user?.userId as number;
+
+    const result = await db.insert(activities).values([{
+      user_id: userId,
+      name,
+      city,
+      type,
+      date,
+      durationTotal,
+      distanceTotal,
+      comment,
+      segments
+    }]);
+
+    if (!result) {
+      // handle the error or throw an error
+      throw new Error('Database insertion failed.');
+    }
+
+    res.status(200).send('GPX file processed successfully.');
+  } catch (error) {
     next(error);
   }
 };
