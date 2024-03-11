@@ -28,4 +28,14 @@
   h3 {
     margin-right: 1rem;
   }
+
+  @media (max-width: 576px) {
+    .item {
+      display: block;
+    }
+
+    span {
+      margin-left: 2rem;
+    }
+  }
 </style>
