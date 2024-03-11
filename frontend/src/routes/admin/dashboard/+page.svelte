@@ -1,6 +1,8 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import UserInfo from '$lib/components/user-info.svelte';
+  import UserinfoField from '$lib/components/userinfo-field.svelte';
+  import type { Trainer } from '$lib/types/trainer.js';
   import { Trash2Icon } from 'svelte-feather-icons';
   // Va devoir être dynamique
   const img =
@@ -15,7 +17,8 @@
 
   export let data;
 
-  $: ({ user } = data);
+  // $: ({ trainer } = data);
+  // const currentTrainer: Trainer = null;
 </script>
 
 <svelte:head>
@@ -38,7 +41,11 @@
       {/each}
     </div>
     <div class="main">
-      <UserInfo {user} />
+      <!-- <UserInfo {user} /> -->
+      <UserinfoField name="Username"></UserinfoField>
+      <UserinfoField name="Name"></UserinfoField>
+      <UserinfoField name="email"></UserinfoField>
+      <UserinfoField name="password"></UserinfoField>
     </div>
     <div class="new">
       <!-- (Possiblement modal) -->
