@@ -1,4 +1,5 @@
-import { redirect, type Handle } from '@sveltejs/kit';
+// import { redirect, type Handle } from '@sveltejs/kit';
+import { type Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
   const token = event.cookies.get('token');
