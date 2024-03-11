@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {planned_activities} from '../models/planned_activities';
 import { User } from '../models/users';
-import {getUserById} from '../services/user.services';
+import { getUserById } from '../services/user.services';
 import { db } from '../db/db';
 import {and, eq, gte} from 'drizzle-orm';
 
@@ -51,6 +51,52 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
     return res.status(200).json({ plannedActivities });
 
   } catch (error) {
+    next(error);
+  }
+};
+
+export const createPlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    let { type, date, duration, name, comment} = req.body;
+
+    // Type validation
+    const validTypes = ['Running', 'Biking', 'Walking'];
+    if (!type || !validTypes.includes(type)) {
+      return res.status(400).json({ message: `Type must be one of the following: ${validTypes.join(', ')}` });
+    }
+ 
+    // Name dafault value
+    if (!name || name.length == 0) {
+      name = type.toString();
+    }
+   
+    // Comment default value
+    if (!comment) {
+      comment = '';
+    }
+
+    date = new Date(date);
+
+    const userId = req.user?.userId as number;
+
+    const result = await db.insert(planned_activities).values([{
+      user_id: userId,
+      type,
+      date,
+      duration,
+      name,
+      comment,
+    }]);
+
+    if (!result) {
+      // handle the error or throw an error
+      throw new Error('Database insertion failed.');
+    }
+
+
+    return res.status(201).json({ message: 'Planned Activity added successfully' });
+  } catch (error) {
+    console.log(error);
     next(error);
   }
 };
