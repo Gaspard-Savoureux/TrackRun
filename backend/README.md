@@ -87,6 +87,8 @@ Pour lancer le backend:
 ```bash
 npm install # Installation des dépendances
 
+npm install multer #Installation des dépendances pour le traitement de fichier
+
 npm run generate # Génère les fichiers sql pour la DB
 
 npm run migrate # Envoi le contenu des fichiers sql dans la DB
