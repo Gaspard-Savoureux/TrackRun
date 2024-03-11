@@ -1,8 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models/users';
-import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById } from '../services/user.services';
+import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById} from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+
+
+// User controller
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -64,6 +67,8 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
   }
 };
 
+
+
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
@@ -72,6 +77,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
     if (!user) {
       return res.status(404).json({ error: 'No corresponding user' });
     }
+
 
     delete user.password;
     delete user.id;
@@ -83,6 +89,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
+
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
@@ -92,7 +99,8 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
       return res.status(404).json({ error: 'No corresponding user' });
     }
 
-    const { username, password, age, height, weight, sex, description } = req.body;
+    const { username, password, email, name,
+     age, height, weight, sex, description, picture } = req.body;
 
     const updateData: Partial<User> = {};
 
@@ -101,6 +109,8 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
       const hashedPassword = await bcrypt.hash(password, 10);
       updateData.password = hashedPassword;
     }
+    if (email) updateData.email = email;
+    if (name) updateData.name = name;
     if (age) updateData.age = age;
     if (height) updateData.height = height;
     if (weight) updateData.weight = weight;
@@ -115,7 +125,6 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
-
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -134,4 +143,5 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
 

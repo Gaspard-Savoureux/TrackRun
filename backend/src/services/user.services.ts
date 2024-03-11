@@ -1,6 +1,8 @@
+import express from 'express';
 import { db } from '../db/db';
 import { User, users } from '../models/users';
 import { eq } from 'drizzle-orm';
+
 
 export const getUserByUsername = async ( username: string) : Promise<User | undefined> => {
   const [ user ] = await db.select()
@@ -26,7 +28,6 @@ export const getUserByEmail = async (email: string) : Promise<User | undefined> 
   return user;
 };
 
-
 export const insertUser = async (user: User) => {
   return await db.insert(users).values([{...user}]);
 };
@@ -41,4 +42,3 @@ export const deleteUserById = async (id: number) => {
   return await db.delete(users)
     .where(eq(users.id, id));
 };
-

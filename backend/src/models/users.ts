@@ -52,7 +52,6 @@ export const users = mysqlTable('users', {
   password: varchar('password', { length: 72 }),
   email: varchar('email', { length: 256 }),
   name: varchar('name', { length: 256 }),
-
   age: int('age'),
   height: float('height'),
   weight: float('weight'),

@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { createUser, getUser, deleteUser, updateUser } from '../controllers/UserController';
+import { createUser, getUser, deleteUser, updateUser} from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 
@@ -37,7 +37,12 @@ const router = express.Router();
  *              name: 
  *                type: string
  *                description: The name of a user
- *                example: jean-papa Juanpadre
+ *                example: jean-papa Juan,padre
+ *              age:
+ *                required: true
+ *                type: integer
+ *                description: The age of a user
+ *                example: 30
  *    responses:
  *      201:
  *        description: New user created
@@ -59,60 +64,80 @@ router.post('/',
   createUser
 );
 
-// TODO add response body for 200
+
+
 /**
  * @swagger
  * /user:
- *  get:
- *    tags:
- *    - user
- *    summary: Get user data
- *    description: Route to get the data of a user using its token
- *    security:
- *      - BearerAuth: []
- *    responses:
- *      200:
- *        description: Information obtained successfully
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *               username:
- *                 type: string
- *                 example: jean-papa
- *               password:
- *                 type: string
- *                 description: The password of a user
- *                 example: voici mon mot de passe
- *               age:
- *                 type: integer
- *                 description: The age of a user
- *                 example: 30
- *               height:
- *                 type: number
- *                 format: float
- *                 description: The height of a user in cm
- *                 example: 180.5
- *               weight:
- *                 type: number
- *                 format: float
- *                 description: The weight of a user in kg
- *                 example: 75.5
- *               sex:
- *                 type: string
- *                 description: The sex of a user
- *                 example: male
- *               description:
- *                 type: string
- *                 description: Description of a user
- *                 example: Timothé le 6e du nom, aime les oranges
- *      404:
- *        description: No corresponding user found
- *      500:
- *        description: Server Error
+ *   get:
+ *     tags:
+ *       - user
+ *     summary: Get user data
+ *     description: Route to get the data of a user using its token
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Information obtained successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   required: true
+ *                   type: string
+ *                   example: jean-papa
+ *                 password:
+ *                   required: true
+ *                   type: string
+ *                   description: The password of a user
+ *                   example: 1234
+ *                 email:
+ *                   required: true
+ *                   type: string
+ *                   description: The email of a user
+ *                   example: jeanpapa@gmail.com
+ *                 name:
+ *                   required: true
+ *                   type: string
+ *                   description: The name of a user
+ *                   example: jean-papa Juanpadre
+ *                 age:
+ *                   required: true
+ *                   type: integer
+ *                   description: The age of a user
+ *                   example: 30
+ *                 height:
+ *                   required: false
+ *                   type: number
+ *                   format: float
+ *                   description: The height of a user in cm
+ *                   example: 180.5
+ *                 weight:
+ *                   required: false  
+ *                   type: number
+ *                   format: float
+ *                   description: The weight of a user in kg
+ *                   example: 75.5
+ *                 sex:
+ *                   required: false
+ *                   type: string
+ *                   description: The sex of a user
+ *                   example: male
+ *                 description:
+ *                   required: false
+ *                   type: string
+ *                   description: Description of a user
+ *                   example: Timothé le 6e du nom, aime les oranges
+ *       404:
+ *         description: No corresponding user found
+ *       500:
+ *         description: Server Error
  */
 router.get('/', verifyUserToken, getUser);
+
+
 
 /**
  * @swagger
@@ -139,6 +164,14 @@ router.get('/', verifyUserToken, getUser);
  *                type: string
  *                description: The password of a user
  *                example: 1234
+ *              email:
+ *                type: string
+ *                description: The email of a user
+ *                example: jeanpapa@gmail.com
+ *              name:
+ *                type: string
+ *                description: The name of a user
+ *                example: jean-papa Juanpadre               
  *              age:
  *                type: integer
  *                description: The age of a user
@@ -153,7 +186,14 @@ router.get('/', verifyUserToken, getUser);
  *                format: float
  *                description: The weight of a user in kg
  *                example: 75.5
- * 
+ *              sex:
+ *                type: string
+ *                description: The sex of a user
+ *                example: male
+ *              description:
+ *                type: string
+ *                description: Description of a user
+ *                example: Timothé le 6e du nom, aime les oranges
  *    responses:
  *      200:
  *        description: User updated successfully
@@ -174,8 +214,9 @@ router.put('/',
   ],
   expressValidator,
   verifyUserToken,
-  updateUser
+  updateUser,
 );
+
 
 /**
  * @swagger
@@ -200,5 +241,7 @@ router.put('/',
  *                  example: User successfully deleted
  */
 router.delete('/', verifyUserToken, deleteUser);
+
+
 
 export default router;
