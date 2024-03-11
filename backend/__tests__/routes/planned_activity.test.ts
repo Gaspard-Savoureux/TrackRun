@@ -7,7 +7,7 @@ import app from '../../src/app';
 import {except} from 'drizzle-orm/mysql-core';
 
 const user = {username: 'test-user', password: '1234', email: 'test@test.com', name: 'Test'};
-var auth_token: string;
+let auth_token: string;
 
 beforeAll(async () => {
   // Cleans DB
@@ -17,7 +17,7 @@ beforeAll(async () => {
   await request(app).post('/user').send(user);
   // Get auth token
   auth_token = (await request(app).post('/auth').send(user)).body['token'];
-  console.log("Auth token: " + auth_token);
+  console.log('Auth token: ' + auth_token);
 });
 
 afterAll(async () => {
@@ -43,27 +43,92 @@ describe('GET PlannedActivities', () => {
   });
 
   test('Should return set with one element', async () => {
-    // TEMPORARY: Create some planned_activities until route is available
-    const userid = (await db.select().from(users).where(eq(users.username, user.username)))[0].id;
 
-    await db.insert(planned_activities).values({
-      user_id: userid,
+    const pActivity = {
       type: 'Running',
-      date: new Date(2024, 1, 12),
-      duration: 3600
-    });
+      date: '2024-02-26 16:30:00',
+      duration: 3600,
+      name: 'A run in the park',
+      comment: 'Remember to focus on your breath the entire time!'
+    };
+
+    await request(app)
+      .post(route)
+      .send(pActivity)
+      .set('Authorization', 'Bearer ' + auth_token);
+    
     const res = await request(app)
       .get(route)
       .set('Authorization', 'Bearer ' + auth_token);
 
     expect(res.body).toEqual({
-      'plannedActivities': [expect.objectContaining({
+      plannedActivities: [expect.objectContaining({
         //Dates might fail depending on timezones
-        "type": "Running",
-        "duration": 3600,
+        type: 'Running',
+        duration: 3600,
+        name: 'A run in the park',
+        comment: 'Remember to focus on your breath the entire time!'
       })]
     });
   });
+});
+
+describe('POST PlannedActivities', () => {
+  const route : string = '/plannedactivities';
+  beforeAll( async () => {
+    // Cleans DB
+    await db.delete(planned_activities);
+  });
+
+  afterAll( async () => {
+    // Cleans DB
+    await db.delete(planned_activities);
+  });
+
+  test('Should return 401: Unauthorized', async () => {
+    const pActivity = {
+      type: 'Running',
+      date: '2024-02-26 16:30:00',
+      duration: 1823,
+      name: 'A run in the park',
+      comment: 'Remember to focus on your breath the entire time!'
+    };
+    
+    const res = await request(app)
+      .post(route)
+      .send(pActivity);
+    expect(res.status).toBe(401);
+  });
+
+
+  test('Should return transformed undefined name and comment', async () => {
+
+    const pActivity = {
+      type: 'Running',
+      date: '2024-02-26 16:30:00',
+      duration: 1823,
+      name: undefined,
+      comment: undefined
+    };
+
+    await request(app)
+      .post(route)
+      .send(pActivity)
+      .set('Authorization', 'Bearer ' + auth_token);
+    
+    const res = await request(app)
+      .get(route)
+      .set('Authorization', 'Bearer ' + auth_token);
+    expect(res.body).toEqual({
+      plannedActivities: [expect.objectContaining({
+        type: 'Running',
+        duration: 1823,
+        name: 'Running',
+        comment: ''
+      })]
+    });
+  });
+
 });
 
 describe('Filter PlannedActivities', () => {
@@ -93,7 +158,7 @@ describe('Filter PlannedActivities', () => {
         duration: 1800,
       },
     ]);
-  })
+  });
 
   test('Filter by date', async () => {
     const fromDate = '2024-02-12'; // February 12th
@@ -128,7 +193,7 @@ describe('Filter PlannedActivities', () => {
   test('Invalid from query', async () => {
     const res = await request(app)
       .get(route)
-      .query({from: "2024/15/05"}) // invalid date
+      .query({from: '2024/15/05'}) // invalid date
       .set('Authorization', 'Bearer ' + auth_token);
     expect(res.status).toBe(400);
   });
@@ -136,8 +201,8 @@ describe('Filter PlannedActivities', () => {
   test('Invalid type query', async () => {
     const res = await request(app)
       .get(route)
-      .query({type: "Swimming"}) // invalid activity type
+      .query({type: 'Swimming'}) // invalid activity type
       .set('Authorization', 'Bearer ' + auth_token);
     expect(res.status).toBe(400);
   });
-})
+});
