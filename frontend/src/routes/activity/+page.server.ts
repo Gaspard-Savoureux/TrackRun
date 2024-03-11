@@ -92,7 +92,7 @@ function convertDureeToSecondes(duree: string): number {
 
 //formulaire manuelle
 export const actions: object = {
-  ajouterActivite: async ({ fetch, request }: RequestEvent) => {
+  ajouterActivite: async ({ cookies, fetch, request }: RequestEvent) => {
     //const activiteData = await extractFormData(request);
     const data = await request.formData();
     const name = data.get('nom');
@@ -103,15 +103,6 @@ export const actions: object = {
     const distance = data.get('distance');
     const comment = data.get('comment');
     const segments = '{}';
-
-    console.log(name);
-    console.log(city);
-    console.log(type);
-    console.log(date);
-    console.log(duree);
-    console.log(distance);
-    console.log(comment);
-    console.log(segments);
 
     // Validation des champs
     if (!isValidNom(<string>name)) {
@@ -160,13 +151,16 @@ export const actions: object = {
     const durationTotal = convertDureeToSecondes(<string>duree);
     const distanceTotal = Number(distance);
 
+    const token = cookies.get('token');
+
     const res = await fetch(`${API_URL}/activity/manual`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ name, city , type, date, durationTotal, distanceTotal, comment, segments }),
     });
-
-    console.log(res);
 
     if (res.status === 400 || res.status === 401) {
 
