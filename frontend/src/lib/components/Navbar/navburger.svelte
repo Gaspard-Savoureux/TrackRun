@@ -41,7 +41,6 @@
     top: var(--heigth-offset);
     right: var(--width-offset);
     transition: right 0.3s ease-in-out;
-    overflow-x: clip;
   }
 
   .active {

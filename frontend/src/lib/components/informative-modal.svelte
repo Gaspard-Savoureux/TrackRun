@@ -19,8 +19,7 @@
     background-color: var(--bg-2);
     border-radius: 0.2rem;
     padding: 0.3rem;
-    visibility: hidden;
-    overflow: hidden;
+    display: none;
   }
 
   .active {
@@ -46,6 +45,7 @@
   a:hover > .modal {
     top: 4rem;
     visibility: visible;
+    display: block;
     background-color: var(--bg-2);
     filter: invert(100%);
   }

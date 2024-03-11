@@ -21,3 +21,11 @@
 {/if}
 
 <slot />
+
+<style>
+  @media (max-width: 576px) {
+    :global(html, body) {
+      overflow-x: hidden;
+    }
+  }
+</style>
