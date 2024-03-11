@@ -12,7 +12,7 @@ const pActivitiesUrl = `${API_URL}/plannedactivities`;
 export const load: PageServerLoad = async ({ fetch, locals }) => {
   const res = await fetch(pActivitiesUrl, {
     method: 'GET',
-      headers: { Authorization: `Bearer ${locals.token}` },
+    headers: { Authorization: `Bearer ${locals.token}` },
   });
   if (!res.ok) {
     // Should not really happen since user is logged in but you never know
