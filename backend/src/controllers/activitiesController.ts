@@ -4,8 +4,8 @@ import { db } from '../db/db';
 import { User } from '../models/users';
 import { getUserById } from '../services/user.services';
 import { getUserActivities } from '../services/activity.services';
-import * as fs from 'node:fs';
-import GPXParser from './gpxParser';
+import { gpxParser } from './gpxParser';
+
 
 export const createActivityManual = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -15,7 +15,6 @@ export const createActivityManual = async (req: Request, res: Response, next: Ne
     if (!name || typeof name !== 'string' || name.length < 3 || name.length > 256) {
       return res.status(400).json({ message: 'Name is required and must be between 3 and 256 characters' });
     }
-
 
     // Validation de `city`
     if (city == null) {
@@ -88,35 +87,37 @@ export const createActivityManual = async (req: Request, res: Response, next: Ne
 
 export const createActivityGPX = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let { name, type, comment} = req.body;
+    let { name, type, comment } = req.body;
 
-    // Validation de `name`
+    // Validation for `name`
     if (!name || typeof name !== 'string' || name.length < 3 || name.length > 256) {
       return res.status(400).json({ message: 'Name is required and must be between 3 and 256 characters' });
     }
-    // Validation de `type`
+    // Validation for `type`
     const validTypes = ['Running', 'Biking', 'Walking'];
     if (!type || !validTypes.includes(type)) {
       return res.status(400).json({ message: `Type is required and must be one of the following: ${validTypes.join(', ')}` });
     }
 
-    // Validation de `comment`
+    // Validation for `comment`
     if (comment == null) {
       comment = ' ';
     } else if (comment && typeof comment !== 'string') {
       return res.status(400).json({ message: 'Comment must be a string' });
     }
 
-    let segments;
+    let segments; let metadata;
     if (req.file) {
-      const gpxData = fs.readFileSync(req.file.path, 'utf-8');
-      const gpxParser = new GPXParser();
-      segments = gpxParser.parse(gpxData);
+      const gpxConverter = new gpxParser();
+      const conversionResult = await gpxConverter.convertGPXToJson(req.file.path);
+      segments = conversionResult.segments;
+      metadata = conversionResult.metadata;
     } else {
-      res.status(400).send('No GPX file uploaded.');
+      return res.status(400).send('No GPX file uploaded.');
     }
 
-    const city = null; const date = new Date(); const durationTotal = 0; const distanceTotal = 0;
+    const city = null; // Assuming city is not determined from the GPX file
+    const { date, dureTotal: durationTotal, distanceTotal } = metadata;
 
     const userId = req.user?.userId as number;
 
@@ -129,7 +130,7 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
       durationTotal,
       distanceTotal,
       comment,
-      segments
+      segments: JSON.stringify(segments) // Assuming your DB can store JSON or stringified JSON
     }]);
 
     if (!result) {
