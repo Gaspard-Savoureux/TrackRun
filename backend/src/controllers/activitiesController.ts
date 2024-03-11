@@ -109,7 +109,7 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
     let segments; let metadata;
     if (req.file) {
       const gpxConverter = new gpxParser();
-      const conversionResult = await gpxConverter.convertGPXToJson(req.file.path);
+      const conversionResult = await gpxConverter.parseGpxFile(req.file.path);
       segments = conversionResult.segments;
       metadata = conversionResult.metadata;
     } else {
@@ -117,7 +117,7 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
     }
 
     const city = null; // Assuming city is not determined from the GPX file
-    const { date, dureTotal: durationTotal, distanceTotal } = metadata;
+    const { date: date, durationTotal, distanceTotal } = metadata;
 
     const userId = req.user?.userId as number;
 
