@@ -52,7 +52,7 @@ router.get('/', verifyUserToken, getPlannedActivities);
 
 /**
  * @swagger
- * /plannedactivities/delete/{activityId}:
+ * /plannedactivities:
  *  delete:
  *    tags:
  *    - planned_activities
@@ -75,7 +75,7 @@ router.get('/', verifyUserToken, getPlannedActivities);
  *      500:
  *        description: Server Error
  */
-router.delete("/delete/:activityId", verifyUserToken, deletePlannedActivity);
+router.delete("/", verifyUserToken, deletePlannedActivity);
 
 
 export default router;
