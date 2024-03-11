@@ -102,7 +102,7 @@
 {#await plannedActivities}
   <h1>Loading...</h1>
   <!-- Make a pretty loader -->
-{:then plannedActivities}
+{:then}
   <article class="planning-container">
     <h1>Planning this week</h1>
     {#each getDaysWithActivities() as { day, activities }}
