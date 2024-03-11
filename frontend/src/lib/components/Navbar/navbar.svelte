@@ -38,7 +38,6 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: 10%;
     position: -webkit-sticky; /* Safari */
     position: sticky;
     top: 0;
@@ -60,7 +59,7 @@
     display: none;
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 576px) {
     .pages-icon {
       display: none;
     }

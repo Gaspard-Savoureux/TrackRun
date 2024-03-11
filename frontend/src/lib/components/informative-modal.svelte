@@ -44,19 +44,18 @@
 
   a:hover > .modal {
     top: 4rem;
-    visibility: visible;
     display: block;
     background-color: var(--bg-2);
     filter: invert(100%);
   }
 
-  @media (width >= 500px) {
+  @media (width >= 576px) {
     a:hover {
       background-color: var(--blue);
     }
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 576px) {
     .modal {
       display: none;
     }

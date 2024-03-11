@@ -30,7 +30,7 @@
     border: none;
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 576px) {
     button {
       padding-right: 100%;
       margin-right: -86%;

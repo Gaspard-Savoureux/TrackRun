@@ -3,11 +3,22 @@ blockquote, body, dd, dl, dt, fieldset, figure, h1, h2, h3, h4, h5, h6, hr, html
   margin: 0;
 }
 
+html, body {
+  height: 100%;
+}
+
+@media (max-width: 576px) {
+  html, body {
+    overflow-x: hidden;
+  }
+}
+
 body {
   font-family: "Open Sans", sans-serif;
   font-weight: 400;
   color: var(--text);
   background-color: var(--bg-1);
+  overflow: hidden;
 }
 
 a {
