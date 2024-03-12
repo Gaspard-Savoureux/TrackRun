@@ -76,7 +76,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
     delete user.password;
     delete user.id;
 
-    return res.status(200).json({ user });
+    return res.status(200).json(user);
 
   } catch (error) {
     next(error);
