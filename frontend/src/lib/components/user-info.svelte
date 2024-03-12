@@ -7,7 +7,7 @@
 
 <div class="row desktop">
   <div class="column">
-    <Item name="Username">{user?.username}</Item>
+    <Item name="Username">{user?.username ?? user?.username}</Item>
     <Item name="Age">{user?.age}</Item>
     <Item name="Height">{user?.height && user?.height + ' cm'}</Item>
   </div>
@@ -22,10 +22,10 @@
 
 <div class="column mobile">
   <Item name="Username">{user?.username}</Item>
-  <Item name="Age">{user?.age}</Item>
-  <Item name="Height">{user?.height && user?.height + ' cm'}</Item>
   <Item name="Email">{user?.email}</Item>
+  <Item name="Age">{user?.age}</Item>
   <Item name="Sex">{user?.sex}</Item>
+  <Item name="Height">{user?.height && user?.height + ' cm'}</Item>
   <Item name="Weight">{user?.weight && user?.weight + ' kg'}</Item>
   <Item name="Description"><p>{user?.description}</p></Item>
 </div>

@@ -11,7 +11,7 @@
 <section>
   <div class="container">
     <h1>Admin</h1>
-    <form method="POST" action="?/create" use:enhance>
+    <form method="POST" use:enhance>
       <input
         type="text"
         placeholder="Enter your username"

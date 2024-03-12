@@ -1,23 +1,25 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import UserInfo from '$lib/components/user-info.svelte';
+  // import UserInfo from '$lib/components/user-info.svelte';
   import UserinfoField from '$lib/components/userinfo-field.svelte';
   import type { Trainer } from '$lib/types/trainer.js';
+  // import type { Trainer } from '$lib/types/trainer.js';
   import { Trash2Icon } from 'svelte-feather-icons';
   // Va devoir être dynamique
   const img =
     'https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fpluspng.com%2Fimg-png%2Fpng-user-icon-circled-user-icon-2240.png&f=1&nofb=1&ipt=57cfe19f82008a29af4e6808fc7e62295538f825b80750ef2e7c3616f673dc02&ipo=images';
-  const trainers = [
-    { username: 'Michael', pic: img },
-    { username: 'Jean', pic: img },
-    { username: 'Charle', pic: img },
-  ];
+  // const trainers = [
+  //   { username: 'Michael', pic: img },
+  //   { username: 'Jean', pic: img },
+  //   { username: 'Charle', pic: img },
+  // ];
 
   let form;
 
   export let data;
 
-  // $: ({ trainer } = data);
+  $: ({ trainers } = data);
+  let currentTrainer: Trainer = null;
   // const currentTrainer: Trainer = null;
 </script>
 
@@ -33,7 +35,8 @@
     <div class="list">
       <h3>Trainers:</h3>
       {#each trainers as trainer}
-        <div class="list-item">
+        <!-- eslint-disable-next-line svelte/valid-compile -->
+        <div class="list-item" on:click={(currentTrainer = trainer)}>
           <img src={trainer.pic} alt={trainer.username} width="24" height="24" />
           <p id="name">{trainer.username}</p>
           <button class="delete-btn"><Trash2Icon size="20" /></button>
@@ -42,7 +45,7 @@
     </div>
     <div class="main">
       <!-- <UserInfo {user} /> -->
-      <UserinfoField name="Username"></UserinfoField>
+      <UserinfoField name="Username">{currentTrainer?.name}</UserinfoField>
       <UserinfoField name="Name"></UserinfoField>
       <UserinfoField name="email"></UserinfoField>
       <UserinfoField name="password"></UserinfoField>
