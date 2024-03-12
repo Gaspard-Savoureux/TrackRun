@@ -20,7 +20,7 @@
 
     if (!email.trim()) {
       errors.email = 'Email address is required.';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (!/^[a-zA-Z]{2,}@[a-zA-Z]{2,}\.[a-zA-Z]{2,}$/.test(email)) {
       errors.email = 'Email address is not valid.';
     }
 
