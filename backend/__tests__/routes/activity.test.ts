@@ -78,6 +78,114 @@ describe('POST activity', () => {
     expect(res.statusCode).toBe(401);
   });
 
+  test('Should not create because of name', async () => {
+    const activity = {
+      name: 'this is a text of 257 characters: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget turpis eu ligula ultricies fringilla. Nullam sed varius dui. Curabitur euismod, est ac venenatis eleifend, sapien purus varius justo, eget varius velit elit.',
+      city: 'San Francisco',
+      type: 'Running',
+      date: '2024-02-28 15:45:00.123456',
+      durationTotal: 30,
+      distanceTotal: 7.5,
+      comment: 'Felt good!',
+      segments: '{}'
+    };
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } =  getToken.body;
+
+
+    const res = await request(app)
+      .post(route_creation)
+      .set('Authorization', `Bearer ${token}`)
+      .send(activity);
+    expect(res.text).toEqual('{"message":"Name is required and must be between 3 and 256 characters"}');
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('Should not create because of type', async () => {
+    const activity = {
+      name: 'test',
+      city: 'San Francisco',
+      type: 'Swimming',
+      date: '2024-02-28 15:45:00.123456',
+      durationTotal: 30,
+      distanceTotal: 7.5,
+      comment: 'Felt good!',
+      segments: '{}'
+    };
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } =  getToken.body;
+
+
+    const res = await request(app)
+      .post(route_creation)
+      .set('Authorization', `Bearer ${token}`)
+      .send(activity);
+    console.log(res.text);
+    expect(res.text).toEqual('{"message":"Type is required and must be one of the following: Running, Biking, Walking"}');
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('Should not create because of date', async () => {
+    const activity = {
+      name: 'test',
+      city: 'San Francisco',
+      type: 'Running',
+      date: '2024-0-28 15:45:00.123456',
+      durationTotal: 30,
+      distanceTotal: 7.5,
+      comment: 'Felt good!',
+      segments: '{}'
+    };
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } =  getToken.body;
+
+
+    const res = await request(app)
+      .post(route_creation)
+      .set('Authorization', `Bearer ${token}`)
+      .send(activity);
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('Should not create because of durationTotal', async () => {
+    const activity = {
+      name: 'test',
+      city: 'San Francisco',
+      type: 'Running',
+      date: '2024-02-28 15:45:00.123456',
+      durationTotal: -1,
+      distanceTotal: 7.5,
+      comment: 'Felt good!',
+      segments: '{}'
+    };
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } =  getToken.body;
+
+
+    const res = await request(app)
+      .post(route_creation)
+      .set('Authorization', `Bearer ${token}`)
+      .send(activity);
+    expect(res.text).toEqual('{"message":"DurationTotal is required and must be a non-negative number"}');
+    expect(res.statusCode).toBe(400);
+  });
+
 });
 
 describe('get all activities', () => {
