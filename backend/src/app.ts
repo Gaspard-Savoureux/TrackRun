@@ -1,13 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import basicAuth from 'express-basic-auth';
 
 /***  Routers ***/
 import user from './routes/user';
+import trainer from './routes/trainer';
 import planned_activities from './routes/planned_activity';
 import stub from './routes/stub';
 import auth from './routes/auth';
 import activity from './routes/activity';
+import admin from './routes/admin';
 /****************/
 
 /*** Middlewares ***/
@@ -28,8 +31,14 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 /**** Routes ****/
+app.use('/admin', basicAuth({
+  users: { 
+    [process.env.ADMIN_NAME ?? 'admin' as string]: process.env.ADMIN_PASSWORD ?? 'defaultPassword', 
+  }
+}), admin);
 app.use(auth);
 app.use('/user', user);
+app.use('/trainer', trainer);
 app.use('/plannedactivities', planned_activities);
 app.use('/', stub);
 app.use('/activity', activity);
