@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import {planned_activities} from '../models/planned_activities';
+import { planned_activities } from '../models/planned_activities';
 import { User } from '../models/users';
 import {  getUserById  } from '../services/user.services';
 import { db } from '../db/db';
-import {and, eq, gte} from 'drizzle-orm';
-import { eq } from 'drizzle-orm';
+import { and, eq, gte } from 'drizzle-orm';
 import { deletePlannedActivityById, selectPlannedActivityById } from '../services/planned_activity.services';
 
 export const getPlannedActivities = async (req: Request, res: Response, next: NextFunction) => {
