@@ -6,7 +6,7 @@ services:
     image: mysql:8.0.36-debian
     container_name: tse-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: G0hab5gO
+      MYSQL_ROOT_PASSWORD: your_root_password
       MYSQL_DATABASE: tse_db
       MYSQL_USER: tse_user
       MYSQL_PASSWORD: tse_tse
