@@ -19,7 +19,11 @@
   export let data;
 
   $: ({ trainers } = data);
-  let currentTrainer: Trainer = null;
+  let currentTrainer: Trainer;
+
+  const setCurrentTrainer = (trainer) => {
+    currentTrainer = trainer;
+  };
   // const currentTrainer: Trainer = null;
 </script>
 
@@ -36,19 +40,24 @@
       <h3>Trainers:</h3>
       {#each trainers as trainer}
         <!-- eslint-disable-next-line svelte/valid-compile -->
-        <div class="list-item" on:click={(currentTrainer = trainer)}>
+        <button class="list-item" on:click={setCurrentTrainer(trainer)}>
           <img src={trainer.pic} alt={trainer.username} width="24" height="24" />
           <p id="name">{trainer.username}</p>
           <button class="delete-btn"><Trash2Icon size="20" /></button>
-        </div>
+        </button>
       {/each}
     </div>
     <div class="main">
+      <h3>Info:</h3>
       <!-- <UserInfo {user} /> -->
-      <UserinfoField name="Username">{currentTrainer?.name}</UserinfoField>
-      <UserinfoField name="Name"></UserinfoField>
-      <UserinfoField name="email"></UserinfoField>
-      <UserinfoField name="password"></UserinfoField>
+
+      <UserinfoField name="Id" value={currentTrainer?.id} />
+      <UserinfoField name="Username" value={currentTrainer?.username} />
+      <UserinfoField name="Name" value={currentTrainer?.name} />
+      <UserinfoField name="email" value={currentTrainer?.email} />
+      <!-- REMPLACER false par image -->
+      <UserinfoField name="image" value={false} />
+      <!-- <UserinfoField name="password"></UserinfoField> -->
     </div>
     <div class="new">
       <!-- (Possiblement modal) -->
@@ -57,11 +66,18 @@
         <!-- <h1>Admin</h1> -->
         <!-- <h2>Create user</h2> -->
         <form method="POST" action="?/create" use:enhance>
-          <input type="text" placeholder="username" name="username" value={form?.username ?? ''} />
+          <input type="text" placeholder="Username" name="username" value={form?.username ?? ''} />
+          <input type="text" placeholder="Name" name="name" value={form?.name ?? ''} />
+          <input
+            type="email"
+            placeholder="email@example.com"
+            name="email"
+            value={form?.email ?? ''}
+          />
           <input type="password" placeholder="password" name="password" />
 
           {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
-          <button class="link" type="submit">Create</button>
+          <button class="" type="submit">Ajouter</button>
           <hr />
         </form>
       </div>
@@ -72,6 +88,8 @@
 <style>
   section {
     padding: 1.5rem;
+    max-width: 40rem;
+    margin: 0 auto;
   }
 
   h1 {
@@ -91,12 +109,16 @@
     flex-wrap: column;
     flex-direction: column;
     background-color: var(--bg-3);
+    height: 30rem;
+    overflow-y: scroll;
+    /* max-height: 60%; */
   }
 
   .list-item {
     border: 2px solid var(--bg-3);
     border-radius: 6px;
     border-color: --var(--text);
+    color: var(--text);
     /* box-shadow:
       0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
       0 0px 0 1px rgba(10, 10, 10, 0.02); */
@@ -115,7 +137,7 @@
 
   .main {
     grid-area: main;
-    /* background-color: bisque; */
+    background-color: var(--bg-3);
   }
 
   .new {
@@ -129,10 +151,14 @@
       'top top top top top top'
       'list main main main main main'
       'list main main main main main'
-      'new main main main main main'
-      'new main main main main main';
-    left: 5%;
-    right: 10%;
+      'list main main main main main'
+      'new new new new new new'
+      'new new new new new new';
+    /* 'new main main main main main'
+      'new main main main main main'; */
+    /* left: 5%;
+    right: 10%; */
+    gap: 2rem;
   }
 
   /* h2 {
