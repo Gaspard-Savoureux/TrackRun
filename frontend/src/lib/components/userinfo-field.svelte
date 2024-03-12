@@ -1,11 +1,12 @@
 <script lang="ts">
   export let name: string;
+  export let value: unknown = undefined;
 </script>
 
 <div class={'item'}>
   <h3>{name}</h3>
-  {#if $$slots.default}
-    <span><slot /></span>
+  {#if value}
+    {value}
   {:else}
     <span class="notset">Not specified</span>
   {/if}

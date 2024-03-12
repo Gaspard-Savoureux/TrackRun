@@ -7,26 +7,26 @@
 
 <div class="row desktop">
   <div class="column">
-    <Item name="Username">{user?.username ?? user?.username}</Item>
-    <Item name="Age">{user?.age}</Item>
-    <Item name="Height">{user?.height && user?.height + ' cm'}</Item>
+    <Item name="Username" value={user?.username} />
+    <Item name="Age" value={user?.age} />
+    <Item name="Height" value={user?.height && user?.height + ' cm'} />
   </div>
   <div class="column">
-    <Item name="Email">{user?.email}</Item>
-    <Item name="Sex">{user?.sex}</Item>
-    <Item name="Weight">{user?.weight && user?.weight + ' kg'}</Item>
+    <Item name="Email" value={user?.email} />
+    <Item name="Sex" value={user?.sex} />
+    <Item name="Weight" value={user?.weight && user?.weight + ' kg'} />
   </div>
 
-  <Item name="Description">{user?.description}</Item>
+  <Item name="Description" value={user?.description} />
 </div>
 
 <div class="column mobile">
-  <Item name="Username">{user?.username}</Item>
-  <Item name="Email">{user?.email}</Item>
-  <Item name="Age">{user?.age}</Item>
-  <Item name="Sex">{user?.sex}</Item>
-  <Item name="Height">{user?.height && user?.height + ' cm'}</Item>
-  <Item name="Weight">{user?.weight && user?.weight + ' kg'}</Item>
+  <Item name="Username" value={user?.username} />
+  <Item name="Email" value={user?.email} />
+  <Item name="Age" value={user?.age} />
+  <Item name="Sex" value={user?.sex} />
+  <Item name="Height" value={user?.height && user?.height + ' cm'} />
+  <Item name="Weight" value={user?.weight && user?.weight + ' kg'} />
   <Item name="Description"><p>{user?.description}</p></Item>
 </div>
 
