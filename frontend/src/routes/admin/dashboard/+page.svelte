@@ -1,30 +1,80 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  // import UserInfo from '$lib/components/user-info.svelte';
+  import { invalidate, invalidateAll } from '$app/navigation';
   import UserinfoField from '$lib/components/userinfo-field.svelte';
+  import type { JsonBodyResponse } from '$lib/types/JsonBodyResponse.js';
   import type { Trainer } from '$lib/types/trainer.js';
-  // import type { Trainer } from '$lib/types/trainer.js';
-  import { Trash2Icon } from 'svelte-feather-icons';
-  // Va devoir être dynamique
-  const img =
-    'https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fpluspng.com%2Fimg-png%2Fpng-user-icon-circled-user-icon-2240.png&f=1&nofb=1&ipt=57cfe19f82008a29af4e6808fc7e62295538f825b80750ef2e7c3616f673dc02&ipo=images';
-  // const trainers = [
-  //   { username: 'Michael', pic: img },
-  //   { username: 'Jean', pic: img },
-  //   { username: 'Charle', pic: img },
-  // ];
+  import type { formDataTrainer, trainerFields } from '$lib/types/trainerField.js';
+  import { Trash2Icon, PlusIcon, MinusIcon, Edit2Icon, XIcon } from 'svelte-feather-icons';
 
-  let form;
+  export let form: formDataTrainer;
 
   export let data;
 
   $: ({ trainers } = data);
-  let currentTrainer: Trainer;
+  let currentTrainer: Trainer | null;
 
-  const setCurrentTrainer = (trainer) => {
-    currentTrainer = trainer;
+  const setCurrentTrainer = (trainer: Trainer) => {
+    if (currentTrainer === trainer) {
+      currentTrainer = null;
+    } else {
+      currentTrainer = trainer;
+    }
   };
-  // const currentTrainer: Trainer = null;
+
+  /** Trainer list related**/
+  const deleteTrainer = async (trainerId: number | undefined) => {
+    await fetch(`/admin/dashboard/${trainerId}`, { method: 'DELETE' });
+    return invalidate('/admin/dashboard');
+  };
+
+  /** Infos related**/
+  let editing = false;
+  let editForm: HTMLFormElement;
+  let dataEdited: JsonBodyResponse = {
+    message: '',
+    success: true,
+  };
+
+  const editTrainer = async () => {
+    const formData = new FormData(editForm);
+    const data = Object.fromEntries(formData);
+
+    const res = await fetch(`/admin/dashboard/${currentTrainer?.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    dataEdited = await res.json();
+
+    invalidateAll();
+  };
+
+  /** ADD trainer related**/
+  const formData: trainerFields = {
+    username: '',
+    name: '',
+    email: '',
+    password: '',
+  };
+  let trainerFormFilled = false;
+  const fillTemplateTrainer = () => {
+    if (!trainerFormFilled) {
+      formData.username = `trainer-${trainers.length}`;
+      formData.name = `trainer numero ${trainers.length}`;
+      formData.email = `trainer${trainers.length}@delicieux.jambon.com`;
+      formData.password = '1234';
+    } else {
+      formData.username = '';
+      formData.name = '';
+      formData.email = '';
+      formData.password = '';
+    }
+    trainerFormFilled = !trainerFormFilled;
+  };
 </script>
 
 <svelte:head>
@@ -36,45 +86,98 @@
     <div class="top">
       <h1>Admin Dashboard</h1>
     </div>
+
     <div class="list">
       <h3>Trainers:</h3>
       {#each trainers as trainer}
-        <!-- eslint-disable-next-line svelte/valid-compile -->
-        <button class="list-item" on:click={setCurrentTrainer(trainer)}>
-          <img src={trainer.pic} alt={trainer.username} width="24" height="24" />
+        <button class="list-item" on:click={() => setCurrentTrainer(trainer)}>
           <p id="name">{trainer.username}</p>
-          <button class="delete-btn"><Trash2Icon size="20" /></button>
+          <button class="delete-btn" on:click={() => deleteTrainer(trainer.id)}>
+            <Trash2Icon size="20" />
+          </button>
         </button>
       {/each}
     </div>
-    <div class="main">
-      <h3>Info:</h3>
-      <!-- <UserInfo {user} /> -->
 
-      <UserinfoField name="Id" value={currentTrainer?.id} />
-      <UserinfoField name="Username" value={currentTrainer?.username} />
-      <UserinfoField name="Name" value={currentTrainer?.name} />
-      <UserinfoField name="email" value={currentTrainer?.email} />
-      <!-- REMPLACER false par image -->
-      <UserinfoField name="image" value={false} />
-      <!-- <UserinfoField name="password"></UserinfoField> -->
+    <div class="main">
+      <div class="top-section">
+        <h3>Info:</h3>
+        {#if currentTrainer && !editing}
+          <button class="edit-btn" on:click={() => (editing = !editing)}><Edit2Icon /></button>
+        {:else if editing}
+          <button class="edit-btn close" on:click={() => (editing = !editing)}><XIcon /></button>
+        {/if}
+      </div>
+      {#if !editing && currentTrainer}
+        <UserinfoField name="Id" value={currentTrainer?.id} />
+        <UserinfoField name="Username" value={currentTrainer?.username} />
+        <UserinfoField name="Name" value={currentTrainer?.name} />
+        <UserinfoField name="email" value={currentTrainer?.email} />
+      {:else if currentTrainer}
+        <div class="container">
+          <form
+            method="PUT"
+            action={`?/${currentTrainer.id}`}
+            bind:this={editForm}
+            on:submit={editTrainer}
+          >
+            <label for="username">
+              Username:
+              <input type="text" placeholder={currentTrainer.username} name="username" />
+            </label>
+            <label for="name">
+              Name:
+              <input type="text" placeholder={currentTrainer.name} name="name" />
+            </label>
+            <label for="email">
+              Email:
+              <input type="email" placeholder={currentTrainer.email} name="email" />
+            </label>
+            <label for="password">
+              Password:
+              <input type="password" placeholder="New password" name="password" />
+            </label>
+
+            {#if dataEdited.success === false}<p class="danger">{dataEdited.message}</p>{/if}
+            <button class="" type="submit">Modifier</button>
+            <hr />
+          </form>
+        </div>
+      {/if}
     </div>
+
     <div class="new">
-      <!-- (Possiblement modal) -->
-      <h2>Ajouter entraîneur:</h2>
+      <div class="top-section">
+        <h3>Ajouter entraîneur:</h3>
+        <button class="add-trainer-template" class:trainerFormFilled on:click={fillTemplateTrainer}>
+          {#if trainerFormFilled}
+            <span class="minus"> <MinusIcon size="20" /> </span>
+          {:else}
+            <span class="plus"><PlusIcon size="20" /></span>
+          {/if}
+        </button>
+      </div>
       <div class="container">
-        <!-- <h1>Admin</h1> -->
-        <!-- <h2>Create user</h2> -->
-        <form method="POST" action="?/create" use:enhance>
-          <input type="text" placeholder="Username" name="username" value={form?.username ?? ''} />
-          <input type="text" placeholder="Name" name="name" value={form?.name ?? ''} />
+        <form method="POST" use:enhance action="?/createTrainer" on:submit={fillTemplateTrainer}>
+          <input
+            type="text"
+            placeholder="Username"
+            name="username"
+            value={form?.username ?? formData?.username}
+          />
+          <input type="text" placeholder="Name" name="name" value={form?.name ?? formData?.name} />
           <input
             type="email"
             placeholder="email@example.com"
             name="email"
-            value={form?.email ?? ''}
+            value={form?.email ?? formData?.email}
           />
-          <input type="password" placeholder="password" name="password" />
+          <input
+            type="password"
+            placeholder="password"
+            name="password"
+            value={formData?.password}
+          />
 
           {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
           <button class="" type="submit">Ajouter</button>
@@ -88,7 +191,7 @@
 <style>
   section {
     padding: 1.5rem;
-    max-width: 40rem;
+    max-width: 60rem;
     margin: 0 auto;
   }
 
@@ -98,20 +201,19 @@
 
   .top {
     grid-area: top;
-    /* background-color: var(--bg-3); */
     text-align: center;
   }
 
+  /* LIST TRAINER */
   .list {
     grid-area: list;
-    /* background-color: red; */
     display: flex;
     flex-wrap: column;
     flex-direction: column;
     background-color: var(--bg-3);
-    height: 30rem;
     overflow-y: scroll;
-    /* max-height: 60%; */
+    min-width: 4rem;
+    /* height: 95%; */
   }
 
   .list-item {
@@ -127,55 +229,120 @@
     flex: row;
     justify-content: space-between;
     align-items: center;
-    backdrop-filter: invert(80%);
-    /* filter: invert(100%); */
+    min-width: 2rem;
   }
 
-  .list-item > p {
-    filter: invert(100%);
+  .list-item:hover {
+    background-color: inherit;
+    border-color: var(--success);
+    color: var(--text);
   }
 
+  .delete-btn {
+    color: var(--text-button);
+    border-color: var(--text);
+    background-color: var(--danger);
+    border-radius: 6px;
+    border: none;
+  }
+
+  .delete-btn:hover {
+    background-color: var(--success);
+  }
+
+  /* MAIN/INFO */
   .main {
     grid-area: main;
     background-color: var(--bg-3);
+    /* max-width: 30rem; */
+    /* min-width: 20rem; */
+    /* width: 32rem; */
+    /* width: 90%; */
   }
 
+  .edit-btn {
+    all: unset;
+    border-radius: 50%;
+    border-color: var(--text);
+    padding: 0.3rem;
+  }
+
+  .edit-btn:hover {
+    background-color: var(--success);
+  }
+  .edit-btn.close:hover {
+    background-color: var(--danger);
+  }
+
+  /* NEW TRAINER */
   .new {
     grid-area: new;
+    background-color: var(--bg-3);
   }
 
+  .add-trainer-template {
+    all: unset;
+    height: 20px;
+    border: 3px solid var(--text);
+    border-radius: 6px;
+  }
+
+  .add-trainer-template:hover {
+    background-color: var(--success);
+  }
+  .trainerFormFilled:hover {
+    background-color: var(--danger);
+  }
+
+  /* LAYOUT */
   .grid-container {
     background-color: var(--bg-2);
     display: grid;
+    grid-template-columns: 2fr 2fr 2fr;
+    grid-template-rows: 0fr 1.1fr 2fr;
     grid-template-areas:
-      'top top top top top top'
-      'list main main main main main'
-      'list main main main main main'
-      'list main main main main main'
-      'new new new new new new'
-      'new new new new new new';
-    /* 'new main main main main main'
-      'new main main main main main'; */
-    /* left: 5%;
-    right: 10%; */
+      'top  top top'
+      'list main main'
+      'list new new';
+
+    /* grid-template-areas:
+      'top top top top top top top'
+      'list list main main main main main'
+      'list list main main main main main'
+      'list list main main main main main'
+      'list list main main main main main'
+      'list list new new new new new'
+      'list list new new new new new'; */
     gap: 2rem;
+    padding: 1rem;
   }
 
-  /* h2 {
-    background-color: var(--bg-3);
-  } */
-
-  h2 {
-    text-align: center;
+  .top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    height: 1.3rem;
   }
-  .delete-btn {
-    color: var(--text-button);
-    background-color: var(--danger);
-    border-radius: 10px;
+  @media (max-width: 700px) {
+    .grid-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main {
+      min-width: 0;
+    }
+  }
+  .grid-container > .list,
+  .main,
+  .new {
+    border-radius: 6px;
+    padding: 1rem;
   }
 
+  /* OTHER */
   .container {
-    /* padding: 1rem; */
     max-width: 30rem;
     margin: 0 auto;
     border-radius: 0.35rem;
@@ -187,6 +354,7 @@
       padding: 2rem;
     }
   }
+
   form {
     display: flex;
     flex-direction: column;

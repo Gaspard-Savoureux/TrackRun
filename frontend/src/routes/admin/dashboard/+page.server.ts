@@ -15,59 +15,72 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
     throw new Error(`HTTP error! Status: ${await res.status}}`);
   }
 
-  // const resData = await res.json();
-  // console.log(await res.json());
   const trainers: Trainer[] = await res.json();
   return { trainers };
 };
 
 
-// export const actions: object = {
-//   default: async ({ cookies, fetch, request }: RequestEvent) => {
-//     const data = await request.formData();
-//     const username = data.get('username');
-//     const password = data.get('password');
+export const actions: object = {
+  createTrainer: async ({ fetch, request, locals }: RequestEvent) => {
+    const data = await request.formData();
 
-//     if (!username) return fail(400, {
-//       success: false,
-//       message: 'Please enter a username',
-//       username,
-//     });
+    const username = data.get('username');
+    const name = data.get('name');
+    const email = data.get('email');
+    const password = data.get('password');
+    
+    if (!username) return fail(400, {
+      success: false,
+      message: 'Please enter a username',
+      username,
+    });
 
-//     if (!password) return fail(400, {
-//       success: false,
-//       message: 'Please enter a password',
-//       username,
-//     });
+    if (!name) return fail(400, {
+      success: false,
+      message: 'Please enter the trainer\'s name',
+      name,
+    });
 
-//     const encodedCredentials = btoa(`${username}:${password}`);
-//     const res = await fetch(`${API_URL}/admin`, {
-//       method: 'GET',
-//       headers: { Authorization: `Basic ${encodedCredentials}` },
-//     });
+    if (!email) return fail(400, {
+      success: false,
+      message: 'Please enter the trainer\'s email',
+      email,
+    });
 
-//     if (res.status === 400 || res.status === 401) return fail(res.status, {
-//       success: false,
-//       message: 'Your credentials are invalid',
-//       username,
-//     });
+    if (!password) return fail(400, {
+      success: false,
+      message: 'Please enter a password',
+      password,
+    });
 
-//     if (res.ok) {
-//       cookies.set('basicAuth', `Basic ${encodedCredentials}`, {
-//         path: '/',
-//         httpOnly: true,
-//         sameSite: 'strict',
-//         // secure: process.env.NODE_ENV === 'production',
-//         maxAge: 60 * 60, // 1h
-//       });
-//       redirect(302, '/admin/dashboard');
-//     }
+    const res = await fetch(`${API_URL}/admin/trainer`, {
+      method: 'POST',
+      headers: { Authorization: locals.basicAuth as string, 'Content-Type': 'application/json' },
+      body: JSON.stringify({username, name, email, password}),
+    });
+    
+    if (res.status === 400 || res.status === 401) return fail(res.status, {
+      success: false,
+      message: 'Your credentials are invalid',
+    });
 
-//     return fail(500, {
-//       success: false,
-//       message: 'Internal server error',
-//       username,
-//     });
-//   },
-// };
+    if (res.status === 409) return fail(res.status, {
+      success: false,
+      message: 'Conflict, email or username already in use',
+    });
+
+    if (res.ok) {
+      return {
+        success: true,
+        message: 'Trainer added successfully',
+      };
+    }
+
+    return fail(500, {
+      success: false,
+      message: 'Internal server error',
+      username,
+    });
+  },
+};
 
