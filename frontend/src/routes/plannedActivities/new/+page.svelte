@@ -5,14 +5,16 @@
   let durationInMinutes = 0;
   let name = '';
   let comment = ''; */
+  import { enhance } from '$app/forms';
 
-  let submitted = false;
+  export let form;
 
-
+/*
   function handleSubmission() {
     submitted = true;
-    setTimeout(() => submitted = false, 3000); // Reset after 3 seconds
+    //setTimeout(() => submitted = false, 3000); // Reset after 3 seconds
   }
+*/
 </script>
 
 <svelte:head>
@@ -65,19 +67,20 @@
 </style>
 
 <h2 class="header">Plan a new activity</h2>
-<form method="POST" action="/plannedactivities" on:submit={handleSubmission}>
-  <label for="type">Type</label>
+
+  <form method="POST" use:enhance>
+  <label for="type">Type<span class="danger">*</span></label>
   <select id="type" name="type">
     <option value="Running">Running</option>
     <option value="Biking">Biking</option>
     <option value="Walking">Walking</option>
   </select>
 
-  <label for="date">Date</label>
-  <input id="date" type="date" name="date" />
+  <label for="date">Date<span class="danger">*</span></label>
+  <input id="date" type="date" name="date"/>
 
-  <label for="duration">Duration (in minutes)</label>
-  <input id="duration" type="number" name="duration" />
+  <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
+  <input id="duration" type="number" name="duration"/>
 
   <label for="name">Name</label>
   <input id="name" name="name" />
@@ -85,9 +88,12 @@
   <label for="comment">Comment</label>
   <textarea id="comment" name="comment"></textarea>
 
+  {#if form?.success === false}
+    <p class="danger">{form?.message}</p>
+  {:else if form?.success === true}
+    <p>Activity planned!</p>
+    <a href="/plannedActivities">See planned activity [ADD URL WITH ID]</a>
+  {/if}
+
   <button type="submit">Submit</button>
 </form>
-
-{#if submitted}
-  <p>Activity created</p>
-{/if}
