@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { invalidate, invalidateAll } from '$app/navigation';
+  import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import UserinfoField from '$lib/components/userinfo-field.svelte';
   import type { JsonBodyResponse } from '$lib/types/JsonBodyResponse.js';
   import type { Trainer } from '$lib/types/trainer.js';
@@ -84,7 +85,11 @@
 <section>
   <div class="grid-container">
     <div class="top">
+      <div></div>
       <h1>Admin Dashboard</h1>
+      <div>
+        <ThemeSwitcher />
+      </div>
     </div>
 
     <div class="list">
@@ -202,6 +207,8 @@
   .top {
     grid-area: top;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
   }
 
   /* LIST TRAINER */
@@ -213,7 +220,7 @@
     background-color: var(--bg-3);
     overflow-y: scroll;
     min-width: 4rem;
-    /* height: 95%; */
+    height: 40rem;
   }
 
   .list-item {
@@ -332,6 +339,10 @@
 
     .main {
       min-width: 0;
+    }
+
+    :global(html, body) {
+      overflow: scroll;
     }
   }
   .grid-container > .list,
