@@ -43,7 +43,6 @@ router.post('/manual',
     body('comment').isString().withMessage('Comment is optional'),
     body('segments').isJSON().withMessage('Data of workout is optional')
   ],
-
   expressValidator,
   verifyUserToken,
   createActivity
