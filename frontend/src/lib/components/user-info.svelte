@@ -27,7 +27,7 @@
   <Item name="Sex" value={user?.sex} />
   <Item name="Height" value={user?.height && user?.height + ' cm'} />
   <Item name="Weight" value={user?.weight && user?.weight + ' kg'} />
-  <Item name="Description"><p>{user?.description}</p></Item>
+  <Item name="Description" value={user?.description && user.description}></Item>
 </div>
 
 <style>

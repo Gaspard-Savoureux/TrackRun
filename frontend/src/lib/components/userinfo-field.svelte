@@ -6,7 +6,7 @@
 <div class={'item'}>
   <h3>{name}</h3>
   {#if value}
-    {value}
+    <span>{value}</span>
   {:else}
     <span class="notset">Not specified</span>
   {/if}
@@ -33,10 +33,11 @@
   @media (max-width: 576px) {
     .item {
       display: block;
+      margin: 0.5rem;
     }
 
     span {
-      margin-left: 2rem;
+      margin-left: 0.5rem;
     }
   }
 </style>
