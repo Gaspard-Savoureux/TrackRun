@@ -18,7 +18,7 @@ export const actions: object = {
     const data = await request.formData();
     const pActivity = {
       type: data.get('type'),
-      date: data.get('date'),
+      date: `${data.get('date')} ${data.get('time')}`,
       duration: data.get('duration'),
       name: data.get('name') || data.get('type'),
       comment: data.get('comment') || '',

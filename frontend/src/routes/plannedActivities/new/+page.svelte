@@ -22,6 +22,9 @@
 </svelte:head>
 
 <style>
+  body {
+    
+  }
   form {
     display: flex;
     flex-direction: column;
@@ -66,34 +69,39 @@
   }
 </style>
 
-<h2 class="header">Plan a new activity</h2>
+<body>
+  <h2 class="header">Plan a new activity</h2>
 
-  <form method="POST" use:enhance>
-  <label for="type">Type<span class="danger">*</span></label>
-  <select id="type" name="type">
-    <option value="Running">Running</option>
-    <option value="Biking">Biking</option>
-    <option value="Walking">Walking</option>
-  </select>
+    <form method="POST" use:enhance>
+    <label for="type">Type<span class="danger">*</span></label>
+    <select id="type" name="type">
+      <option value="Running">Running</option>
+      <option value="Biking">Biking</option>
+      <option value="Walking">Walking</option>
+    </select>
 
-  <label for="date">Date<span class="danger">*</span></label>
-  <input id="date" type="date" name="date"/>
+    <label for="date">Date<span class="danger">*</span></label>
+    <input id="date" type="date" name="date" />
 
-  <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
-  <input id="duration" type="number" name="duration"/>
+    <label for="time">Time<span class="danger">*</span></label>
+    <input id="time" type="time" name="time" step="1" />
 
-  <label for="name">Name</label>
-  <input id="name" name="name" />
+    <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
+    <input id="duration" type="number" name="duration"/>
 
-  <label for="comment">Comment</label>
-  <textarea id="comment" name="comment"></textarea>
+    <label for="name">Name</label>
+    <input id="name" name="name" />
 
-  {#if form?.success === false}
-    <p class="danger">{form?.message}</p>
-  {:else if form?.success === true}
-    <p>Activity planned!</p>
-    <a href="/plannedActivities">See planned activity [ADD URL WITH ID]</a>
-  {/if}
+    <label for="comment">Comment</label>
+    <textarea id="comment" name="comment"></textarea>
 
-  <button type="submit">Submit</button>
-</form>
+    {#if form?.success === false}
+      <p class="danger">{form?.message}</p>
+    {:else if form?.success === true}
+      <p>Activity planned!</p>
+      <a href="/plannedActivities">See planned activity [ADD URL WITH ID]</a>
+    {/if}
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
