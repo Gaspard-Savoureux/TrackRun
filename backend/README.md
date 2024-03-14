@@ -16,8 +16,9 @@ Pour le MySQL local, vous avez 2 options: **(ne faites pas les deux!)**
 - `docker compose up` depuis la **racine** du projet pour lancer un container mysql
 - utiliser le `.env` fourni (voir instructions plus bas)
 - Si un Mac Apple Silicon chip est utilisé, le changement suivant se doit d'être appliquer dans le fichier `docker-compose-yml` a la source du projet.
+
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   mysql:
@@ -72,6 +73,10 @@ DB_URL=mysql://user:password@host:port/database # uri de connexion
 # exemple developpement local:
 # DB_URL=mysql://touriste:expirer@localhost:3306/sportapp
 SECRET=nimportequellescaractères # Pour hasher les mots de passes
+
+# Pour le basic Auth de l'admin, OBLIGATOIRE
+ADMIN_NAME=admin
+ADMIN_PASSWORD=1234
 ```
 
 Si vous avez utilisé `docker` pour `mysql`(option 1), voici le contenu du fichier `.env` à créer:

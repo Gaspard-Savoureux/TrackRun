@@ -43,7 +43,6 @@ router.post('/manual',
     body('distanceTotal').custom((value) => value === null || (typeof value === 'number')).withMessage('Distance in kilometer'),
     body('comment').custom((value) => value === null || (typeof value === 'string' && value.trim().length > 0)).withMessage('Comment is optional'),
   ],
-
   expressValidator,
   verifyUserToken,
   createActivityManual
