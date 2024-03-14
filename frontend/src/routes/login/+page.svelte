@@ -38,9 +38,9 @@
     background-color: var(--bg-2);
   }
 
-  @media (width >= 500px) {
+  @media (width >= 576px) {
     .container {
-      padding: 2rem
+      padding: 2rem;
     }
   }
 
