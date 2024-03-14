@@ -18,7 +18,7 @@ body {
   font-weight: 400;
   color: var(--text);
   background-color: var(--bg-1);
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 a {
