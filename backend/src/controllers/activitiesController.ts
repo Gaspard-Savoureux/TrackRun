@@ -107,20 +107,30 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
     }
 
     let segments; let metadata;
+
     if (req.file) {
       const gpxConverter = new gpxParser();
       const conversionResult = await gpxConverter.parseGpxFile(req.file.path);
       segments = conversionResult.segments;
+      console.log(segments);
       metadata = conversionResult.metadata;
+      console.log(metadata);
     } else {
       return res.status(400).send('No GPX file uploaded.');
     }
 
     const city = null; // Assuming city is not determined from the GPX file
-    const { date: date, durationTotal, distanceTotal } = metadata;
+    let { date: date, durationTotal, distanceTotal } = metadata;
+
+    if (!date)
+      date = new Date();
+    else
+      date = new Date(date);
 
     const userId = req.user?.userId as number;
 
+    console.log(date);
+    console.log('en route');
     const result = await db.insert(activities).values([{
       user_id: userId,
       name,
@@ -130,9 +140,10 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
       durationTotal,
       distanceTotal,
       comment,
-      segments: JSON.stringify(segments) // Assuming your DB can store JSON or stringified JSON
+      segments // Assuming your DB can store JSON or stringified JSON
     }]);
 
+    console.log('work');
     if (!result) {
       // handle the error or throw an error
       throw new Error('Database insertion failed.');
@@ -140,6 +151,7 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
 
     res.status(200).send('GPX file processed successfully.');
   } catch (error) {
+    console.log('fail');
     next(error);
   }
 };
