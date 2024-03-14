@@ -1,9 +1,16 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { createActivityManual, getActivity, getSpecifiedActivities, createActivityGPX } from '../controllers/activitiesController';
+import {
+  createActivityManual,
+  getActivity,
+  getSpecifiedActivities,
+  createActivityGPX,
+  getGPXDataByID
+} from '../controllers/activitiesController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 import { upload } from '../middlewares/uploadActivity';
+import {getActivityById} from '../services/activity.services';
 
 const router = express.Router();
 
@@ -151,6 +158,36 @@ router.get('/getActivity',
 router.get('/getSpecifiedActivities',
   verifyUserToken,
   getSpecifiedActivities
+);
+
+/**
+ * @swagger
+ * /activity/getGPXData:
+ *  get:
+ *    tags:
+ *    - Activity
+ *    summary: Get GPX data
+ *    description: Get GPX data by ID
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *      - in: query
+ *        name: id
+ *        required: true
+ *        description: The ID of the GPX data
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: Success
+ *      404:
+ *        description: No corresponding GPX data found
+ *      500:
+ *        description: Server Error
+ */
+router.get('/getGPXData',
+  verifyUserToken,
+  getGPXDataByID
 );
 
 export default router;
