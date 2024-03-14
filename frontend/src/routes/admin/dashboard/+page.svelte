@@ -197,18 +197,20 @@
   section {
     padding: 1.5rem;
     max-width: 60rem;
+    max-height: 40rem;
     margin: 0 auto;
   }
 
-  h1 {
-    padding: 1rem;
-  }
-
+  /* TOP/TITLE section */
   .top {
     grid-area: top;
     text-align: center;
     display: flex;
     justify-content: space-between;
+  }
+
+  h1 {
+    padding: 1rem;
   }
 
   /* LIST TRAINER */
@@ -228,9 +230,6 @@
     border-radius: 6px;
     border-color: --var(--text);
     color: var(--text);
-    /* box-shadow:
-      0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
-      0 0px 0 1px rgba(10, 10, 10, 0.02); */
     padding: 1.25rem;
     display: flex;
     flex: row;
@@ -261,11 +260,10 @@
   .main {
     grid-area: main;
     background-color: var(--bg-3);
-    /* max-width: 30rem; */
-    /* min-width: 20rem; */
-    /* width: 32rem; */
-    /* width: 90%; */
+    height: auto;
   }
+
+  /* .main::-webkit-resizer */
 
   .edit-btn {
     all: unset;
@@ -306,22 +304,16 @@
     background-color: var(--bg-2);
     display: grid;
     grid-template-columns: 2fr 2fr 2fr;
-    grid-template-rows: 0fr 1.1fr 2fr;
     grid-template-areas:
       'top  top top'
       'list main main'
       'list new new';
-
-    /* grid-template-areas:
-      'top top top top top top top'
-      'list list main main main main main'
-      'list list main main main main main'
-      'list list main main main main main'
-      'list list main main main main main'
-      'list list new new new new new'
-      'list list new new new new new'; */
     gap: 2rem;
     padding: 1rem;
+  }
+
+  :global(html, body) {
+    overflow: auto;
   }
 
   .top-section {
@@ -357,7 +349,7 @@
     max-width: 30rem;
     margin: 0 auto;
     border-radius: 0.35rem;
-    background-color: var(--bg-2);
+    background-color: inherit;
   }
 
   @media (width >= 576px) {
@@ -374,16 +366,17 @@
 
   input {
     font-size: 1.15rem;
-    line-height: 1.5;
+    /* line-height: 1.5; */
     box-sizing: border-box;
-    display: inline-flex;
-    height: 3.125rem;
+    /* display: inline-flex; */
+    /* height: 3.125rem; */
     width: 100%;
-    max-width: 100%;
+    /* max-width: 100%; */
     padding: 0.5rem 0.5rem;
     border-radius: 4px;
     border: 1px solid var(--text-light);
-    background-color: inherit;
+    /* background-color: inherit; */
+    background-color: var(--bg-2);
   }
 
   input:focus-visible {
@@ -395,7 +388,7 @@
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--text-button);
-    width: 100%;
+    /* width: 100%; */
     padding: 0.47em 1em;
     border: 1px solid transparent;
     border-radius: 4px;
