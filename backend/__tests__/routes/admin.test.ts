@@ -243,4 +243,22 @@ describe('Trainer routes', () => {
     });
   });
 
+  describe ('GET /admin', () => {
+    test('#15: should send back authorization valid', async () => {
+      const res = await request(app)
+        .get('/admin')
+        .set('Authorization', `Basic ${basicAuthCredentials}`);
+
+      expect(res.status).toBe(200);
+    });
+
+    test('#16: should send back authorization invalid', async () => {
+      const res = await request(app)
+        .get('/admin');
+        
+      expect(res.status).toBe(401);
+    });
+  });
+
+
 });
