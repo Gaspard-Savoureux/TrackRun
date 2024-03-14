@@ -10,7 +10,6 @@ import {
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 import { upload } from '../middlewares/uploadActivity';
-import {getActivityById} from '../services/activity.services';
 
 const router = express.Router();
 
