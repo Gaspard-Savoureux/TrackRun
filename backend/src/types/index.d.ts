@@ -12,23 +12,36 @@ import 'express';
  *         userId:
  *           type: integer
  *           example: 1
- * 
  */
 export type userPayload = {
-  userId: number; 
+  userId: number;
   [key: string]: JwtPayload | string;
+};
 
-}; 
-// declare module 'express-serve-static-core' {
-//   interface Request {
-//     user?: userPayload;
-//   }
-// }
+
+// TODO À valider plus tard, mauvaise branche
+// NOTE on peut probablement l'ajouter à userPayload et faire la validation sur le login
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *   TrainerPayload:
+ *    type: object
+ *   properties:
+ *   trainerId:
+ *   type: integer
+ *  example: 1
+ */
+// export type trainerPayload = {
+//   trainerId: number;
+//   [key: string]: JwtPayload | string;
+// };
 
 declare global {
   namespace Express {
     export interface Request {
       user?: userPayload;
+      trainer?: trainerPayload;
     }
   }
 }
