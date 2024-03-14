@@ -73,44 +73,7 @@ export class gpxParser {
       segments: gpxJson.gpx.trk[0].trkseg
     };
     return result;
-    /*    return new Promise((resolve, reject) => {
-      fs.readFile(filePath, 'utf8', (err, data) => {
-        if (err) {
-          console.log('step2');
-          reject(err);
-        } else {
-          console.log('step3');
-          this.parser.parseString(data, async (error: any, result: any) => {
-            if (error) {
-              console.log('step4');
-              reject(error);
-            } else {
-              console.log('step5');
-              try {
-                // Previously, here was a recursive call to parseGpxFile
-                // Now directly calculate total distance and duration from `result`
-                console.log('step6');
-                // const totalDistance = await this.getTotalDistance(data);
-                console.log('step7');
-                // const totalDuration = await this.getTotalDuration(data);
-                console.log('step8');
-                // Add to result
-                // result.totalDistance = totalDistance;
-                // result.totalDuration = totalDuration;
-
-                resolve(result);
-                console.log('step9');
-              } catch (err) {
-                reject(err);
-              }
-            }
-          });
-          console.log('step10');
-        }
-      });
-    });*/
   }
-
 
   private async getTotalDistance(data: GpxTrkSeg[]): Promise<number> {
     let totalDistance = 0;
