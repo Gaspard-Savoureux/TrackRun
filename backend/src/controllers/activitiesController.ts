@@ -3,7 +3,7 @@ import { activities } from '../models/activities';
 import { db } from '../db/db';
 import { User } from '../models/users';
 import { getUserById } from '../services/user.services';
-import { getUserActivities } from '../services/activity.services';
+import {getActivityById, getUserActivities} from '../services/activity.services';
 import { gpxParser } from './gpxParser';
 
 
@@ -156,7 +156,6 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
   }
 };
 
-
 export const getActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
@@ -200,6 +199,27 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
     return res.status(200).json(searchedActivities);
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+export const getGPXDataByID = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const activityId = parseInt(req.params.activityId);
+
+    if (isNaN(activityId) || !activityId) {
+      return res.status(400).json({ error: 'Invalid activityId' });
+    }
+
+    const activityRequest = await getActivityById(activityId, userId);
+
+    if (activityRequest.length !== 1) {
+      return res.status(404).json({ error: 'Activity not found' });
+    }
+
+    return res.status(201).json({activityRequest});
+  } catch (error) {
     next(error);
   }
 };
