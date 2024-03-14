@@ -3,7 +3,7 @@ import multer from 'multer';
 // Set up storage directory (adjust path as needed)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, '../../uploads/'); // make sure this uploads directory exists
+    cb(null, './src/uploads/'); // make sure this uploads directory exists
   },
   filename: (req, file, cb) => {
     cb(null, file.fieldname + '-' + Date.now() + '.gpx');
@@ -12,11 +12,13 @@ const storage = multer.diskStorage({
 
 // Adjust the fileFilter to include the req parameter
 const fileFilter = (req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  if (file.mimetype === 'application/gpx+xml' || (file.mimetype === 'text/xml' && file.originalname.endsWith('.gpx'))) {
+  if ( file.mimetype === 'application/gpx+xml'
+    || file.mimetype === 'application/octet-stream' && file.originalname.endsWith('.gpx')
+    || file.mimetype === 'text/xml' && file.originalname.endsWith('.gpx') ) {
     cb(null, true);
   } else {
     new Error('Please upload only GPX files.');
-    cb(null, false);
+    cb(null, true);
   }
 };
 
