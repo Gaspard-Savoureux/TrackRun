@@ -51,7 +51,7 @@ router.post('/manual',
 
 /**
  * @swagger
- * /gpxForm:
+ * /activity/gpxForm:
  *  post:
  *   tags:
  *    - Activity
