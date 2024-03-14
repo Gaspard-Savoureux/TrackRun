@@ -15,15 +15,11 @@
   $: ({ trainers } = data);
   let currentTrainer: Trainer | null;
 
+  /** Trainer list related**/
   const setCurrentTrainer = (trainer: Trainer) => {
-    if (currentTrainer === trainer) {
-      currentTrainer = null;
-    } else {
-      currentTrainer = trainer;
-    }
+    currentTrainer = currentTrainer === trainer ? null : trainer;
   };
 
-  /** Trainer list related**/
   const deleteTrainer = async (trainerId: number | undefined) => {
     await fetch(`/admin/dashboard/${trainerId}`, { method: 'DELETE' });
     return invalidate('/admin/dashboard');
@@ -93,15 +89,18 @@
     </div>
 
     <div class="list">
-      <h3>Trainers:</h3>
-      {#each trainers as trainer}
-        <button class="list-item" on:click={() => setCurrentTrainer(trainer)}>
-          <p id="name">{trainer.username}</p>
-          <button class="delete-btn" on:click={() => deleteTrainer(trainer.id)}>
-            <Trash2Icon size="20" />
+      <h3>Entraîneurs:</h3>
+      <!-- <h3>Trainers:</h3> -->
+      <div class="list-content">
+        {#each trainers as trainer}
+          <button class="list-item" on:click={() => setCurrentTrainer(trainer)}>
+            <p id="name">{trainer.username}</p>
+            <button class="delete-btn" on:click={() => deleteTrainer(trainer.id)}>
+              <Trash2Icon size="20" />
+            </button>
           </button>
-        </button>
-      {/each}
+        {/each}
+      </div>
     </div>
 
     <div class="main">
@@ -115,23 +114,23 @@
       </div>
       {#if !editing && currentTrainer}
         <UserinfoField name="Id" value={currentTrainer?.id} />
-        <UserinfoField name="Username" value={currentTrainer?.username} />
+        <UserinfoField name="Nom d'utilisateur" value={currentTrainer?.username} />
+        <UserinfoField name="Nom" value={currentTrainer?.name} />
+        <UserinfoField name="Email" value={currentTrainer?.email} />
+        <!-- <UserinfoField name="Username" value={currentTrainer?.username} />
         <UserinfoField name="Name" value={currentTrainer?.name} />
-        <UserinfoField name="email" value={currentTrainer?.email} />
+        <UserinfoField name="email" value={currentTrainer?.email} /> -->
       {:else if currentTrainer}
         <div class="container">
-          <form
-            method="PUT"
-            action={`?/${currentTrainer.id}`}
-            bind:this={editForm}
-            on:submit={editTrainer}
-          >
+          <form method="PUT" bind:this={editForm} on:submit={editTrainer}>
             <label for="username">
-              Username:
+              <!-- Username: -->
+              Nom d'utilisateur:
               <input type="text" placeholder={currentTrainer.username} name="username" />
             </label>
             <label for="name">
-              Name:
+              <!-- Name: -->
+              Nom:
               <input type="text" placeholder={currentTrainer.name} name="name" />
             </label>
             <label for="email">
@@ -139,8 +138,10 @@
               <input type="email" placeholder={currentTrainer.email} name="email" />
             </label>
             <label for="password">
-              Password:
-              <input type="password" placeholder="New password" name="password" />
+              <!-- Password: -->
+              <!-- <input type="password" placeholder="New password" name="password" /> -->
+              Mot de passe:
+              <input type="password" placeholder="Nouveau mot de passe" name="password" />
             </label>
 
             {#if dataEdited.success === false}<p class="danger">{dataEdited.message}</p>{/if}
@@ -156,9 +157,9 @@
         <h3>Ajouter entraîneur:</h3>
         <button class="add-trainer-template" class:trainerFormFilled on:click={fillTemplateTrainer}>
           {#if trainerFormFilled}
-            <span class="minus"> <MinusIcon size="20" /> </span>
+            <MinusIcon size="20" />
           {:else}
-            <span class="plus"><PlusIcon size="20" /></span>
+            <PlusIcon size="20" />
           {/if}
         </button>
       </div>
@@ -166,26 +167,26 @@
         <form method="POST" use:enhance action="?/createTrainer" on:submit={fillTemplateTrainer}>
           <input
             type="text"
-            placeholder="Username"
+            placeholder="Nom d'utilisateur"
             name="username"
             value={form?.username ?? formData?.username}
           />
-          <input type="text" placeholder="Name" name="name" value={form?.name ?? formData?.name} />
+          <input type="text" placeholder="Nom" name="name" value={form?.name ?? formData?.name} />
           <input
             type="email"
-            placeholder="email@example.com"
+            placeholder="email@exemple.com"
             name="email"
             value={form?.email ?? formData?.email}
           />
           <input
             type="password"
-            placeholder="password"
+            placeholder="Mot de passe"
             name="password"
             value={formData?.password}
           />
 
           {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
-          <button class="" type="submit">Ajouter</button>
+          <button type="submit">Ajouter</button>
           <hr />
         </form>
       </div>
@@ -220,7 +221,13 @@
     flex-wrap: column;
     flex-direction: column;
     background-color: var(--bg-3);
-    overflow-y: scroll;
+  }
+
+  .list-content {
+    display: flex;
+    flex-wrap: column;
+    flex-direction: column;
+    overflow-y: auto;
     min-width: 4rem;
     height: 40rem;
   }
@@ -248,7 +255,7 @@
     color: var(--text-button);
     border-color: var(--text);
     background-color: var(--danger);
-    border-radius: 6px;
+    border-radius: 4px;
     border: none;
   }
 
@@ -304,6 +311,7 @@
     background-color: var(--bg-2);
     display: grid;
     grid-template-columns: 2fr 2fr 2fr;
+    grid-template-rows: 0fr 1.1fr 2fr;
     grid-template-areas:
       'top  top top'
       'list main main'
@@ -366,16 +374,13 @@
 
   input {
     font-size: 1.15rem;
-    /* line-height: 1.5; */
+    line-height: 1.5;
     box-sizing: border-box;
-    /* display: inline-flex; */
-    /* height: 3.125rem; */
+    height: 3.125rem;
     width: 100%;
-    /* max-width: 100%; */
     padding: 0.5rem 0.5rem;
     border-radius: 4px;
     border: 1px solid var(--text-light);
-    /* background-color: inherit; */
     background-color: var(--bg-2);
   }
 
@@ -388,7 +393,7 @@
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--text-button);
-    /* width: 100%; */
+    width: 100%;
     padding: 0.47em 1em;
     border: 1px solid transparent;
     border-radius: 4px;
