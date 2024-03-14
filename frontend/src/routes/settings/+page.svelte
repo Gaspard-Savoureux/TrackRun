@@ -1,10 +1,29 @@
 <script lang="ts">
-  import ThemeSwitcher from "$lib/components/theme-switcher.svelte";
-  import type { PageServerData } from "./$types";
+  import { applyAction, deserialize } from '$app/forms';
+  import { invalidateAll } from '$app/navigation';
+  import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
+  import type { ActionResult } from '@sveltejs/kit';
+  import type { ActionData, PageServerData } from './$types';
 
   export let data: PageServerData;
+  export let form: ActionData;
 
-  console.log(data)
+  const submitUpdateUser = async (event: { currentTarget: EventTarget & HTMLFormElement }) => {
+    const data = new FormData(event.currentTarget);
+
+    const response = await fetch(event.currentTarget.action, {
+      method: 'POST',
+      body: data,
+    });
+
+    const result: ActionResult = deserialize(await response.text());
+
+    if (result.type === 'success') {
+      await invalidateAll();
+    }
+
+    applyAction(result);
+  };
 </script>
 
 <svelte:head>
@@ -14,14 +33,18 @@
 <section>
   <h1>Settings</h1>
   <h2>Update user profile</h2>
-  <form method="POST">
+  <form method="POST" action="?/user" on:submit|preventDefault={submitUpdateUser}>
     <label>
       Username
       <input type="text" name="username" value={data.user.username} />
     </label>
     <label>
-      Password
-      <input type="password" name="password" />
+      Email
+      <input type="email" name="email" value={data.user.email} />
+    </label>
+    <label>
+      Name
+      <input type="text" name="name" value={data.user.name} />
     </label>
     <label>
       Age
@@ -35,9 +58,18 @@
       Weight
       <input type="text" name="weight" value={data.user.weight} />
     </label>
+    <label>
+      Sex
+      <input type="text" name="sex" value={data.user.sex} />
+    </label>
+    <label>
+      Description
+      <input type="text" name="description" value={data.user.description} />
+    </label>
+    {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
+    {#if form?.success === true}<p class="success">{form?.message}</p>{/if}
     <div>
       <button type="submit">Update</button>
-      <!-- <a class="button" href="/profile">Cancel</a> -->
     </div>
   </form>
   <hr />
@@ -45,15 +77,14 @@
   <form method="POST" action="?/password">
     <label>
       Password
-      <input type="password" name="password" />
+      <input type="password" placeholder="Enter new password" name="password" />
     </label>
     <label>
       Confirm Password
-      <input type="password" name="password" />
+      <input type="password" placeholder="Confirm new password" name="confirm-password" />
     </label>
     <div>
       <button type="submit">Update</button>
-      <!-- <a class="button" href="/profile">Cancel</a> -->
     </div>
   </form>
   <hr />
@@ -84,7 +115,6 @@
   }
 
   h2 {
-
     margin: 0 0 1.5rem 0;
   }
 
@@ -128,7 +158,8 @@
     border-color: var(--link);
   }
 
-  button, .button {
+  button,
+  .button {
     display: inline-block;
     font-family: inherit;
     font-size: 1.25rem;
@@ -144,15 +175,16 @@
     box-sizing: border-box;
   }
 
-  button:hover, .button:hover {
+  button:hover,
+  .button:hover {
     background-color: var(--blue-darker);
   }
 
-  .danger {
+  .button.danger {
     background-color: var(--danger);
   }
 
-  .danger:hover {
+  .button.danger:hover {
     background-color: var(--danger-darker);
   }
 
