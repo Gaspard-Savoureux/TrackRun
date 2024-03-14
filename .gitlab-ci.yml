@@ -19,7 +19,7 @@ build_backend:
   stage: build
   before_script:
     - apk add --no-cache python3 py3-pip make g++
-    - ln -s /usr/bin/python3 /usr/bin/python
+#    - ln -s /usr/bin/python3 /usr/bin/python
     - npm config set python /usr/bin/python3
   script:
     - npm config set proxy null
