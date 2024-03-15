@@ -17,8 +17,6 @@ build_frontend:
 
 build_backend:
   stage: build
-#  before_script:
-#    - apk add --no-cache python3 py3-pip make g++
   script:
     - npm config set proxy null
     - npm config set https-proxy null
@@ -43,8 +41,6 @@ lint_frontend:
 test_integration_backend:
   stage: test
   coverage: /Statements\s+:\s(\d+.?\d+)%/
-#  before_script:
-#    - apk add --no-cache python3 py3-pip make g++
   variables:
     MYSQL_DATABASE: tse_db
     MYSQL_ROOT_PASSWORD: your_root_password
