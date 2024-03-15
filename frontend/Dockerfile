@@ -14,5 +14,4 @@ COPY --from=builder /app/node_modules node_modules/
 COPY package.json .
 EXPOSE 3000
 ENV NODE_ENV=production
-ENV ORIGIN=http://tse.info.uqam.ca
 CMD [ "node", "build" ]
