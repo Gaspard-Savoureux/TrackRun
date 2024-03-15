@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
-import { fail, redirect } from '@sveltejs/kit';
-import type { RequestEvent } from '../$types';
+import {error, fail, redirect} from '@sveltejs/kit';
+import type {PageServerLoad, RequestEvent} from '../$types';
 import { API_URL } from '../../constants';
+import type {activity} from "$lib/types/activity";
 
 // Enumération des codes d'erreur
 enum ErrorCode {
@@ -185,4 +186,16 @@ export const actions: object = {
       },
     };
   },
+};
+export const load: PageServerLoad = async ({ fetch, cookies }) => {
+  const token = cookies.get('token');
+  const res = await fetch(`${API_URL}/activity/getActivity`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    return error(404, { message: 'Could not get activities'});
+  }
+  const activities: activity[] = await res.json();
+  return { activities };
 };

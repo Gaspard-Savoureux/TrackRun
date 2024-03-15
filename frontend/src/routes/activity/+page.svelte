@@ -2,16 +2,24 @@
     import { enhance } from '$app/forms';
 
     interface Activite {
-      nom: string;
-      ville: string;
-      typeActivite: 'Course' | 'Vélo';
+      id: number;
+      user_id: number;
+      name: string;
+      city: string;
+      type: 'Running' | 'Biking' | 'Walking';
       date: string;
-      duree: string;
-      distance: string;
+      durationTotal: number;
+      distanceTotal: number;
       comment: string;
+      segment: string
     }
-  
-    const activites: Activite[] = [];
+
+    export let data;
+    let activities = data.activities.userActivities;
+
+	console.log(activities);
+
+
     let nom = '';
     let ville = '';
     let typeActivite: 'Course' | 'Vélo' = 'Course';
@@ -51,15 +59,15 @@
     {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
     <button class="link" type="submit">Ajouter l'activité</button>
   </form>
-  
-  {#if activites.length > 0}
+
+  {#if activities.length > 0}
     <h2>Activités enregistrées</h2>
-    {#each activites as activite}
-      <div class="activite">
-        <h3>{activite.nom}</h3>
-        <p>Distance: {activite.distance}</p>
-        <p>Durée: {activite.duree}</p>
-        <p>Date: {activite.date}</p>
+    {#each activities as activity}
+      <div class="activity">
+        <h3>{activity.name}</h3>
+        <p>Distance: {activity.distanceTotal}</p>
+        <p>Durée: {activity.durationTotal}</p>
+        <p>Date: {activity.date}</p>
       </div>
     {/each}
   {:else}
