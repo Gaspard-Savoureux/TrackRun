@@ -20,8 +20,6 @@ function formatPlannedActivity(data: FormData): PlannedActivity {
 export const actions: object = {
   default: async ({ cookies, fetch, request }: RequestEvent) => {
     const data = await request.formData();
-    const date = data.get('date')
-    const time = data.get('time')
     
     if (!data.get('date') || !data.get('time') ||
         !data.get('duration') || !data.get('type')) {
