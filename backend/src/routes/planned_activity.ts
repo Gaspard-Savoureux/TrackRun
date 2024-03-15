@@ -1,8 +1,8 @@
 import express from 'express';
-import {createPlannedActivity, getPlannedActivities} from '../controllers/plannedActivitiesController';
+import { createPlannedActivity, getPlannedActivities, modifyPlannedActivity } from '../controllers/plannedActivitiesController';
 import { verifyUserToken } from '../middlewares/authentication';
 import { body } from 'express-validator';
-import {expressValidator} from '../middlewares/validation';
+import { expressValidator } from '../middlewares/validation';
 
 const router = express.Router();
 
@@ -63,6 +63,17 @@ const router = express.Router();
  */
 router.get('/', verifyUserToken, getPlannedActivities);
 
+router.put('/',
+  [
+    body('name').optional().isString(),
+    body('comment').optional().isString(),
+    body('duration').optional().isString(),
+    body('date').optional().isString(),
+    body('activityId').optional().isString(),
+    body('type').optional().isString(),
+  ],
+  verifyUserToken, modifyPlannedActivity);
+
 /**
  * @swagger
  * /plannedactivities:
@@ -112,14 +123,14 @@ router.get('/', verifyUserToken, getPlannedActivities);
  */
 router.post('/',
   [
-    body('type').isString(), 
+    body('type').isString(),
     body('date').isISO8601(),
-    body('duration').isInt({min: 0}),
-    body('name').optional({values: 'null'}).isString().isLength({max: 256}),
-    body('comment').optional({values: 'null'}).isString()
+    body('duration').isInt({ min: 0 }),
+    body('name').optional({ values: 'null' }).isString().isLength({ max: 256 }),
+    body('comment').optional({ values: 'null' }).isString()
   ],
   expressValidator,
-  verifyUserToken, 
+  verifyUserToken,
   createPlannedActivity);
 
 
