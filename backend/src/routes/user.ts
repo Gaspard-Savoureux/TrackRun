@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { createUser, getUser, deleteUser, updateUser} from '../controllers/UserController';
+import { createUser, getUser, deleteUser, updateUser, uploadPicture, getPicture} from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 
@@ -63,7 +63,6 @@ router.post('/',
   expressValidator,
   createUser
 );
-
 
 
 /**
@@ -136,7 +135,6 @@ router.post('/',
  *         description: Server Error
  */
 router.get('/', verifyUserToken, getUser);
-
 
 
 /**
@@ -218,6 +216,7 @@ router.put('/',
 );
 
 
+
 /**
  * @swagger
  * /user:
@@ -243,5 +242,61 @@ router.put('/',
 router.delete('/', verifyUserToken, deleteUser);
 
 
+/**
+ * @swagger
+ * /user/picture:
+ *  put:
+ *    tags:
+ *    - user
+ *    summary: Upload user picture
+ *    description: Upload the picture of a user
+ *    security:
+ *      - BearerAuth: []
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              picture:
+ *                type: string
+ *                format: binary
+ *                description: The picture of a user
+ *    responses:
+ *      200:
+ *        description: User picture updated successfully
+ *      400:
+ *        description: Failed to upload the picture
+ *      404:
+ *        description: User not found
+ */
+router.put('/picture',
+  expressValidator,
+  verifyUserToken,
+  uploadPicture
+);
+
+
+/**
+ * @swagger
+ * /user/picture:
+ *  get:
+ *    tags:
+ *    - user
+ *    summary: Get user picture
+ *    description: Retrieve the picture of a user
+ *    security:
+ *      - BearerAuth: []
+ *    responses:
+ *      200::
+
+ *        description: User picture retrieved successfully
+ *      404:
+ *        description: User not found
+ *      405:
+ *        description: Picture does not exist
+ */
+router.get('/picture', verifyUserToken, getPicture);
 
 export default router;

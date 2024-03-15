@@ -5,7 +5,6 @@ import basicAuth from 'express-basic-auth';
 
 /***  Routers ***/
 import user from './routes/user';
-import picture from './routes/picture';
 import trainer from './routes/trainer';
 import planned_activities from './routes/planned_activity';
 import stub from './routes/stub';
@@ -39,7 +38,6 @@ app.use('/admin', basicAuth({
 }), admin);
 app.use(auth);
 app.use('/user', user);
-app.use('/picture', picture);
 app.use('/trainer', trainer);
 app.use('/plannedactivities', planned_activities);
 app.use('/', stub);
