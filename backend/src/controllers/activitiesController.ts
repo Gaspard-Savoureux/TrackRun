@@ -4,7 +4,9 @@ import { db } from '../db/db';
 import { User } from '../models/users';
 import { getUserById } from '../services/user.services';
 import {getActivityById, getUserActivities} from '../services/activity.services';
-import { gpxParser } from './gpxParser';
+import { gpxParser } from '../middlewares/gpxParser';
+import * as fs from 'node:fs';
+import {deletefile} from '../middlewares/fileTreatment';
 
 
 export const createActivityManual = async (req: Request, res: Response, next: NextFunction) => {
@@ -111,12 +113,11 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
     if (req.file) {
       const gpxConverter = new gpxParser();
       const conversionResult = await gpxConverter.parseGpxFile(req.file.path);
+      await deletefile(req.file.path);
       segments = conversionResult.segments;
-      console.log(segments);
       metadata = conversionResult.metadata;
-      console.log(metadata);
     } else {
-      return res.status(400).send('No GPX file uploaded.');
+      return res.status(400).send('No GPX file uploaded or wrong format');
     }
 
     const city = null; // Assuming city is not determined from the GPX file
@@ -129,8 +130,6 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
 
     const userId = req.user?.userId as number;
 
-    console.log(date);
-    console.log('en route');
     const result = await db.insert(activities).values([{
       user_id: userId,
       name,
@@ -143,15 +142,12 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
       segments // Assuming your DB can store JSON or stringified JSON
     }]);
 
-    console.log('work');
     if (!result) {
-      // handle the error or throw an error
       throw new Error('Database insertion failed.');
     }
 
     res.status(200).send('GPX file processed successfully.');
   } catch (error) {
-    console.log('fail');
     next(error);
   }
 };
