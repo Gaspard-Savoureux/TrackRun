@@ -17,7 +17,6 @@ const activity = {
   durationTotal: 30,
   distanceTotal: 7.5,
   comment: 'Felt good!',
-  segments: '{}'
 };
 
 const route : string = '/protected-route';
@@ -87,7 +86,6 @@ describe('POST activity', () => {
       durationTotal: 30,
       distanceTotal: 7.5,
       comment: 'Felt good!',
-      segments: '{}'
     };
     getToken = await request(app)
       .post('/auth')
@@ -114,7 +112,6 @@ describe('POST activity', () => {
       durationTotal: 30,
       distanceTotal: 7.5,
       comment: 'Felt good!',
-      segments: '{}'
     };
     getToken = await request(app)
       .post('/auth')
@@ -142,7 +139,6 @@ describe('POST activity', () => {
       durationTotal: 30,
       distanceTotal: 7.5,
       comment: 'Felt good!',
-      segments: '{}'
     };
     getToken = await request(app)
       .post('/auth')
@@ -168,7 +164,6 @@ describe('POST activity', () => {
       durationTotal: -1,
       distanceTotal: 7.5,
       comment: 'Felt good!',
-      segments: '{}'
     };
     getToken = await request(app)
       .post('/auth')
