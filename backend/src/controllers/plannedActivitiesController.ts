@@ -93,8 +93,13 @@ export const createPlannedActivity = async (req: Request, res: Response, next: N
       throw new Error('Database insertion failed.');
     }
 
+    const insertedId = result[0].insertId as number;
+    
+    return res.status(201).json({
+      message: 'Planned Activity added successfully',
+      id: insertedId
+    });
 
-    return res.status(201).json({ message: 'Planned Activity added successfully' });
   } catch (error) {
     console.log(error);
     next(error);
