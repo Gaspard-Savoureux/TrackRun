@@ -9,6 +9,16 @@ import * as fs from 'node:fs';
 import {deletefile} from '../middlewares/fileTreatment';
 
 
+/**
+ * Create a new activity manually.
+ *
+ * @async
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next function.
+ * @returns {Response} The response object.
+ * @throws {Error} If database insertion fails.
+ */
 export const createActivityManual = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let { name, city, type, date, durationTotal, distanceTotal, comment} = req.body;
@@ -87,6 +97,16 @@ export const createActivityManual = async (req: Request, res: Response, next: Ne
   }
 };
 
+/**
+ * Create an activity from a GPX file and store it in the database.
+ *
+ * @async
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @throws {Error} If the database insertion fails.
+ * @returns {Promise<void>}
+ */
 export const createActivityGPX = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let { name, type, comment } = req.body;
@@ -152,6 +172,16 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
   }
 };
 
+/**
+ * Gets the activities of a user
+ *
+ * @async
+ * @param {Request} req - The HTTP request object
+ * @param {Response} res - The HTTP response object
+ * @param {NextFunction} next - The next function in the middleware stack
+ * @returns {Promise<void>} - Promise that resolves when the activities are retrieved
+ * @throws {Error} - If there's an error while retrieving the activities
+ */
 export const getActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
@@ -169,6 +199,14 @@ export const getActivity = async (req: Request, res: Response, next: NextFunctio
 };
 
 // TODO do a research for the distance range, duration range, and date range
+/**
+ * Retrieves activities based on the specified search criteria.
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>} - A promise that resolves to void.
+ */
 export const getSpecifiedActivities = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
@@ -199,6 +237,15 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
   }
 };
 
+/**
+ * Retrieve GPX data by activity ID
+ *
+ * @param {Object} req - The request object containing user and activity ID.
+ * @param {Object} res - The response object to send back the GPX data.
+ * @param {Function} next - The next middleware function.
+ * @returns {Promise} - A promise with the API response.
+ * @throws {Error} - If an error occurs while retrieving the GPX data.
+ */
 export const getGPXDataByID = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
