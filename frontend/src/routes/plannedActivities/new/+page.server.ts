@@ -1,45 +1,44 @@
 import { fail } from '@sveltejs/kit';
 import type { RequestEvent } from '../$types';
 import { API_URL } from '../../../constants';
+import type { PlannedActivity } from '$lib/types/plannedActivity';
 
-// Might be usefull to define a type for newPlannedActivity?
-// Or maybe reuse the same existing type, but keep id, user_id and activity_id null?
 
-function formatPlannedActivity(pActivity: any) {
-  // Add any other formatting here
-
-  // Time in seconds from minutes
-  const sec = pActivity.duration as number * 60;
-  pActivity.duration = sec;
+function formatPlannedActivity(data: FormData): PlannedActivity {
+  const pActivity: PlannedActivity = {
+    id: null,
+    type: String(data.get('type')) ,
+    date: `${data.get('date')} ${data.get('time')}`,
+    duration: Number(data.get('duration')) * 60,
+    name: String(data.get('name')) || String(data.get('type')),
+    comment: String(data.get('comment')),
+    activity_id: null,
+  };
+  return pActivity;
 }
 
 export const actions: object = {
   default: async ({ cookies, fetch, request }: RequestEvent) => {
     const data = await request.formData();
-    const pActivity = {
-      type: data.get('type'),
-      date: `${data.get('date')} ${data.get('time')}`,
-      duration: data.get('duration'),
-      name: data.get('name') || data.get('type'),
-      comment: data.get('comment') || '',
-    };
-    formatPlannedActivity(pActivity);
-
+    const date = data.get('date')
+    const time = data.get('time')
     
-    if (!pActivity.type || !pActivity.date || !pActivity.duration) {
+    if (!data.get('date') || !data.get('time') ||
+        !data.get('duration') || !data.get('type')) {
       return fail(400, {
         success: false,
         message: 'Please fill all mandatory fields',
       });
     } 
 
-
+    const pActivity: PlannedActivity = formatPlannedActivity(data);
     const res = await fetch(`${API_URL}/plannedactivities`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
         Authorization: `Bearer ${cookies.get('token')}`,
       },
+      
       body: JSON.stringify(pActivity),
     });
 
@@ -65,7 +64,7 @@ export const actions: object = {
       // const pActivityId = await res.json();
 
       // For now return nothing
-      return { success: true };
+      return { submitted: true };
     }
 
 

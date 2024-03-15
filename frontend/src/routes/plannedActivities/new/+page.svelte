@@ -1,20 +1,6 @@
 <script lang="ts">
-/*   import { page } from '$app/stores';
-  let type = 'Running'; // Default selection
-  let date = '';
-  let durationInMinutes = 0;
-  let name = '';
-  let comment = ''; */
   import { enhance } from '$app/forms';
-
   export let form;
-
-/*
-  function handleSubmission() {
-    submitted = true;
-    //setTimeout(() => submitted = false, 3000); // Reset after 3 seconds
-  }
-*/
 </script>
 
 <svelte:head>
@@ -22,10 +8,7 @@
 </svelte:head>
 
 <style>
-  body {
-    
-  }
-  form {
+  form ,.submit-box{
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -48,7 +31,7 @@
     font-size: 16px;
   }
 
-  button {
+  button, .btn {
     padding: 10px;
     background-color: #007BFF;
     color: white;
@@ -66,42 +49,43 @@
     text-align: center;
     font-family: "Montserrat", sans-serif;
     margin: 15px;
-  }
+  } 
 </style>
 
 <body>
   <h2 class="header">Plan a new activity</h2>
-
-    <form method="POST" use:enhance>
-    <label for="type">Type<span class="danger">*</span></label>
-    <select id="type" name="type">
+    {#if form?.submitted}
+      <div class=submit-box>
+        <h3>Activity planned!</h3>
+        <a class="btn" href="/plannedActivities">See planned activity [ADD URL WITH ID]</a>
+      </div> 
+    {:else}
+      <form method="POST" use:enhance>
+      <label for="type">Type<span class="danger">*</span></label>
+      <select id="type" name="type">
       <option value="Running">Running</option>
       <option value="Biking">Biking</option>
       <option value="Walking">Walking</option>
-    </select>
+      </select>
 
-    <label for="date">Date<span class="danger">*</span></label>
-    <input id="date" type="date" name="date" />
+      <label for="date">Date<span class="danger">*</span></label>
+      <input id="date" type="date" name="date"/>
 
-    <label for="time">Time<span class="danger">*</span></label>
-    <input id="time" type="time" name="time" step="1" />
+      <label for="time">Time<span class="danger">*</span></label>
+      <input id="time" type="time" name="time" step="1"/>
 
-    <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
-    <input id="duration" type="number" name="duration"/>
+      <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
+      <input id="duration" type="number" name="duration" min="1"/>
 
-    <label for="name">Name</label>
-    <input id="name" name="name" />
+      <label for="name">Name</label>
+      <input id="name" name="name"/>
 
-    <label for="comment">Comment</label>
-    <textarea id="comment" name="comment"></textarea>
-
-    {#if form?.success === false}
-      <p class="danger">{form?.message}</p>
-    {:else if form?.success === true}
-      <p>Activity planned!</p>
-      <a href="/plannedActivities">See planned activity [ADD URL WITH ID]</a>
-    {/if}
-
+      <label for="comment">Comment</label>
+      <textarea id="comment" name="comment"></textarea>
+      {#if form?.success === false}
+        <p class="danger">{form?.message}</p>
+      {/if}
     <button type="submit">Submit</button>
   </form>
+  {/if}
 </body>
