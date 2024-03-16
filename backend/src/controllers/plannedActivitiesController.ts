@@ -69,7 +69,7 @@ export const modifyPlannedActivity = async (req: Request, res: Response, next: N
     const updatedPlannedActivity: Partial<PlannedActivity> = {};
 
     updatedPlannedActivity.type = type;
-    updatedPlannedActivity.date = date;
+    updatedPlannedActivity.date = new Date(date);
     updatedPlannedActivity.duration = duration;
     updatedPlannedActivity.name = name;
     updatedPlannedActivity.comment = comment;
@@ -79,6 +79,7 @@ export const modifyPlannedActivity = async (req: Request, res: Response, next: N
     return res.status(200).json({ message: 'Planned activity successfully updated' });
 
   } catch (error) {
+    console.log(error);
     next(error);
   }
 }

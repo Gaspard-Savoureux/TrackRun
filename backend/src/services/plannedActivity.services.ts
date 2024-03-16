@@ -3,12 +3,11 @@ import { PlannedActivity, planned_activities } from '../models/planned_activitie
 import { eq, and } from 'drizzle-orm';
 
 
-export const updatePlannedActivityById = async (userId: number, activityId: number, plannedActivity: Partial<PlannedActivity>) => {
+export const updatePlannedActivityById = async (userId: number, pActivityId: number, plannedActivity: Partial<PlannedActivity>) => {
   return await db.update(planned_activities)
     .set(plannedActivity)
     .where(and(
       eq(planned_activities.user_id, userId),
-      eq(planned_activities.activity_id, activityId)
+      eq(planned_activities.id, pActivityId)
     ));
-
 }

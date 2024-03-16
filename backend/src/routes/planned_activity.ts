@@ -63,14 +63,64 @@ const router = express.Router();
  */
 router.get('/', verifyUserToken, getPlannedActivities);
 
+/**
+ * @swagger
+ * /plannedactivities:
+ *  put:
+ *    tags:
+ *     - planned_activities
+ *    summary: update planned activity
+ *    description: update planned activity of the currently logged-in user
+ *    security:
+ *      - BearerAuth: []
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              type:
+ *                type: string
+ *                description: Type of the planned activity
+ *                example: Running
+ *              date:
+ *                type: string($date-time)
+ *                description: The date and time of the activity
+ *                example: 2024-02-26 16:30:00
+ *              duration:
+ *                type: integer
+ *                description: The total duration of the activity in seconds
+ *                example: 1823
+ *              name:
+ *                type: string
+ *                description: The name of the activity
+ *                example: A run in the park
+ *              comment:
+ *                type: string
+ *                description: The comment of the activity
+ *                example: Remember to focus on your breath the entire time!
+ *              activity_id:
+ *                type: integer
+ *                example: 1
+ *    responses:
+ *     201:
+ *      description: Planned activity updated successfully
+ *     400:
+ *      description: Bad request
+ *     401:
+ *      description: User is not logged in
+ *     500:
+ *      description: Server error
+ */
 router.put('/',
   [
-    body('name').optional().isString(),
-    body('comment').optional().isString(),
-    body('duration').optional().isString(),
-    body('date').optional().isString(),
-    body('activityId').optional().isString(),
-    body('type').optional().isString(),
+    body('type').optional({ values: 'null' }).isString().isLength({ max: 64 }),
+    body('date').optional().isISO8601(),
+    body('duration').optional().isInt({ min: 0, max: 1024 }),
+    body('name').optional({ values: 'null' }).isString().isLength({ max: 64 }),
+    body('comment').optional({ values: 'null' }).isString().isLength({ max: 256 }),
+    body('pActivityId').isInt(),
   ],
   verifyUserToken, modifyPlannedActivity);
 
