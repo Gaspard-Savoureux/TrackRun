@@ -9,3 +9,5 @@ dist/
 
 # test juint
 __tests__/junit.xml
+!/src/uploads/file-1710384923573.gpx
+src/uploads/*.gpx

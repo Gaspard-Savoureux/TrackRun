@@ -1,10 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
-import { planned_activities } from '../models/planned_activities';
+import {NextFunction, Request, Response} from 'express';
+import {planned_activities} from '../models/planned_activities';
 import { User } from '../models/users';
-import {  getUserById  } from '../services/user.services';
+import { getUserById } from '../services/user.services';
 import { db } from '../db/db';
-import { and, eq, gte } from 'drizzle-orm';
-import { deletePlannedActivityById, selectPlannedActivityById } from '../services/planned_activity.services';
+import {and, eq, gte} from 'drizzle-orm';
 
 export const getPlannedActivities = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -94,36 +93,15 @@ export const createPlannedActivity = async (req: Request, res: Response, next: N
       throw new Error('Database insertion failed.');
     }
 
+    const insertedId = result[0].insertId as number;
+    
+    return res.status(201).json({
+      message: 'Planned Activity added successfully',
+      id: insertedId
+    });
 
-    return res.status(201).json({ message: 'Planned Activity added successfully' });
   } catch (error) {
     console.log(error);
     next(error);
   }
 };
-
-
-export const deletePlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user?.userId as number;
-    const activityId = parseInt(req.params.activityId);
-
-    // check if the activityId is a number
-    if (isNaN(activityId) || !activityId) {
-      return res.status(400).json({ error: "Invalid activityId" });
-    }
-    const activitiesToDelete = await selectPlannedActivityById(activityId, userId);
-    // log to delete
-    console.log(activitiesToDelete);
-    if (activitiesToDelete.length !== 1) {
-      return res.status(404).json({ error: "No corresponding activity" });
-    }
-
-    await deletePlannedActivityById(activityId, userId);
-    res.status(200).json({ message: "Activity deleted successfully" });
-
-  } catch (error) {
-    next(error);
-  }
-};
-
