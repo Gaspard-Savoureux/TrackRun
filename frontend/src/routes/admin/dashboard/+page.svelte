@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { invalidate, invalidateAll } from '$app/navigation';
+  import { invalidateAll } from '$app/navigation';
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import UserinfoField from '$lib/components/userinfo-field.svelte';
   import type { JsonBodyResponse } from '$lib/types/JsonBodyResponse.js';
@@ -22,7 +22,8 @@
 
   const deleteTrainer = async (trainerId: number | undefined) => {
     await fetch(`/admin/dashboard/${trainerId}`, { method: 'DELETE' });
-    return invalidate('/admin/dashboard');
+
+    invalidateAll();
   };
 
   /** Infos related**/
@@ -164,7 +165,14 @@
         </button>
       </div>
       <div class="container">
-        <form method="POST" use:enhance action="?/createTrainer" on:submit={fillTemplateTrainer}>
+        <form
+          method="POST"
+          use:enhance
+          action="?/createTrainer"
+          on:submit={() => {
+            if (trainerFormFilled) fillTemplateTrainer;
+          }}
+        >
           <input
             type="text"
             placeholder="Nom d'utilisateur"
