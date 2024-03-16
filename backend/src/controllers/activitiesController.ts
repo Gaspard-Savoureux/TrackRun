@@ -133,6 +133,9 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
     if (req.file) {
       const gpxConverter = new gpxParser();
       const conversionResult = await gpxConverter.parseGpxFile(req.file.path);
+      if (!conversionResult.segments || !conversionResult.metadata) {
+        return res.status(400).send('The GPX format isn\'t right');
+      }
       await deletefile(req.file.path);
       segments = conversionResult.segments;
       metadata = conversionResult.metadata;
