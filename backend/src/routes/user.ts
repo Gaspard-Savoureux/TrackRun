@@ -6,7 +6,7 @@ import { verifyUserToken } from '../middlewares/authentication';
 
 const router = express.Router();
 
-/**f
+/**
  * @swagger
  * /user:
  *  post:

@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models/users';
 import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById} from '../services/user.services';
-import { storagePicture, uploadPic } from '../app';
+import { uploadPic } from '../app';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
@@ -103,7 +102,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     }
 
     const { username, password, email, name,
-     age, height, weight, sex, description, picture } = req.body;
+     age, height, weight, sex, description} = req.body;
 
     const updateData: Partial<User> = {};
 
@@ -173,7 +172,7 @@ export const uploadPicture = async (req: Request, res: Response, next: NextFunct
 
       try {
         const files = await fs.promises.readdir(userUploadDir);
-        for (let file of files) {
+        for (const file of files) {
           if (file.startsWith(`${userId}-`) && file !== req.file.filename) {
             await fs.promises.unlink(path.join(userUploadDir, file));
             break; 

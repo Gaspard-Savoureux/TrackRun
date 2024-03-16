@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import basicAuth from 'express-basic-auth';
 import multer from 'multer';
-import path from 'path';
 import crypto from 'crypto';
 
 /***  Routers ***/
@@ -40,10 +39,10 @@ if (process.env.NODE_ENV !== 'production') {
 import { userPayload } from './types';
 
 export const storagePicture = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination(req, file, cb) {
     cb(null, 'uploads/');
   },
-  filename: function(req, file, cb) {
+  filename(req, file, cb) {
     const userId = (req.user as userPayload).userId;
     const fileExtension = file.originalname.split('.').pop();
     const randomString = crypto.randomBytes(8).toString('hex');
@@ -51,6 +50,7 @@ export const storagePicture = multer.diskStorage({
     cb(null, fileName);
   }
 });
+
 export const uploadPic = multer({ storage: storagePicture }).single('picture');
 
 
