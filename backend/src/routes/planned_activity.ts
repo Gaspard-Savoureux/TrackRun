@@ -184,7 +184,7 @@ router.put('/:pActivityId',
     body('name').optional({ values: 'null' }).isString().isLength({ max: 64 }),
     body('comment').optional({ values: 'null' }).isString().isLength({ max: 256 }),
   ],
-  verifyUserToken, modifyPlannedActivity);
+  expressValidator, verifyUserToken, modifyPlannedActivity);
 
 /**
  * @swagger
