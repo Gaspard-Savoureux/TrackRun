@@ -1,5 +1,5 @@
 export type PlannedActivity = {
-  id: number,
+  id: number | null,
   type: string,
   date: string,
   duration: number,
