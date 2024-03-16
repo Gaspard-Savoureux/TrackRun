@@ -31,11 +31,12 @@ beforeEach(() => {
 });
 
 describe('Trainer routes', () => {
+  let numTest = 1;
   // POST /admin/trainer
   describe('POST /admin/trainer', () => {
     const route: string = '/admin/trainer';
 
-    test('#1: should create a new trainer', async () => {
+    test(`${numTest++}: should create a new trainer`, async () => {
       jest.spyOn(actions, 'getTrainerByUsername')
         .mockImplementationOnce(() => Promise.resolve(undefined));
       jest.spyOn(actions, 'getTrainerByEmail')
@@ -50,7 +51,7 @@ describe('Trainer routes', () => {
       expect(res.status).toBe(201);
     });
 
-    test('#2: should not create a new trainer, no authorization', async () => {
+    test(`${numTest++}: should not create a new trainer, no authorization`, async () => {
       jest.spyOn(actions, 'getTrainerByUsername')
         .mockImplementationOnce(() => Promise.resolve(undefined));
       jest.spyOn(actions, 'getTrainerByEmail')
@@ -64,7 +65,7 @@ describe('Trainer routes', () => {
       expect(res.status).toBe(401);
     });
 
-    test('#3: should not create a new trainer, username already taken', async () => {
+    test(`${numTest++}: should not create a new trainer, username already taken`, async () => {
       jest.restoreAllMocks();
       jest.spyOn(actions, 'getTrainerByUsername')
         .mockImplementationOnce(() => Promise.resolve(trainer1));
@@ -82,7 +83,7 @@ describe('Trainer routes', () => {
       expect(res.status).toBe(409);
     });
 
-    test('#4: should not create a new trainer, email already in use', async () => {
+    test(`${numTest++}: should not create a new trainer, email already in use`, async () => {
       jest.spyOn(actions, 'getTrainerByUsername')
         .mockImplementationOnce(() => Promise.resolve(undefined));
       jest.spyOn(actions, 'getTrainerByEmail')
@@ -103,7 +104,7 @@ describe('Trainer routes', () => {
     describe('GET /admin/trainers', () => {
       const route: string = '/admin/trainers';
 
-      test('#5: should return all trainers', async () => {
+      test(`${numTest++}: should return all trainers`, async () => {
         jest.spyOn(actions, 'getAllTrainers')
           .mockImplementationOnce(() => Promise.resolve([trainer1, trainer2]));
         
@@ -120,7 +121,7 @@ describe('Trainer routes', () => {
     describe('GET /admin/trainer/{userId}', () => {
       const route: string = '/admin/trainer';
 
-      test('#6: should return a trainer', async () => {
+      test(`${numTest++}: should return a trainer`, async () => {
         jest.spyOn(actions, 'getTrainerById')
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
@@ -132,7 +133,7 @@ describe('Trainer routes', () => {
         expect(res.status).toBe(200);
       });
 
-      test('#7: should return a bad request error', async () => {
+      test(`${numTest++}: should return a bad request error`, async () => {
         jest.spyOn(actions, 'getTrainerById')
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
@@ -145,7 +146,7 @@ describe('Trainer routes', () => {
       });
 
 
-      test('#8: should return an unauthorize error', async () => {
+      test(`${numTest++}: should return an unauthorize error`, async () => {
         jest.spyOn(actions, 'getTrainerById')
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
@@ -162,7 +163,7 @@ describe('Trainer routes', () => {
     describe('DELETE /admin/trainer/{userId}', () => {
       const route: string = '/admin/trainer';
 
-      test('#9: should delete a trainer', async () => {
+      test(`${numTest++}: should delete a trainer`, async () => {
         jest.spyOn(actions, 'getTrainerById')
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
@@ -174,7 +175,7 @@ describe('Trainer routes', () => {
         expect(res.status).toBe(200);
       });
 
-      test('#10: should return a bad request error', async () => {
+      test(`${numTest++}: should return a bad request error`, async () => {
         jest.spyOn(actions, 'getTrainerById')
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
@@ -187,7 +188,7 @@ describe('Trainer routes', () => {
       });
 
 
-      test('#11: should return an unauthorize error', async () => {
+      test(`${numTest++}: should return an unauthorize error`, async () => {
         jest.spyOn(actions, 'getTrainerById')
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
@@ -204,7 +205,7 @@ describe('Trainer routes', () => {
     describe('PUT /admin/trainer/{userId}', () => {
       const route: string = '/admin/trainer';
 
-      test('#12: should modify a trainer', async () => {
+      test(`${numTest++}: should modify a trainer`, async () => {
         jest.spyOn(actions, 'getTrainerById')
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
@@ -216,7 +217,7 @@ describe('Trainer routes', () => {
         expect(res.status).toBe(200);
       });
 
-      test('#13: should return a bad request error', async () => {
+      test(`${numTest++}: should return a bad request error`, async () => {
         jest.spyOn(actions, 'getTrainerById')
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
@@ -229,7 +230,7 @@ describe('Trainer routes', () => {
       });
 
 
-      test('#14: should return an unauthorize error', async () => {
+      test(`${numTest++}: should return an unauthorize error`, async () => {
         jest.spyOn(actions, 'getTrainerById')
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
@@ -240,11 +241,37 @@ describe('Trainer routes', () => {
         expect(res.status).toBe(401);
       });
 
+      test(`${numTest++}: should return a conflict error for email`, async () => {
+        jest.spyOn(actions, 'getTrainerByEmail')
+          .mockImplementationOnce(() => Promise.resolve(trainer1));
+        
+        const res = await request(app)
+          .put(route + '/1')
+          .send(trainer1)
+          .set('Content-Type', 'application/json')
+          .set('Authorization', `Basic ${basicAuthCredentials}`);
+
+        expect(res.status).toBe(409);
+      });
+
+      test(`${numTest++}: should return a conflict error for username`, async () => {
+        jest.spyOn(actions, 'getTrainerByUsername')
+          .mockImplementationOnce(() => Promise.resolve(trainer1));
+        
+        const res = await request(app)
+          .put(route + '/1')
+          .send(trainer1)
+          .set('Content-Type', 'application/json')
+          .set('Authorization', `Basic ${basicAuthCredentials}`);
+
+        expect(res.status).toBe(409);
+      });
+
     });
   });
 
   describe ('GET /admin', () => {
-    test('#15: should send back authorization valid', async () => {
+    test(`${numTest++}: should send back authorization valid`, async () => {
       const res = await request(app)
         .get('/admin')
         .set('Authorization', `Basic ${basicAuthCredentials}`);
@@ -252,7 +279,7 @@ describe('Trainer routes', () => {
       expect(res.status).toBe(200);
     });
 
-    test('#16: should send back authorization invalid', async () => {
+    test(`${numTest++}: should send back authorization invalid`, async () => {
       const res = await request(app)
         .get('/admin');
         
