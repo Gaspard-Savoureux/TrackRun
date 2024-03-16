@@ -122,8 +122,8 @@ Si nous suivons l'exemple précédent que j'ai une liste de trainer et que je d�
   const deleteTrainer = async (trainerId) => {
     // envoie une requête DELETE à [trainerId]/+server.ts
     await fetch(`/admin/dashboard/${trainerId}`, { method: 'DELETE' });
-    return invalidate('/admin/dashboard');
-    // IMPORTANT invalidate() va relancer le load function pour rafraichir les données désirés, soit trainers dans notre cas
+    return invalidateAll();
+    // IMPORTANT invalidateAll() va relancer le load function pour rafraichir les données désirés, soit trainers dans notre cas
   };
 </script>
 
