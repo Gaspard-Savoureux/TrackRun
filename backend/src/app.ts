@@ -2,8 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import basicAuth from 'express-basic-auth';
-import multer from 'multer';
-import crypto from 'crypto';
 
 /***  Routers ***/
 import user from './routes/user';
@@ -19,8 +17,6 @@ import admin from './routes/admin';
 import ErrorHandler  from './middlewares/errorHandling';
 /******************/
 
-
-
 dotenv.config();
 
 const app = express();
@@ -35,28 +31,6 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
-/**** Storage ****/
-import { userPayload } from './types';
-
-export const storagePicture = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename(req, file, cb) {
-    const userId = (req.user as userPayload).userId;
-    const fileExtension = file.originalname.split('.').pop();
-    const randomString = crypto.randomBytes(8).toString('hex');
-    const fileName = `${userId}-${randomString}.${fileExtension}`;
-    cb(null, fileName);
-  }
-});
-
-export const uploadPic = multer({ storage: storagePicture }).single('picture');
-
-
-
-
-
 /**** Routes ****/
 app.use('/admin', basicAuth({
   users: { 
@@ -70,6 +44,8 @@ app.use('/plannedactivities', planned_activities);
 app.use('/', stub);
 app.use('/activity', activity);
 
+// Statics assets
+app.use('/uploads', express.static('uploads'));
 
 // Needs to be last
 app.use(ErrorHandler);
