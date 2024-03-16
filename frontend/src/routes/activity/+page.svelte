@@ -2,7 +2,7 @@
     import { enhance } from '$app/forms';
 
     export let data;
-    let activities = data.activities.userActivities;
+    const activities = data.activities.userActivities;
 
     let nom = '';
     let ville = '';
