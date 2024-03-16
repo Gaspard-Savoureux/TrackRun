@@ -14,19 +14,27 @@
 
 <button on:click={toggleTheme}>
   {#if $theme === Theme.System}
+    Automatic
     <BoxIcon />
   {:else if $theme === Theme.Dark}
+    Dark
     <MoonIcon />
   {:else if $theme === Theme.Light}
+    Light
     <SunIcon />
   {/if}
 </button>
 
 <style>
   button {
-    background-color: inherit;
+    font-family: inherit;
+    font-size: 1.25rem;
+    color: var(--text-button);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: var(--blue);
     align-self: center;
-    padding: 1rem;
+    padding: 0.47em 1em;
     border: none;
   }
 

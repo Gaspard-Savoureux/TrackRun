@@ -1,8 +1,9 @@
 :root {
   --blue: hsl(212, 100%, 42%);
   --blue-darker: hsl(212, 100%, 33%);
-  --danger: rgb(201, 28, 28);
-  --success: rgb(72, 199, 142);
+  --danger: hsl(0, 76%, 45%);
+  --danger-darker: hsl(0, 76%, 40%);
+  --success: rgb(5, 158, 5);
   --bg-1: rgb(241, 241, 241);
   --bg-2: rgb(224, 224, 224);
   --bg-3: rgb(212, 212, 212);
