@@ -2,7 +2,6 @@
 import {error, fail, redirect} from '@sveltejs/kit';
 import type {PageServerLoad, RequestEvent} from '../$types';
 import { API_URL } from '../../constants';
-import type {activity} from "$lib/types/activity";
 
 // Enumération des codes d'erreur
 enum ErrorCode {
@@ -76,20 +75,6 @@ function convertDureeToSecondes(duree: string): number {
   const [hours, minutes] = duree.split(':').map(Number);
   return hours * 3600 + minutes * 60;
 }
-
-/*async function extractFormData(request: Request) {
-  const data = await request.formData();
-  const activiteData = [
-    data.get('nom')!,
-    data.get('ville')!,
-    data.get('typeActivite')!,
-    data.get('date')!,
-    data.get('duree')!,
-    data.get('distance')!,
-    data.get('comment')!,
-  ];
-  return activiteData;
-}*/
 
 //formulaire manuelle
 export const actions: object = {
@@ -172,10 +157,8 @@ export const actions: object = {
       });
     }
 
-
     if (res.ok) {
-      // Si la requête est réussie, redirigez l'utilisateur vers une autre page (par exemple, la page d'accueil)
-      redirect(302, '/');
+      redirect(302, '/')
     }
 
     return {
@@ -187,6 +170,8 @@ export const actions: object = {
     };
   },
 };
+
+//Prend les activités de la base de donnée
 export const load: PageServerLoad = async ({ fetch, cookies }) => {
   const token = cookies.get('token');
   const res = await fetch(`${API_URL}/activity/getActivity`, {
@@ -196,6 +181,7 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
   if (!res.ok) {
     return error(404, { message: 'Could not get activities'});
   }
-  const activities: activity[] = await res.json();
+  const activities = await res.json();
+
   return { activities };
 };

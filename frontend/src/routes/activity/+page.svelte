@@ -1,24 +1,8 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
 
-    interface Activite {
-      id: number;
-      user_id: number;
-      name: string;
-      city: string;
-      type: 'Running' | 'Biking' | 'Walking';
-      date: string;
-      durationTotal: number;
-      distanceTotal: number;
-      comment: string;
-      segment: string
-    }
-
     export let data;
     let activities = data.activities.userActivities;
-
-	console.log(activities);
-
 
     let nom = '';
     let ville = '';
