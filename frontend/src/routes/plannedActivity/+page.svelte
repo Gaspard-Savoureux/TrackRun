@@ -1,54 +1,128 @@
 <script lang="ts">
-  import { getFormatDate, getFormatDuration } from '$lib/plannedActivity/activity';
   export let data;
-  $: ({ plannedActivity } = data);
+  import { enhance } from '$app/forms';
+  export let form;
 
-  function deleteActivity() {
-    return;
-  }
-  function modifyActivity() {
-    return;
-  }
+
+  $: ({ plannedActivity } = data);
+  $: duration = Math.floor(plannedActivity.duration / 60);
+
+  /* TODO: use this when date is fixed to right format 
+  * (right timezone and formated as YYYY-MM-DD hh:mm:ss)
+  * $: date = plannedActivity.date.split(' ')[0];
+  * $: time = plannedActivity.date.split(' ')[1];
+  */
+  $: date = plannedActivity.date.split('T')[0];
+  $: time = plannedActivity.date.split('T')[1].substring(0,8);
+  
+  const activityType = ['Running', 'Biking', 'Walking'];
 </script>
 
-<article class="activity-container">
-  <div class="activity-info">
-    <h1>Activity : {plannedActivity.name}</h1>
-    <p>Type : {plannedActivity.type}</p>
-    <p>Durée : {getFormatDuration(plannedActivity.duration)}</p>
-    <p>Date : {getFormatDate(plannedActivity.date)}</p>
-    {#if plannedActivity.comment}
-      <p>Commentaire : {plannedActivity.comment}</p>
-    {/if}
-  </div>
 
-  <div class="activity-actions">
-    <button class="action-btn" on:click={modifyActivity}>Modifier</button>
-    <button class="action-btn" on:click={deleteActivity}>Supprimer</button>
+<svelte:head>
+  <title>Planned activity</title>
+</svelte:head>
+
+<h2 class="header">Planned activity</h2>
+
+<!-- TODO: if real activity is linked, do not allow modification-->
+<section>
+  <div class="activity-info">
+    <form method="POST" use:enhance>
+      <input hidden name="id" value={plannedActivity.id}>
+      <label for="type">Type<span class="danger">*</span></label>
+      <select id="type" name="type">
+      {#each activityType as type}
+        {#if type === plannedActivity.type}
+          <option selected value={type}>{type}</option>
+        {:else}
+          <option value={type}>{type}</option>
+        {/if}
+      {/each}
+      </select>
+
+      <label for="date">Date<span class="danger">*</span></label>
+      <input id="date" type="date" name="date" value={date ?? ''}/>
+
+      <label for="time">Time<span class="danger">*</span></label>
+      <input id="time" type="time" name="time" step="1" value={time ?? ''}/>
+
+      <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
+      <input id="duration" type="number" name="duration" min="1" value={duration ?? ''}/>
+
+      <label for="name">Name</label>
+      <input id="name" name="name" value={plannedActivity.name ?? ''}/>
+
+      <label for="comment">Comment</label>
+      <textarea id="comment" name="comment" value={plannedActivity.comment ?? ''}></textarea>
+      
+      {#if form?.success === false}
+        <p class="danger">{form?.message}</p>
+      {:else if form?.success === true}
+        <p class="success">{form?.message}</p>
+      {/if}
+      
+      
+      <button type="submit">Save</button>
+      <button class="btn btn-danger">Delete</button>
+ 
+    </form>
   </div>
-</article>
+</section>
 
 <style>
-  .activity-container {
-    padding: 10px;
+   form {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 16px;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
   }
 
-  .activity-actions {
-    display: flex;
+  label {
+    font-size: 16px;
+    color: #333;
+  }
+
+  input, select, textarea {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+
+  .success {
+    color: #007BFF;
+  }
+
+  button, .btn {
     padding: 10px;
-    gap: 10px;
-  }
-
-  .action-btn {
-    padding: 6px 12px;
-    margin-bottom: 5px;
-    background-color: #555;
+    background-color: #007BFF;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 16px;
   }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-danger {
+    background-color: var(--danger);
+  }
+
+  .btn-danger:hover {
+    background-color: color-mix(in srgb,var(--danger),#000 15%);
+  }
+
+  .header {
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    margin: 15px;
+  } 
 </style>

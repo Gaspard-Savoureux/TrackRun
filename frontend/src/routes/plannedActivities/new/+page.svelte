@@ -57,7 +57,7 @@
     {#if form?.submitted}
       <div class=submit-box>
         <h3>Activity planned!</h3>
-        <a class="btn" href="/plannedActivities">See planned activity [ADD URL WITH ID]</a>
+        <a class="btn" href="/plannedActivity?id={form?.id}">See planned activity</a>
       </div> 
     {:else}
       <form method="POST" use:enhance>

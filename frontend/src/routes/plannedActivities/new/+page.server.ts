@@ -58,11 +58,8 @@ export const actions: object = {
 
 
     if (res.ok) {
-      // TODO: use id of created activity to show on page
-      // const pActivityId = await res.json();
-
-      // For now return nothing
-      return { submitted: true };
+      const id = (await res.json()).id;
+      return { submitted: true, id: id };
     }
 
 
