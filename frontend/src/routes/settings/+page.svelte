@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { applyAction, deserialize } from '$app/forms';
+  import { applyAction, deserialize, enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import type { ActionResult } from '@sveltejs/kit';
@@ -7,6 +7,8 @@
 
   export let data: PageServerData;
   export let form: ActionData;
+
+  let deleteConfirmation: string = '';
 
   const submitUpdateUser = async (event: { currentTarget: EventTarget & HTMLFormElement }) => {
     const data = new FormData(event.currentTarget);
@@ -74,7 +76,7 @@
   </form>
   <hr />
   <h2>Update password</h2>
-  <form method="POST" action="?/password">
+  <form method="POST" action="?/password" use:enhance>
     <label>
       Password
       <input type="password" placeholder="Enter new password" name="password" />
@@ -83,6 +85,8 @@
       Confirm Password
       <input type="password" placeholder="Confirm new password" name="confirm-password" />
     </label>
+    {#if form?.passwordSuccess === false}<p class="danger">{form?.passwordMessage}</p>{/if}
+    {#if form?.passwordSuccess === true}<p class="success">{form?.passwordMessage}</p>{/if}
     <div>
       <button type="submit">Update</button>
     </div>
@@ -93,6 +97,28 @@
   <hr />
   <h2>Logout</h2>
   <a class="button danger" href="/logout">logout</a>
+  <hr />
+  <h2>Delete account</h2>
+  <form method="POST" action="?/delete" use:enhance>
+    <label>
+      Type "Yes, I agree" to delete your account
+      <input
+        type="text"
+        placeholder="Yes, I agree"
+        name="confirmation"
+        bind:value={deleteConfirmation}
+      />
+    </label>
+    <p class="danger">This action cannot be undone</p>
+    <div>
+      <button
+        class="button danger {deleteConfirmation.toLowerCase() === 'yes, i agree'
+          ? ''
+          : 'disabled'}"
+        type="submit">delete account</button
+      >
+    </div>
+  </form>
 </section>
 
 <style>
@@ -186,6 +212,11 @@
 
   .button.danger:hover {
     background-color: var(--danger-darker);
+  }
+
+  .button.danger.disabled {
+    background-color: var(--danger-darker);
+    cursor: not-allowed;
   }
 
   hr {

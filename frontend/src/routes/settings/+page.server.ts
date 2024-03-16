@@ -1,7 +1,7 @@
 import type { PageServerLoad, RequestEvent } from './$types';
 import { API_URL } from '../../constants';
 import type { User } from '$lib/types/user';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
@@ -43,11 +43,60 @@ export const actions: object = {
         success: true,
         message: 'User updated successfully',
       };
-    } else {
-      return fail(400, { success: false, message: 'An error occured'});
     }
+
+    return fail(400, { success: false, message: 'An error occured'});
   },
-  password: async ({ request }: RequestEvent) => {
+  password: async ({ locals, request }: RequestEvent) => {
     const data = await request.formData();
+    const password = data.get('password');
+    const confirmPassword = data.get('confirm-password');
+
+    if (!password || !confirmPassword) {
+      return fail(400, { passwordSuccess: false, passwordMessage: 'Both fields are required' });
+    }
+
+    if (password !== confirmPassword) {
+      return fail(400, { passwordSuccess: false, passwordMessage: 'Passwords do not match' });
+    }
+
+    const res = await fetch(`${API_URL}/user`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${locals.token}`,
+      },
+      body: JSON.stringify({ password }),
+    });
+
+    if (res.ok) {
+      return {
+        passwordSuccess: true,
+        passwordMessage: 'Password updated successfully',
+      };
+    }
+
+    return fail(400, { passwordSuccess: false, passwordMessage: 'An error occured'});
+  },
+  delete: async ({ cookies, locals, request }: RequestEvent) => {
+    const data = await request.formData();
+    const confirmation = data.get('confirmation') as string;
+
+    if (confirmation.toLowerCase() === 'yes, i agree') {
+      const res = await fetch(`${API_URL}/user`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${locals.token}`,
+        },
+      });
+
+      if (res.ok) {
+        cookies.delete('token', {
+          path: '/',
+        });
+
+        return redirect(303, '/login');
+      }
+    }
   },
 };
