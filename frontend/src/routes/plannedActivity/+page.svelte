@@ -3,6 +3,7 @@
   import { enhance } from '$app/forms';
   export let form;
 
+ 
 
   $: ({ plannedActivity } = data);
   $: duration = Math.floor(plannedActivity.duration / 60);
@@ -28,50 +29,60 @@
 <!-- TODO: if real activity is linked, do not allow modification-->
 <section>
   <div class="activity-info">
-    <form method="POST" use:enhance>
-      <input hidden name="id" value={plannedActivity.id}>
-      <label for="type">Type<span class="danger">*</span></label>
-      <select id="type" name="type">
-      {#each activityType as type}
-        {#if type === plannedActivity.type}
-          <option selected value={type}>{type}</option>
-        {:else}
-          <option value={type}>{type}</option>
-        {/if}
-      {/each}
-      </select>
-
-      <label for="date">Date<span class="danger">*</span></label>
-      <input id="date" type="date" name="date" value={date ?? ''}/>
-
-      <label for="time">Time<span class="danger">*</span></label>
-      <input id="time" type="time" name="time" step="1" value={time ?? ''}/>
-
-      <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
-      <input id="duration" type="number" name="duration" min="1" value={duration ?? ''}/>
-
-      <label for="name">Name</label>
-      <input id="name" name="name" value={plannedActivity.name ?? ''}/>
-
-      <label for="comment">Comment</label>
-      <textarea id="comment" name="comment" value={plannedActivity.comment ?? ''}></textarea>
-      
-      {#if form?.success === false}
+    {#if form?.deleted === false}
+      <div class="submit-box">
         <p class="danger">{form?.message}</p>
-      {:else if form?.success === true}
-        <p class="success">{form?.message}</p>
-      {/if}
-      
-      
-      <button type="submit">Save</button>
-      <button class="btn btn-danger">Delete</button>
- 
-    </form>
+        <a class="btn" href="/plannedActivities">Back to planned activities</a>
+      </div>
+    {:else if form?.deleted === true}
+      <div class="submit-box">
+        <h3>{form?.message}</h3>
+        <a class="btn" href="/plannedActivities">See planned activities</a>
+      </div>
+    {:else}
+      <form method="POST" action="?/save" use:enhance>
+        <input hidden name="id" value={plannedActivity.id}>
+        <label for="type">Type<span class="danger">*</span></label>
+        <select id="type" name="type">
+        {#each activityType as type}
+          {#if type === plannedActivity.type}
+            <option selected value={type}>{type}</option>
+          {:else}
+            <option value={type}>{type}</option>
+          {/if}
+        {/each}
+        </select>
+
+        <label for="date">Date<span class="danger">*</span></label>
+        <input id="date" type="date" name="date" value={date ?? ''}/>
+
+        <label for="time">Time<span class="danger">*</span></label>
+        <input id="time" type="time" name="time" step="1" value={time ?? ''}/>
+
+        <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
+        <input id="duration" type="number" name="duration" min="1" value={duration ?? ''}/>
+
+        <label for="name">Name</label>
+        <input id="name" name="name" value={plannedActivity.name ?? ''}/>
+
+        <label for="comment">Comment</label>
+        <textarea id="comment" name="comment" value={plannedActivity.comment ?? ''}></textarea>
+        
+        {#if form?.updated === false}
+          <p class="danger">{form?.message}</p>
+        {:else if form?.updated === true}
+          <p class="success">{form?.message}</p>
+        {/if}
+        
+        <button type="submit">Save</button>
+        <button formaction="?/delete" class="btn-danger">Delete</button>
+      </form>
+    {/if}
   </div>
 </section>
 
 <style>
-   form {
+   form, .submit-box{
     display: flex;
     flex-direction: column;
     gap: 16px;

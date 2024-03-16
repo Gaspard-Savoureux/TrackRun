@@ -6,6 +6,7 @@ import { fail } from '@sveltejs/kit';
 import type { RequestEvent } from '../$types';
 import { formatPlannedActivity } from '$lib/plannedActivity/activity';
 
+
 // Load data
 export const load: PageServerLoad = async ({ fetch, locals, url }) => {
   const activityId = url.searchParams.get('id');
@@ -31,7 +32,7 @@ export const load: PageServerLoad = async ({ fetch, locals, url }) => {
 
 // Update activity
 export const actions: object = {
-  default: async ({ cookies, fetch, request }: RequestEvent) => {
+  save: async ({ cookies, fetch, request }: RequestEvent) => {
     const data = await request.formData();
     
     if (!data.get('date')|| !data.get('time') ||
@@ -43,6 +44,7 @@ export const actions: object = {
     } 
 
     const pActivity: PlannedActivity = formatPlannedActivity(data);
+    console.log(JSON.stringify(pActivity));
     const res = await fetch(`${API_URL}/plannedactivities/${pActivity.id}`, {
       method: 'PUT',
       headers: {
@@ -50,12 +52,13 @@ export const actions: object = {
         Authorization: `Bearer ${cookies.get('token')}`,
       },
       body: JSON.stringify(pActivity),
+      
     });
 
 
     if (res.status === 400) {
       return fail(res.status, {
-        success: false,
+        updated: false,
         message: 'Invalid request: could not update planned activity.',
       });
     }
@@ -63,7 +66,7 @@ export const actions: object = {
 
     if (res.status === 401) {
       return fail(res.status, {
-        success: false,
+        updated: false,
         message: 'User not logged in. Please log in to continue.',
       });
     }
@@ -71,8 +74,46 @@ export const actions: object = {
 
     if (res.ok) {
       return { 
-        success: true,
+        updated: true,
         message: 'Planned activity updated successfully!',
+      };
+    }
+
+    return fail(500, {
+      updated: false,
+      message: 'Internal server error',
+    });
+  },
+
+  delete: async ({ cookies, fetch, request }: RequestEvent) => {
+    const data = await request.formData();
+    const pActivity: PlannedActivity = formatPlannedActivity(data);
+    const res = await fetch(`${API_URL}/plannedactivities/${pActivity.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${cookies.get('token')}`, }
+    });
+
+
+    if (res.status === 400 || res.status === 404 ) {
+      return fail(res.status, {
+        deleted: false,
+        message: 'Could not delete planned activity.',
+      });
+    }
+
+
+    if (res.status === 401) {
+      return fail(res.status, {
+        deleted: false,
+        message: 'User not logged in. Please log in to continue.',
+      });
+    }
+
+
+    if (res.ok) {
+      return { 
+        deleted: true,
+        message: 'Planned activity deleted!',
       };
     }
 
