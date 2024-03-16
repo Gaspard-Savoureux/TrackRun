@@ -28,7 +28,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert the new user in the db
-    insertUser({ username, password: hashedPassword, email, name });
+    await insertUser({ username, password: hashedPassword, email, name });
 
     return res.status(201).json({ message: 'user added succesfully'});
   } catch (error) {
