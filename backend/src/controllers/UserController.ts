@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models/users';
-import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById} from '../services/user.services';
+import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById, updateUserImg, getUserImage} from '../services/user.services';
 import { uploadUserPic } from '../middlewares/uploadPic';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -149,6 +149,8 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 
 
 /*** Picture ***/
+const userUploadDir = path.join(__dirname, '../../uploads');
+
 export const uploadPicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
@@ -158,6 +160,15 @@ export const uploadPicture = async (req: Request, res: Response, next: NextFunct
     if (!req.file) {
       return res.status(402).json({ message: 'No picture uploaded' });
     }
+
+    const { img } = await getUserImage(userId);
+
+    // Update existing image in repertory if exist
+    if (img) {
+      await fs.promises.unlink(path.join(userUploadDir, img));
+    }
+    
+    await updateUserImg(userId, req.file.filename);
     
     return res.status(200).json({ message: 'Picture uploaded successfully' });
   } catch (error) {
@@ -166,7 +177,7 @@ export const uploadPicture = async (req: Request, res: Response, next: NextFunct
 };
 
 
-const userUploadDir = path.join(__dirname, '../../uploads');
+// const userUploadDir = path.join(__dirname, '../../uploads');
 export const getPicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;

@@ -41,3 +41,16 @@ export const deleteUserById = async (id: number) => {
   return await db.delete(users)
     .where(eq(users.id, id));
 };
+
+
+/**User image**/
+export const getUserImage = async (userId: number) => {
+  const [ userImg ] = await db.select({img: users.img})
+    .from(users)
+    .where(eq(users.id, userId));
+  return userImg;
+};
+
+export const updateUserImg = async (userId: number, imgName: string) => {
+  return await db.update(users).set({ img: imgName }).where(eq(users.id, userId));
+};
