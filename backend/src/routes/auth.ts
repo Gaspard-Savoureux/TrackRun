@@ -14,7 +14,12 @@ const router = express.Router();
  *    tags:
  *    - Authentification
  *    summary: Authenticate user
- *    description: Route to authenticate user
+ *    description: Route to authenticate user, the token is also returned in a cookie named `token`, you need to include this cookie in subsequent requests or include it in the `Authorization` headers
+ *    headers: 
+ *      Set-Cookie:
+ *        schema: 
+ *          type: string
+ *          example: token=abcde12345; Path=/; HttpOnly; Samesite=Strict;
  *    requestBody:
  *      required: true
  *      content:

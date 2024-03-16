@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import basicAuth from 'express-basic-auth';
@@ -22,6 +23,7 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 // allow different origin for development
 if (process.env.NODE_ENV !== 'production') {
