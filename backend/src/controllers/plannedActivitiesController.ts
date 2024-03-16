@@ -65,7 +65,7 @@ export const modifyPlannedActivity = async (req: Request, res: Response, next: N
       return res.status(404).json({ error: 'No corresponding user' });
     }
 
-    const { type, date, duration, name, comment, activityId } = req.body;
+    const { type, date, duration, name, comment, pActivityId } = req.body;
     const updatedPlannedActivity: Partial<PlannedActivity> = {};
 
     updatedPlannedActivity.type = type;
@@ -74,7 +74,7 @@ export const modifyPlannedActivity = async (req: Request, res: Response, next: N
     updatedPlannedActivity.name = name;
     updatedPlannedActivity.comment = comment;
 
-    await updatePlannedActivityById(userId, activityId, updatedPlannedActivity);
+    await updatePlannedActivityById(userId, pActivityId, updatedPlannedActivity);
 
     return res.status(200).json({ message: 'Planned activity successfully updated' });
 
