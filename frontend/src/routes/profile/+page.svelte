@@ -1,5 +1,6 @@
 <script lang="ts">
-  import Item from '$lib/components/userinfo-field.svelte';
+  import UserInfo from '$lib/components/user-info.svelte';
+  // import Item from '$lib/components/userinfo-field.svelte';
   export let data;
 
   $: ({ user } = data);
@@ -11,7 +12,8 @@
 
 <section>
   <h1>Your Profile</h1>
-  <div class="column">
+  <UserInfo {user} />
+  <!-- <div class="column">
     <div class="row">
       <Item name="Username">{user?.username}</Item>
       <Item name="Email">{user?.email}</Item>
@@ -25,7 +27,7 @@
       <Item name="Weight">{user?.weight && user?.weight + ' kg'}</Item>
     </div>
     <Item name="Description">{user?.description}</Item>
-  </div>
+  </div> -->
 </section>
 
 <style>
@@ -33,7 +35,7 @@
     padding: 3rem 1.5rem;
   }
 
-  .column {
+  /* .column {
     padding: 1rem;
     max-width: 40rem;
     margin: 0 auto;
@@ -52,7 +54,7 @@
   .row {
     display: flex;
     flex-flow: row wrap;
-  }
+  } */
 
   h1 {
     font-size: 2.5rem;

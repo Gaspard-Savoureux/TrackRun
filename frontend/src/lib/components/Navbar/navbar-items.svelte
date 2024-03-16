@@ -41,7 +41,7 @@
     display: none;
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 576px) {
     p {
       display: block;
       margin-left: 1rem;
