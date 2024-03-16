@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 import { createUser, getUser, deleteUser, updateUser, uploadPicture, getPicture } from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
+import { uploadUserPic } from '../middlewares/uploadPic';
 
 const router = express.Router();
 
@@ -269,8 +270,17 @@ router.delete('/', verifyUserToken, deleteUser);
  *        description: User not found
  */
 router.put('/picture',
+  verifyUserToken,  
+  uploadUserPic.single('picture'),
+  [
+    body('picture').custom((value, { req }) => {
+      if (req.file && !req.file.mimetype.startsWith('image/')) {
+        return Promise.reject('Image file is required!');
+      }
+      return true;
+    })
+  ] ,
   expressValidator,
-  verifyUserToken,
   uploadPicture,
 );
 

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models/users';
 import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById} from '../services/user.services';
-import { uploadPic } from '../app';
+import { uploadUserPic } from '../middlewares/uploadPic';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import path from 'path';
@@ -102,7 +102,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     }
 
     const { username, password, email, name,
-     age, height, weight, sex, description} = req.body;
+      age, height, weight, sex, description} = req.body;
 
     const updateData: Partial<User> = {};
 
@@ -149,48 +149,24 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 
 
 /*** Picture ***/
-
-
-const userUploadDir = path.join(__dirname, '../../uploads');
-
 export const uploadPicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
-
-    if (!userId) {
-      return res.status(404).json({ message: 'No corresponding user' });
+    
+    if (!userId) return res.status(404).json({ message: 'No corresponding user' });
+    
+    if (!req.file) {
+      return res.status(402).json({ message: 'No picture uploaded' });
     }
-
-    uploadPic(req, res, async function (err: any) {
-      if (err) {
-        return res.status(400).json({ message: 'Failed to upload picture' });
-      }
-
-      if (!req.file) {
-        return res.status(402).json({ message: 'No picture uploaded' });
-      }
-
-      try {
-        const files = await fs.promises.readdir(userUploadDir);
-        for (const file of files) {
-          if (file.startsWith(`${userId}-`) && file !== req.file.filename) {
-            await fs.promises.unlink(path.join(userUploadDir, file));
-            break; 
-          }
-        }
-      } catch (error) {
-        next(error);
-      }
-
-      return res.status(200).json({ message: 'Picture uploaded successfully' });
-    });
-
+    
+    return res.status(200).json({ message: 'Picture uploaded successfully' });
   } catch (error) {
     next(error);
   }
 };
 
 
+const userUploadDir = path.join(__dirname, '../../uploads');
 export const getPicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
