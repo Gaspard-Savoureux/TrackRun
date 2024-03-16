@@ -36,12 +36,9 @@
     align-self: center;
     padding: 0.47em 1em;
     border: none;
-  }
-
-  @media (max-width: 576px) {
-    button {
-      padding-right: 100%;
-      margin-right: -86%;
-    }
+    display: flex;
+    flex-wrap: wrap column;
+    gap: 0.5em;
+    align-items: center;
   }
 </style>
