@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import basicAuth from 'express-basic-auth';
+import multer from 'multer';
+import path from 'path';
+import crypto from 'crypto';
 
 /***  Routers ***/
 import user from './routes/user';
@@ -17,11 +20,14 @@ import admin from './routes/admin';
 import ErrorHandler  from './middlewares/errorHandling';
 /******************/
 
+
+
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
+
 
 // allow different origin for development
 if (process.env.NODE_ENV !== 'production') {
@@ -29,6 +35,27 @@ if (process.env.NODE_ENV !== 'production') {
     origin: 'http://localhost:5173'
   }));
 }
+
+/**** Storage ****/
+import { userPayload } from './types';
+
+export const storagePicture = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function(req, file, cb) {
+    const userId = (req.user as userPayload).userId;
+    const fileExtension = file.originalname.split('.').pop();
+    const randomString = crypto.randomBytes(8).toString('hex');
+    const fileName = `${userId}-${randomString}.${fileExtension}`;
+    cb(null, fileName);
+  }
+});
+export const uploadPic = multer({ storage: storagePicture }).single('picture');
+
+
+
+
 
 /**** Routes ****/
 app.use('/admin', basicAuth({

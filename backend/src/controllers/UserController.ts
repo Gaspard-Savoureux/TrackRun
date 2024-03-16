@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models/users';
 import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById} from '../services/user.services';
+import { storagePicture, uploadPic } from '../app';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
@@ -148,38 +149,40 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 
 
 
+/*** Picture ***/
 
 
+const userUploadDir = path.join(__dirname, '../../uploads');
 
-const uploadDir = path.resolve(__dirname, '../../uploads/'); 
-
-// Picture controller
 export const uploadPicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
-    const user: User | undefined = await getUserById(userId);
 
-    if (!user || !user.username) {
+    if (!userId) {
       return res.status(404).json({ message: 'No corresponding user' });
     }
 
-
-    const storagePicture = multer.diskStorage({
-      destination: (req, file, callback) => {
-        callback(null, uploadDir);
-      },
-      filename: (req, file, callback) => {
-        const uniqueFilename = `${user.username}`;
-        callback(null, uniqueFilename);
-      }
-    });
-
-    const upload = multer({ storage: storagePicture }).any();
-
-    upload(req, res, function (err: any) {
+    uploadPic(req, res, async function (err: any) {
       if (err) {
-        return res.status(400).json({ message: 'Failed to upload picture', error: err.message });
+        return res.status(400).json({ message: 'Failed to upload picture' });
       }
+
+      if (!req.file) {
+        return res.status(401).json({ message: 'No picture uploaded' });
+      }
+
+      try {
+        const files = await fs.promises.readdir(userUploadDir);
+        for (let file of files) {
+          if (file.startsWith(`${userId}-`) && file !== req.file.filename) {
+            await fs.promises.unlink(path.join(userUploadDir, file));
+            break; 
+          }
+        }
+      } catch (error) {
+        next(error);
+      }
+
       return res.status(200).json({ message: 'Picture uploaded successfully' });
     });
 
@@ -192,20 +195,25 @@ export const uploadPicture = async (req: Request, res: Response, next: NextFunct
 export const getPicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
-    const user: User | undefined = await getUserById(userId);
 
-    if (!user || !user.username) {
+    if (!userId) {
       return res.status(404).json({ message: 'No corresponding user' });
     }
+    
+    fs.readdir(userUploadDir, (err, files) => {
+      if (err) {
+        return res.status(500).json({ message: 'Error reading directory' });
+      }
 
-    const picturePath = path.join(uploadDir, user.username); 
+      const matchingFile = files.find(file => file.startsWith(userId.toString()));
 
-    if (fs.existsSync(picturePath)) {
-      return res.status(200).sendFile(picturePath);
-    } else {
-      return res.status(404).json({ message: 'Picture does not exist' });
-    }
-
+      if (matchingFile) {
+        const filePath = path.join(userUploadDir, matchingFile);
+        return res.status(200).sendFile(filePath);
+      } else {
+        return res.status(405).json({ message: 'Picture does not exist' });
+      }
+    });
   } catch (error) {
     next(error);
   }

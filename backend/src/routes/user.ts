@@ -1,12 +1,12 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { createUser, getUser, deleteUser, updateUser, uploadPicture, getPicture} from '../controllers/UserController';
+import { createUser, getUser, deleteUser, updateUser, uploadPicture, getPicture } from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 
 const router = express.Router();
 
-/**
+/**f
  * @swagger
  * /user:
  *  post:
@@ -37,7 +37,7 @@ const router = express.Router();
  *              name: 
  *                type: string
  *                description: The name of a user
- *                example: jean-papa Juan,padre
+ *                example: jean-papa Juanpadre
  *              age:
  *                required: true
  *                type: integer
@@ -268,13 +268,15 @@ router.delete('/', verifyUserToken, deleteUser);
  *        description: User picture updated successfully
  *      400:
  *        description: Failed to upload the picture
+ *      402:
+ *        description: No picture uploaded
  *      404:
  *        description: User not found
  */
 router.put('/picture',
   expressValidator,
   verifyUserToken,
-  uploadPicture
+  uploadPicture,
 );
 
 
@@ -289,8 +291,7 @@ router.put('/picture',
  *    security:
  *      - BearerAuth: []
  *    responses:
- *      200::
-
+ *      200:
  *        description: User picture retrieved successfully
  *      404:
  *        description: User not found

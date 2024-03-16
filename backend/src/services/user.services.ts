@@ -1,4 +1,3 @@
-import express from 'express';
 import { db } from '../db/db';
 import { User, users } from '../models/users';
 import { eq } from 'drizzle-orm';
