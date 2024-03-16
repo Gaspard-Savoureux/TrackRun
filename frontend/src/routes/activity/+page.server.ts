@@ -3,6 +3,8 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from '../$types';
 import { API_URL } from '../../constants';
 
+
+
 // Enumération des codes d'erreur
 enum ErrorCode {
     Missing,
@@ -185,4 +187,85 @@ export const actions: object = {
       },
     };
   },
+
+  /*
+  // Fonction pour modifier une activité
+  modifierActivite: async ({ cookies, fetch }: RequestEvent, activiteId: string, nouvelleActivite: Activite) => {
+    const token = cookies.get('token');
+
+    const res = await fetch(`${API_URL}/activity/${activiteId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(nouvelleActivite),
+    });
+
+    if (res.status === 400 || res.status === 401) {
+      const errorData = await res.json();
+      return fail(res.status, {
+        success: false,
+        message: errorData.message,
+      });
+    }
+
+    if (res.ok) {
+      // Activité modifiée avec succès
+      return {
+        status: 200,
+        body: {
+          success: true,
+          message: 'Activité modifiée avec succès!',
+        },
+      };
+    }
+
+    // Erreur inattendue
+    return fail(500, {
+      success: false,
+      message: 'Une erreur est survenue lors de la modification de l\'activité.',
+    });
+  },
+
+  // Fonction pour supprimer une activité
+  supprimerActivite: async ({ cookies, fetch }: RequestEvent, activiteId: string) => {
+    const token = cookies.get('token');
+
+    const res = await fetch(`${API_URL}/activity/${activiteId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.status === 400 || res.status === 401) {
+      const errorData = await res.json();
+      return fail(res.status, {
+        success: false,
+        message: errorData.message,
+      });
+    }
+
+    if (res.ok) {
+      // Activité supprimée avec succès
+      return {
+        status: 200,
+        body: {
+          success: true,
+          message: 'Activité supprimée avec succès!',
+        },
+      };
+    }
+
+    // Erreur inattendue
+    return fail(500, {
+      success: false,
+      message: 'Une erreur est survenue lors de la suppression de l\'activité.',
+    });
+  }*/
 };
+
+
+
+
