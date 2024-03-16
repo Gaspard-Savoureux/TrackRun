@@ -8,7 +8,7 @@
   export let data: LayoutServerData;
 
   theme.set(data.theme);
-  const noNavPage = ['/login', '/register'];
+  const noNavPage = ['/login', '/register', '/admin', '/admin/dashboard'];
 </script>
 
 <svelte:head>

@@ -1,11 +1,12 @@
 <script lang="ts">
   export let name: string;
+  export let value: unknown = undefined;
 </script>
 
 <div class={'item'}>
   <h3>{name}</h3>
-  {#if $$slots.default}
-    <span><slot /></span>
+  {#if value}
+    <span>{value}</span>
   {:else}
     <span class="notset">Not specified</span>
   {/if}
@@ -27,5 +28,16 @@
 
   h3 {
     margin-right: 1rem;
+  }
+
+  @media (max-width: 576px) {
+    .item {
+      display: block;
+      margin: 0.5rem;
+    }
+
+    span {
+      margin-left: 0.5rem;
+    }
   }
 </style>

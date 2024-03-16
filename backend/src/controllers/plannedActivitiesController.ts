@@ -4,7 +4,7 @@ import { User } from '../models/users';
 import { getUserById } from '../services/user.services';
 import { db } from '../db/db';
 import { and, eq, gte } from 'drizzle-orm';
-import { updatePlannedActivityById } from '../services/plannedActivity.services'
+import { deletePlannedActivityById, selectPlannedActivityById, updatePlannedActivityById } from '../services/planned_activity.services';
 
 export const getPlannedActivities = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -80,9 +80,30 @@ export const modifyPlannedActivity = async (req: Request, res: Response, next: N
 
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getPlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const user: User | undefined = await getUserById(userId);
+    const pActivityId = Number(req.params?.pActivityId);
+
+    const [plannedActivity] = await db.select()
+      .from(planned_activities)
+      .where(and(eq(planned_activities.user_id, userId), eq(planned_activities.id, pActivityId)))
+      .limit(1);
+
+    if (!plannedActivity) {
+      return res.status(404).json({ message: 'No corresponding planned activity found' });
+    }
+
+    return res.status(200).json({ plannedActivity });
+
+  } catch (error) {
     next(error);
   }
-}
+};
 
 export const createPlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -131,6 +152,30 @@ export const createPlannedActivity = async (req: Request, res: Response, next: N
 
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+export const deletePlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const activityId = parseInt(req.params.activityId);
+
+    // check if the activityId is a number
+    if (!activityId || isNaN(activityId)) {
+      return res.status(400).json({ error: "Invalid activityId" });
+    }
+    const activitiesToDelete = await selectPlannedActivityById(activityId, userId);
+    // log to delete
+    console.log(activitiesToDelete);
+    if (activitiesToDelete.length !== 1) {
+      return res.status(404).json({ error: "No corresponding activity" });
+    }
+
+    await deletePlannedActivityById(activityId, userId);
+    res.status(200).json({ message: "Activity deleted successfully" });
+
+  } catch (error) {
     next(error);
   }
 };
