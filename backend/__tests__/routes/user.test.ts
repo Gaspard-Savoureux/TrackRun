@@ -7,13 +7,13 @@ import { User } from '../../src/models/users';
 
 
 // Base user should always work
-const user = {username: 'test-user', password: '1234', email: 'testing@gmail.com', name: 'Test User', age: '30'};
+const user = {username: 'test-user', password: '1234', email: 'testing@gmail.com', name: 'Test User'};
 
 // this user as the same name
-const user1 = {username: 'test-user', password: '4567', email: 'usertesting@gmail.com', name: 'Test User the 2nd', age: '30'};
+const user1 = {username: 'test-user', password: '4567', email: 'usertesting@gmail.com', name: 'Test User the 2nd'};
 
 // this user has the same email
-const user2 = {username: 'testing user', password: '4567',email: 'testing@gmail.com', name: 'Test User the 3nd', age: '30'};
+const user2 = {username: 'testing user', password: '4567',email: 'testing@gmail.com', name: 'Test User the 3nd'};
 
 
 let returnedUser: User;
@@ -28,10 +28,10 @@ beforeAll(async () => {
   returnedUser = {id: 1, username: user.username, password: hashedPassword, };
 
   const hashedPassword1 = await bcrypt.hash(user1.password, 10);
-  returnedUser1 = {id: 2, username: user1.username, password: hashedPassword1, email: user1.email, name: user1.name, age : parseInt(user1.age)};
+  returnedUser1 = {id: 2, username: user1.username, password: hashedPassword1, email: user1.email, name: user1.name};
 
   const hashedPassword2 = await bcrypt.hash(user2.password, 10);
-  returnedUser2 = {id: 3, username: user2.username, password: hashedPassword2, email: user2.email, name: user2.name, age : parseInt(user2.age)};
+  returnedUser2 = {id: 3, username: user2.username, password: hashedPassword2, email: user2.email, name: user2.name};
 });
 
 

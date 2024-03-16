@@ -38,11 +38,6 @@ const router = express.Router();
  *                type: string
  *                description: The name of a user
  *                example: jean-papa Juanpadre
- *              age:
- *                required: true
- *                type: integer
- *                description: The age of a user
- *                example: 30
  *    responses:
  *      201:
  *        description: New user created

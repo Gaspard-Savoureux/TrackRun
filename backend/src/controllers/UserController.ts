@@ -167,7 +167,7 @@ export const uploadPicture = async (req: Request, res: Response, next: NextFunct
       }
 
       if (!req.file) {
-        return res.status(401).json({ message: 'No picture uploaded' });
+        return res.status(402).json({ message: 'No picture uploaded' });
       }
 
       try {
