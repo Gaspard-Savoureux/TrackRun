@@ -60,13 +60,30 @@ export const modifyPlannedActivity = async (req: Request, res: Response, next: N
   try {
     const userId = req.user?.userId as number;
     const user: User | undefined = await getUserById(userId);
+    const pActivityId = Number(req.params?.pActivityId);
 
     if (!user) {
       return res.status(404).json({ error: 'No corresponding user' });
     }
 
-    const { type, date, duration, name, comment, pActivityId } = req.body;
+    let { type, date, duration, name, comment } = req.body;
     const updatedPlannedActivity: Partial<PlannedActivity> = {};
+
+
+    const validTypes = ['Running', 'Biking', 'Walking'];
+    if (!type || !validTypes.includes(type)) {
+      return res.status(400).json({ message: `Type must be one of the following: ${validTypes.join(', ')}` });
+    }
+
+    // Name dafault value
+    if (!name || name.length == 0) {
+      name = type.toString();
+    }
+
+    // Comment default value
+    if (!comment) {
+      comment = '';
+    }
 
     updatedPlannedActivity.type = type;
     updatedPlannedActivity.date = new Date(date);

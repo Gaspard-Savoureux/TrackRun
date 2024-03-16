@@ -99,18 +99,9 @@ describe('PUT PlannedActivities', () => {
   });
 
   test('Should return 401: Unauthorized', async () => {
-    const pActivity = {
-      type: 'Running',
-      date: '2024-02-26 16:30:00',
-      duration: 1823,
-      name: 'A run in the park',
-      comment: 'Remember to focus on your breath the entire time!',
-      pActivityId: 1
-    };
 
     const res = await request(app)
-      .put(route)
-      .send(pActivity);
+      .put(route + '/1')
     expect(res.status).toBe(401);
   });
 
@@ -121,24 +112,29 @@ describe('PUT PlannedActivities', () => {
       duration: 1823,
       name: 'A run in the park',
       comment: 'Remember to focus on your breath the entire time!',
-      pActivityId: 1
     };
 
-    await request(app)
+    const resPost = await request(app)
       .post(route)
       .send(pActivity)
       .set('Authorization', 'Bearer ' + auth_token);
 
-    pActivity.name = "A run in the field";
+    const pActivityId = resPost.body.id;
 
-    const res = await request(app)
-      .put(route)
+    pActivity.name = "A run in the field";
+    pActivity.duration = 666;
+
+    const resPut = await request(app)
+      .put(route + '/' + pActivityId)
       .send(pActivity)
       .set('Authorization', 'Bearer ' + auth_token);
-    expect(res.body).toEqual({
-      plannedActivities: [expect.objectContaining({
-        name: 'A run in the field'
-      })]
+
+    expect(resPut.body).toEqual({
+      plannedActivity: expect.objectContaining({
+        type: 'Running',
+        name: 'A run in the park',
+        duration: 666,
+      })
     });
   });
 });

@@ -110,8 +110,6 @@ router.get('/', verifyUserToken, getPlannedActivities);
  *                    type: string
  *                  comment:
  *                    type: string
- *                  activity_id:
- *                    type: integer
  *      401:
  *        description: User is not logged in
  *      404:
@@ -123,7 +121,7 @@ router.get('/:pActivityId', verifyUserToken, getPlannedActivity);
 
 /**
  * @swagger
- * /plannedactivities:
+ * /plannedactivities/{pActivityId}:
  *  put:
  *    tags:
  *     - planned_activities
@@ -131,6 +129,13 @@ router.get('/:pActivityId', verifyUserToken, getPlannedActivity);
  *    description: update planned activity of the currently logged-in user
  *    security:
  *      - BearerAuth: []
+ *    parameters:
+ *       - in: path
+ *         name: pActivityId
+ *         schema:
+ *           type: integer
+ *           required: true
+ *           description: the id of a planned activity
  *    requestBody:
  *      required: true
  *      content:
@@ -171,14 +176,13 @@ router.get('/:pActivityId', verifyUserToken, getPlannedActivity);
  *     500:
  *      description: Server error
  */
-router.put('/',
+router.put('/:pActivityId',
   [
     body('type').optional({ values: 'null' }).isString().isLength({ max: 64 }),
     body('date').optional().isISO8601(),
     body('duration').optional().isInt({ min: 0, max: 1024 }),
     body('name').optional({ values: 'null' }).isString().isLength({ max: 64 }),
     body('comment').optional({ values: 'null' }).isString().isLength({ max: 256 }),
-    body('pActivityId').isInt(),
   ],
   verifyUserToken, modifyPlannedActivity);
 
