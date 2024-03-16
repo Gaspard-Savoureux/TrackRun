@@ -105,7 +105,7 @@ describe('PUT PlannedActivities', () => {
     expect(res.status).toBe(401);
   });
 
-  test('Should return modified pActivity', async () => {
+  test('Should return success message', async () => {
     const pActivity = {
       type: 'Running',
       date: '2024-02-26 16:30:00',
@@ -129,11 +129,14 @@ describe('PUT PlannedActivities', () => {
       .send(pActivity)
       .set('Authorization', 'Bearer ' + auth_token);
 
-    expect(resPut.body).toEqual({
+    const resGet = await request(app)
+      .get(route + '/' + pActivityId)
+      .set('Authorization', 'Bearer ' + auth_token);
+
+    expect(resGet.body).toEqual({
       plannedActivity: expect.objectContaining({
-        type: 'Running',
-        name: 'A run in the park',
-        duration: 666,
+        name: 'A run in the field',
+        duration: 666
       })
     });
   });

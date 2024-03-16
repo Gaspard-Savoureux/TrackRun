@@ -163,9 +163,6 @@ router.get('/:pActivityId', verifyUserToken, getPlannedActivity);
  *                type: string
  *                description: The comment of the activity
  *                example: Remember to focus on your breath the entire time!
- *              pActivityId:
- *                type: integer
- *                example: 1
  *    responses:
  *     201:
  *      description: Planned activity updated successfully
@@ -184,7 +181,7 @@ router.put('/:pActivityId',
     body('name').optional({ values: 'null' }).isString().isLength({ max: 64 }),
     body('comment').optional({ values: 'null' }).isString().isLength({ max: 256 }),
   ],
-  verifyUserToken, modifyPlannedActivity);
+  expressValidator, verifyUserToken, modifyPlannedActivity);
 
 /**
  * @swagger
