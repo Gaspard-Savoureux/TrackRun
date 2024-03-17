@@ -6,13 +6,13 @@
     let afficherGPXForm = false;
     
     function afficherManuel() {
-        afficherManuelForm = true;
-        afficherGPXForm = false;
+      afficherManuelForm = true;
+      afficherGPXForm = false;
     }
 
     function afficherGPX() {
-        afficherManuelForm = false;
-        afficherGPXForm = true;
+      afficherManuelForm = false;
+      afficherGPXForm = true;
     }
 
     export let data;
