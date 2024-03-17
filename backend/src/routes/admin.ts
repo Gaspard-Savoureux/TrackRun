@@ -17,6 +17,32 @@ const router = express.Router();
  *       scheme: basic
  */
 
+
+/**
+ *
+ * @swagger
+ * /admin:
+ *   get:
+ *     tags:
+ *       - admin
+ *     summary: validate admin credentials
+ *     description: Route to validate admin credentials
+ *     security:
+ *       - basicAuth: []
+ *     responses:
+ *       200:
+ *         description: authorized
+ *       400:
+ *         description: Bad Request
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Conflict
+ *       500:
+ *         description: Server Error
+ */
+router.get('/', (req, res) => res.status(200).json({message: 'authorized'}));
+
 /**
  *
  * @swagger
@@ -56,6 +82,9 @@ const router = express.Router();
  *         description: New user created
  *       400:
  *         description: Bad Request
+ * 
+ *       401:
+ *         description: Unauthorized
  *       409:
  *         description: Conflict
  *       500:
@@ -110,6 +139,8 @@ router.post('/trainer',
  *                     type: string
  *                     description: The name of a user
  *                     example: Maurice Du Plat Lisse
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: No corresponding trainerfound
  *       500:
@@ -157,6 +188,8 @@ router.get('/trainers', getTrainers);
  *                   example: Maurice Du Plat Lisse
  *       400:
  *         description: Bad Request
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: No corresponding trainerfound
  *       500:
@@ -201,6 +234,8 @@ router.get('/trainer/:trainerId',
  *                   example: Trainer successfully deleted
  *       400:
  *         description: Bad Request
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: No corresponding trainerfound
  *       500:
@@ -281,6 +316,8 @@ router.delete('/trainer/:trainerId',
  *                   example: Trainer successfully updated
  *       400:
  *         description: Bad Request
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: No corresponding trainerfound
  *       500:

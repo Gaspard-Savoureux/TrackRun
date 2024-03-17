@@ -1,8 +1,13 @@
 import express from 'express';
-import {createPlannedActivity, getPlannedActivities} from '../controllers/plannedActivitiesController';
+import {
+  createPlannedActivity,
+  getPlannedActivities,
+  getPlannedActivity,
+  deletePlannedActivity,
+} from '../controllers/plannedActivitiesController';
 import { verifyUserToken } from '../middlewares/authentication';
 import { body } from 'express-validator';
-import {expressValidator} from '../middlewares/validation';
+import { expressValidator } from '../middlewares/validation';
 
 const router = express.Router();
 
@@ -65,6 +70,58 @@ router.get('/', verifyUserToken, getPlannedActivities);
 
 /**
  * @swagger
+ * /plannedactivities/{pActivityId}:
+ *  get:
+ *    tags:
+ *    - planned_activities
+ *    summary: Get a planned activity of current user
+ *    description: Route to get a planned activity of a logged user
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *       - in: path
+ *         name: pActivityId
+ *         schema:
+ *           type: integer
+ *           required: true
+ *           description: the id of a planned activity
+ *    responses:
+ *      200:
+ *        description: Planned activity
+ *        content:
+ *          application/json:
+ *            schema:
+ *                type: object
+ *                properties:
+ *                  id:
+ *                    type: integer
+ *                  user_id:
+ *                    type: integer
+ *                  type:
+ *                    type: string
+ *                  date:
+ *                    type: string
+ *                    format: date-time
+ *                    example: 2024-02-26 16:30:00
+ *                  duration:
+ *                    type: integer
+ *                  name:
+ *                    type: string
+ *                  comment:
+ *                    type: string
+ *                  activity_id:
+ *                    type: integer
+ *      401:
+ *        description: User is not logged in
+ *      404:
+ *        description: No corresponding planned activity found
+ *      500:
+ *        description: Server Error
+ */
+router.get('/:pActivityId', verifyUserToken, getPlannedActivity);
+
+/**
+ * @swagger
  * /plannedactivities:
  *  post:
  *    tags:
@@ -112,15 +169,42 @@ router.get('/', verifyUserToken, getPlannedActivities);
  */
 router.post('/',
   [
-    body('type').isString(), 
+    body('type').isString(),
     body('date').isISO8601(),
-    body('duration').isInt({min: 0}),
-    body('name').optional({values: 'null'}).isString().isLength({max: 256}),
-    body('comment').optional({values: 'null'}).isString()
+    body('duration').isInt({ min: 0 }),
+    body('name').optional({ values: 'null' }).isString().isLength({ max: 256 }),
+    body('comment').optional({ values: 'null' }).isString()
   ],
   expressValidator,
-  verifyUserToken, 
+  verifyUserToken,
   createPlannedActivity);
+
+/**
+ * @swagger
+ * /plannedactivities/{activityId}:
+ *  delete:
+ *    tags:
+ *    - planned_activities
+ *    summary: Delete planned activity
+ *    description: Route to delete a planned activity of a logged user
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *      - in: path
+ *        name: activityId
+ *        required: true
+ *        description: The id of the activity to delete
+ *        schema:
+ *          type: integer
+ *    responses:
+ *      200:
+ *        description: Activity deleted successfully
+ *      400:
+ *        description: Invalid activityId
+ *      500:
+ *        description: Server Error
+ */
+router.delete("/:activityId", verifyUserToken, deletePlannedActivity);
 
 
 export default router;
