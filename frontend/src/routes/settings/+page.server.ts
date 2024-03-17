@@ -93,6 +93,7 @@ export const actions: object = {
       if (res.ok) {
         cookies.delete('token', {
           path: '/',
+          secure: false,
         });
 
         return redirect(303, '/login');
