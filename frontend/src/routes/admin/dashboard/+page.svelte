@@ -170,7 +170,8 @@
           use:enhance
           action="?/createTrainer"
           on:submit={() => {
-            if (trainerFormFilled) fillTemplateTrainer;
+            if (trainerFormFilled) fillTemplateTrainer();
+            trainerFormFilled = false;
           }}
         >
           <input
