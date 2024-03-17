@@ -227,3 +227,143 @@ describe('get specified activities', () => {
   });
 
 });
+
+describe('GPX file related test', () => {
+  test('Right GPX', async () => {
+    const gpxFile = gpxFileWorking;
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .post('/activity/gpxForm')
+      .set('Authorization', `Bearer ${token}`)
+      .field('name', 'Nom de l\'activiter').field('type', 'Running').field('comment', 'Activity from unity test')
+      .attach('file', Buffer.from(gpxFile), 'activity.gpx');
+
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('Wrong GPX', async () => {
+    const gpxFile = gpxFileWrong;
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .post('/activity/gpxForm')
+      .set('Authorization', `Bearer ${token}`)
+      .field('name', 'Nom de l\'activiter').field('type', 'Running').field('comment', 'Activity from unity test')
+      .attach('file', Buffer.from(gpxFile), 'activity.gpx');
+
+    expect(res.statusCode).toBe(400);
+  });
+});
+
+
+
+
+
+
+/**
+ * This variable represents a GPX file in XML format.
+ *
+ * @type {string}
+ * @description The GPX file contains location data of a track, including latitude, longitude, elevation, and time.
+ * @example
+ * gpxFileWorking = `<?xml version="1.0" encoding="UTF-8"?>
+ * <gpx version="1.1" creator="AI Assistant">
+ *   <metadata>
+ *     <name>Example GPX</name>
+ *     <desc>This is an example GPX file</desc>
+ *   </metadata>
+ *   <trk>
+ *     <name>Example track</name>
+ *     <trkseg>
+ *       <trkpt lat="47.644548" lon="-122.326897">
+ *         <ele>4.46</ele>
+ *         <time>2009-10-17T18:36:26Z</time>
+ *       </trkpt>
+ *       <trkpt lat="47.644548" lon="-122.326897">
+ *         <ele>4.94</ele>
+ *         <time>2009-10-17T18:37:26Z</time>
+ *       </trkpt>
+ *     </trkseg>
+ *   </trk>
+ * </gpx>`;
+ */
+export const gpxFileWorking = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AI Assistant">
+  <metadata>
+    <name>Example GPX</name>
+    <desc>This is an example GPX file</desc>
+  </metadata>
+  <trk>
+    <name>Example track</name>
+    <trkseg>
+      <trkpt lat="47.644548" lon="-122.326897">
+        <ele>4.46</ele>
+        <time>2009-10-17T18:36:26Z</time>
+      </trkpt>
+      <trkpt lat="47.644548" lon="-122.326897">
+        <ele>4.94</ele>
+        <time>2009-10-17T18:37:26Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>`;
+
+/**
+ * @typedef {string} gpxFileWrong
+ *
+ * @description
+ * The `gpxFileWrong` variable represents an invalid GPX file in XML format.
+ *
+ * @example
+ * <?xml version="1.0" encoding="UTF-8"?>
+ * <gpx version="1.1" creator="AI Assistant">
+ *   <metadata>
+ *     <name>Example GPX</name>
+ *     <desc>This is an example GPX file</desc>
+ *   </metadata>
+ *   <trk>
+ *     <name>Example track</name>
+ *     <trkseg>
+ *       <trkpt lat="47.644548" lon="-122.326897">
+ *         <ele>4.46</ele>
+ *         <time>2009-10-17T18:36:26Z</time>
+ *       </trkpt>
+ *       <trkpt lat="47.644548" lon="-122.326897">
+ *         <ele>4.94</ele>
+ *         <time>2009-10-17T18:37:26Z</time>
+ *       </trkpt>
+ *     </trkseg>
+ *   </trk>
+ */
+export const gpxFileWrong = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AI Assistant">
+  <metadata>
+    <name>Example GPX</name>
+    <desc>This is an example GPX file</desc>
+  </metadata>
+  <trk>
+    <name>Example track</name>
+    <trkseg>
+      <trkpt lat="47.644548" lon="-122.326897">
+        <ele>4.46</ele>
+        <time>2009-10-17T18:36:26Z</time>
+      </trkpt>
+      <trkpt lat="47.644548" lon="-122.326897">
+        <ele>4.94</ele>
+        <time>2009-10-17T18:37:26Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>`;
+
