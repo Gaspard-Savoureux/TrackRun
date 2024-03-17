@@ -243,15 +243,14 @@ export const actions: object = {
     };
   },
   ajouterActiviteGPX: async ({ cookies, fetch, request }: RequestEvent) => {
-    //const activiteData = await extractFormData(request);
     const data = await request.formData();
-    const name = data.get('nom');
+    const name = data.get('name');
     const type = data.get('typeActivite');
     const comment = data.get('comment');
-    const segments = data.get('fichierGPX') as File;
-
+    const fichierGPX = data.get('fichierGPX') as File;
+    
     // Validation des champs
-    if (!name || !type || !comment || !segments) {
+    if (!name || !type || !comment || !fichierGPX) {
       return fail(400, { 
         success: false, 
         message: getErrorMessage(ErrorCode.Missing, 'vide'), 
@@ -272,10 +271,10 @@ export const actions: object = {
     if (!isValidComment(<string>comment)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
+        message: getErrorMessage(ErrorCode.InvalidComment, 'comment'),
       });
     }
-    if (!isGPXFile(segments)) {
+    if (!isGPXFile(fichierGPX)) {
       return fail(400, { 
         success: false, 
         message: getErrorMessage(ErrorCode.InvalidGPX, 'FormatGPX'), 
@@ -290,7 +289,7 @@ export const actions: object = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ name, type, comment, segments }),
+      body: JSON.stringify({ name, type, comment, fichierGPX }),
     });
 
     if (res.status === 400 || res.status === 401) {
