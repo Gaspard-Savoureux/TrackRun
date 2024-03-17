@@ -120,6 +120,10 @@ router.post('/',
  *                   type: string
  *                   description: The sex of a user
  *                   example: male
+ *                 img:
+ *                   type: string
+ *                   description: The name of the user's image
+ *                   example: 1-djaskhfgads08fwdsfnb234f890.png
  *                 description:
  *                   required: false
  *                   type: string

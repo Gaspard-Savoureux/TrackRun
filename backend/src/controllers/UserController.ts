@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models/users';
 import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById, updateUserImg, getUserImage} from '../services/user.services';
-import { uploadUserPic } from '../middlewares/uploadPic';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import path from 'path';
@@ -154,8 +153,9 @@ const userUploadDir = path.join(__dirname, '../../uploads');
 export const uploadPicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
+    const user: User | undefined = await getUserById(userId);
     
-    if (!userId) return res.status(404).json({ message: 'No corresponding user' });
+    if (!user) return res.status(404).json({ message: 'No corresponding user' });
     
     if (!req.file) {
       return res.status(402).json({ message: 'No picture uploaded' });
@@ -176,31 +176,50 @@ export const uploadPicture = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-
-// const userUploadDir = path.join(__dirname, '../../uploads');
 export const getPicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
+    const user: User | undefined = await getUserById(userId);
 
-    if (!userId) {
+    if (!user) {
       return res.status(404).json({ message: 'No corresponding user' });
     }
-    
-    fs.readdir(userUploadDir, (err, files) => {
-      if (err) {
-        return res.status(500).json({ message: 'Error reading directory' });
-      }
 
-      const matchingFile = files.find(file => file.startsWith(userId.toString()));
+    const { img } = await getUserImage(userId);
 
-      if (matchingFile) {
-        const filePath = path.join(userUploadDir, matchingFile);
-        return res.status(200).sendFile(filePath);
-      } else {
-        return res.status(405).json({ message: 'Picture does not exist' });
-      }
-    });
+    if (!img) return res.status(405).json({ message: 'Picture does not exist' });
+
+    return res.status(200).json({img: `/uploads/${img}`});
   } catch (error) {
     next(error);
   }
 };
+
+
+// Deviendra une option pour télécharger un photo
+// export const getPicture = async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const userId = req.user?.userId as number;
+
+//     if (!userId) {
+//       return res.status(404).json({ message: 'No corresponding user' });
+//     }
+    
+//     fs.readdir(userUploadDir, (err, files) => {
+//       if (err) {
+//         return res.status(500).json({ message: 'Error reading directory' });
+//       }
+
+//       const matchingFile = files.find(file => file.startsWith(userId.toString()));
+
+//       if (matchingFile) {
+//         const filePath = path.join(userUploadDir, matchingFile);
+//         return res.status(200).sendFile(filePath);
+//       } else {
+//         return res.status(405).json({ message: 'Picture does not exist' });
+//       }
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
