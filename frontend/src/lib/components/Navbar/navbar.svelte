@@ -41,6 +41,7 @@
     position: -webkit-sticky; /* Safari */
     position: sticky;
     top: 0;
+    height: 3.7rem;
   }
 
   .nav-item {
@@ -60,6 +61,10 @@
   }
 
   @media (max-width: 576px) {
+    .navbar {
+      height: auto;
+    }
+
     .pages-icon {
       display: none;
     }

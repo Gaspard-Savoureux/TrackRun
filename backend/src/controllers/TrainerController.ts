@@ -104,6 +104,12 @@ export const updateTrainer = async (req: Request, res: Response, next: NextFunct
 
     const { username, password, name, email } = req.body;
 
+    const emailInUse = await getTrainerByEmail(email);
+    const usernameInUse = await getTrainerByUsername(username);
+
+    if (emailInUse) return res.status(409).json({ error: 'A trainer already has that name' });
+    if (usernameInUse) return res.status(409).json({error: 'A trainer already has that email'});
+
     const updateData: Partial<Trainer> = {};
 
     if (username) updateData.username = username;
