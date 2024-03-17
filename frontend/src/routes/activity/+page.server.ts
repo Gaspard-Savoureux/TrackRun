@@ -231,7 +231,7 @@ export const actions: object = {
     }
 
     if (res.ok) {
-      redirect(302, '/');
+      redirect(302, '?/activity/');
     }
 
     return {
@@ -283,13 +283,20 @@ export const actions: object = {
 
     const token = cookies.get('token');
 
+
+    console.log('test');
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('type', type);
+    formData.append('comment', comment);
+    formData.append('file', fichierGPX);
+
     const res = await fetch(`${API_URL}/activity/gpxForm`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ name, type, comment, fichierGPX }),
+      body: formData,
     });
 
     if (res.status === 400 || res.status === 401) {
@@ -302,7 +309,7 @@ export const actions: object = {
     }
 
     if (res.ok) {
-      redirect(302, '/');
+      redirect(302, '?/activity/');
     }
 
     return {

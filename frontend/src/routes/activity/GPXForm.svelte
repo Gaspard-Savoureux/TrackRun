@@ -9,7 +9,7 @@
   export let form: { success?: boolean, message?: string } = {};
 </script>
 
-<form method="POST" action="?/ajouterActiviteGPX" use:enhance>
+<form method="POST" action="?/ajouterActiviteGPX" use:enhance enctype="multipart/form-data">
   <label for="name">Nom de l'activité:</label>
   <input name="name" type="text" bind:value={name} required>
 
