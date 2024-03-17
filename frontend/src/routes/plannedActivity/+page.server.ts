@@ -35,7 +35,7 @@ export const actions: object = {
   save: async ({ cookies, fetch, request }: RequestEvent) => {
     const data = await request.formData();
     
-    if (!data.get('date')|| !data.get('time') ||
+    if (!data.get('date') || !data.get('time') ||
         !data.get('duration') || !data.get('type')) {
       return fail(400, {
         success: false,
@@ -44,7 +44,7 @@ export const actions: object = {
     } 
 
     const pActivity: PlannedActivity = formatPlannedActivity(data);
-    console.log(JSON.stringify(pActivity));
+  
     const res = await fetch(`${API_URL}/plannedactivities/${pActivity.id}`, {
       method: 'PUT',
       headers: {
@@ -90,7 +90,7 @@ export const actions: object = {
     const pActivity: PlannedActivity = formatPlannedActivity(data);
     const res = await fetch(`${API_URL}/plannedactivities/${pActivity.id}`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${cookies.get('token')}`, }
+      headers: { Authorization: `Bearer ${cookies.get('token')}` },
     });
 
 
