@@ -7,7 +7,7 @@ import type { PlannedActivity } from '$lib/types/plannedActivity';
 function formatPlannedActivity(data: FormData): PlannedActivity {
   const pActivity: PlannedActivity = {
     id: null,
-    type: String(data.get('type')) ,
+    type: String(data.get('type')),
     date: `${data.get('date')} ${data.get('time')}`,
     duration: Number(data.get('duration')) * 60,
     name: String(data.get('name')) || String(data.get('type')),
@@ -20,23 +20,23 @@ function formatPlannedActivity(data: FormData): PlannedActivity {
 export const actions: object = {
   default: async ({ cookies, fetch, request }: RequestEvent) => {
     const data = await request.formData();
-    
+
     if (!data.get('date') || !data.get('time') ||
-        !data.get('duration') || !data.get('type')) {
+      !data.get('duration') || !data.get('type')) {
       return fail(400, {
         success: false,
         message: 'Please fill all mandatory fields',
       });
-    } 
+    }
 
     const pActivity: PlannedActivity = formatPlannedActivity(data);
     const res = await fetch(`${API_URL}/plannedactivities`, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${cookies.get('token')}`,
       },
-      
+
       body: JSON.stringify(pActivity),
     });
 
@@ -59,9 +59,8 @@ export const actions: object = {
 
     if (res.ok) {
       const id = (await res.json()).id;
-      return { submitted: true, id: id };
+      return { submitted: true, id };
     }
-
 
     return fail(500, {
       success: false,
