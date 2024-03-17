@@ -21,7 +21,7 @@
   </select>
 
   <label for="fichierGPX">Fichier GPX:</label>
-  <input name="fichierGPX" type="file" bind:files={fichierGPX} required>
+  <input name="fichierGPX" type="file" accept=".gpx" bind:files={fichierGPX} required>
 
   <label for="commentaires">Commentaires:</label>
   <textarea name="commentaires" bind:value={commentaires} required></textarea>

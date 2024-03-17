@@ -12,7 +12,8 @@ enum ErrorCode {
     InvalidDate,
     InvalidDuree,
     InvalidDistance,
-    InvalidComment
+    InvalidComment,
+    InvalidGPX
 }
 
 // Fonction pour récupérer les messages d'erreur en fonction du code d'erreur
@@ -41,6 +42,8 @@ function getErrorMessage(errorCode: ErrorCode, variable: string): string {
     return `Le champ "${variable}" de l'activité doit être un nombre positif.`;
   case ErrorCode.InvalidComment:
     return `Le champ "${variable}" de l'activité doit être une chaîne de caractères d'une longueur maximale de 1000 caractères.`;
+  case ErrorCode.InvalidGPX:
+    return `Le champ "${variable}" de l'activité doit être au format GPX.`;
   default:
     return 'Une erreur inconnue s\'est produite.';
   }
@@ -118,6 +121,10 @@ function isValidDistance(distance: string): boolean {
  */
 function isValidComment(comment: string): boolean {
   return comment.length <= 1000;
+}
+
+function isGPXFile(file: File): boolean {
+  return file.name.toLowerCase().endsWith('.gpx');
 }
 
 /**
@@ -241,9 +248,39 @@ export const actions: object = {
     const name = data.get('nom');
     const type = data.get('typeActivite');
     const comment = data.get('comment');
-    const segments = data.get('fichierGPX');
+    const segments = data.get('fichierGPX') as File;
 
-    // Validation des champs TODO
+    // Validation des champs
+    if (!name || !type || !comment || !segments) {
+      return fail(400, { 
+        success: false, 
+        message: getErrorMessage(ErrorCode.Missing, 'vide'), 
+      });
+    }
+    if (!isValidNom(<string>name)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+      });
+    }
+    if (!isValidTypeActivite(<string>type)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+      });
+    }
+    if (!isValidComment(<string>comment)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
+      });
+    }
+    if (!isGPXFile(segments)) {
+      return fail(400, { 
+        success: false, 
+        message: getErrorMessage(ErrorCode.InvalidGPX, 'FormatGPX'), 
+      });
+    }
 
     const token = cookies.get('token');
 
