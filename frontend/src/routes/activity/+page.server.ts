@@ -144,7 +144,7 @@ export const actions: object = {
    * @param {Object} requestEvent - The request event object containing the cookies, fetch, and request properties.
    * @returns {Object} - The response object containing the status code and body.
    */
-  ajouterActivite: async ({ cookies, fetch, request }: RequestEvent) => {
+  ajouterActiviteManuel: async ({ cookies, fetch, request }: RequestEvent) => {
     //const activiteData = await extractFormData(request);
     const data = await request.formData();
     const name = data.get('nom');
@@ -234,6 +234,49 @@ export const actions: object = {
         message: 'Activité ajoutée avec succès!',
       },
     };
+  },
+  ajouterActiviteGPX: async ({ cookies, fetch, request }: RequestEvent) => {
+    //const activiteData = await extractFormData(request);
+    const data = await request.formData();
+    const name = data.get('nom');
+    const type = data.get('typeActivite');
+    const comment = data.get('comment');
+    const segments = data.get('fichierGPX');
+
+    // Validation des champs TODO
+
+    const token = cookies.get('token');
+
+    const res = await fetch(`${API_URL}/activity/gpxForm`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name, type, comment, segments }),
+    });
+
+    if (res.status === 400 || res.status === 401) {
+
+      const errorData = await res.json();
+      return fail(res.status, {
+        success: false,
+        message: errorData.message,
+      });
+    }
+
+    if (res.ok) {
+      redirect(302, '/');
+    }
+
+    return {
+      status: 200,
+      body: {
+        success: true,
+        message: 'Activité ajoutée avec succès!',
+      },
+    };
+
   },
 };
 

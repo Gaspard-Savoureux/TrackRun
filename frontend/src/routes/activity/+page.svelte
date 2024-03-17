@@ -1,48 +1,37 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
+    import GPXForm from './GPXForm.svelte';
+    import ManuelForm from './ManuelForm.svelte';
+
+    let afficherManuelForm = false;
+    let afficherGPXForm = false;
+    
+    function afficherManuel() {
+        afficherManuelForm = true;
+        afficherGPXForm = false;
+    }
+
+    function afficherGPX() {
+        afficherManuelForm = false;
+        afficherGPXForm = true;
+    }
 
     export let data;
     const activities = data.activities.userActivities;
+</script>
 
-    let nom = '';
-    let ville = '';
-    let typeActivite: 'Course' | 'Vélo' = 'Course';
-    let date = '';
-    let duree = '';
-    let distance = '';
-    let comment = '';
+<h1>Page d'activiter</h1>
+<p>Choisiser votre formulaire</p>
 
-    export let form;
-    </script>
+<button on:click={afficherManuel}>Enregistrement Manuel</button>
+<button on:click={afficherGPX}>Enregistrement GPX</button>
 
-<form method="POST" action="?/ajouterActivite" use:enhance>
-    <label for="nom">Nom de l'activité:</label>
-    <input name="nom" type="text" bind:value={nom} required>
+{#if afficherManuelForm}
+    <ManuelForm />
+{/if}
 
-    <label for="ville">Ville:</label>
-    <input name="ville" type="text" bind:value={ville} required>
-  
-    <label for="typeActivite">Type d'activité:</label>
-    <select name="typeActivite" bind:value={typeActivite} required>
-      <option value="Running">Running</option>
-      <option value="Biking">Biking</option>
-      <option value="Walking">Walking</option>
-    </select>
-
-    <label for="date">Date:</label>
-    <input name="date" type="date" bind:value={date} required>
-  
-    <label for="duree">Durée:</label>
-    <input name="duree" type="text" bind:value={duree} required>
-
-    <label for="distance">Distance:</label>
-    <input name="distance" type="text" bind:value={distance} required>
-
-    <label for="comment">Commentaires:</label>
-    <input name="comment" type="text" bind:value={comment} required>
-    {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
-    <button class="link" type="submit">Ajouter l'activité</button>
-  </form>
+{#if afficherGPXForm}
+    <GPXForm />
+{/if}
 
   {#if activities.length > 0}
     <h2>Activités enregistrées</h2>
