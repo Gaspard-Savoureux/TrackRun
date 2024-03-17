@@ -276,15 +276,6 @@ router.delete('/', verifyUserToken, deleteUser);
 router.put('/picture',
   verifyUserToken,  
   uploadUserPic.single('picture'),
-  [
-    body('picture').custom((value, { req }) => {
-      if (req.file && !req.file.mimetype.startsWith('image/')) {
-        return Promise.reject('Image file is required!');
-      }
-      return true;
-    })
-  ] ,
-  expressValidator,
   uploadPicture,
 );
 
@@ -304,8 +295,8 @@ router.put('/picture',
  *        description: User picture retrieved successfully
  *      404:
  *        description: User not found
- *      405:
- *        description: Picture does not exist
+ *      404:
+ *        description: User has no picture
  */
 router.get('/picture', verifyUserToken, getPicture);
 

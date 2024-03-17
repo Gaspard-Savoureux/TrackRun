@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models/users';
-import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById, updateUserImg, getUserImage} from '../services/user.services';
+import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById, getUserImage, updateUserImage } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import path from 'path';
@@ -158,18 +158,17 @@ export const uploadPicture = async (req: Request, res: Response, next: NextFunct
     if (!user) return res.status(404).json({ message: 'No corresponding user' });
     
     if (!req.file) {
-      return res.status(402).json({ message: 'No picture uploaded' });
+      return res.status(400).json({ message: 'No picture uploaded' });
     }
 
     const { img } = await getUserImage(userId);
 
-    // Update existing image in repertory if exist
     if (img) {
       await fs.promises.unlink(path.join(userUploadDir, img));
     }
     
-    await updateUserImg(userId, req.file.filename);
-    
+    await updateUserImage(userId, req.file.filename);
+
     return res.status(200).json({ message: 'Picture uploaded successfully' });
   } catch (error) {
     next(error);
@@ -187,7 +186,7 @@ export const getPicture = async (req: Request, res: Response, next: NextFunction
 
     const { img } = await getUserImage(userId);
 
-    if (!img) return res.status(405).json({ message: 'Picture does not exist' });
+    if (!img) return res.status(404).json({ message: 'User has no picture' });
 
     return res.status(200).json({img: `/uploads/${img}`});
   } catch (error) {

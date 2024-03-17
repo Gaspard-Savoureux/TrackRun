@@ -51,6 +51,6 @@ export const getUserImage = async (userId: number) => {
   return userImg;
 };
 
-export const updateUserImg = async (userId: number, imgName: string) => {
+export const updateUserImage = async (userId: number, imgName: string) => {
   return await db.update(users).set({ img: imgName }).where(eq(users.id, userId));
 };

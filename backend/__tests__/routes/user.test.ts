@@ -4,7 +4,8 @@ import bcrypt from 'bcrypt';
 import * as actions from '../../src/services/user.services';
 import { beforeEach, describe } from 'node:test';
 import { User } from '../../src/models/users';
-
+import { NextFunction, Request, Response } from 'express';
+import { Readable } from 'stream';
 
 // Base user should always work
 const user = {username: 'test-user', password: '1234', email: 'testing@gmail.com', name: 'Test User'};
@@ -19,7 +20,6 @@ const user2 = {username: 'testing user', password: '4567',email: 'testing@gmail.
 let returnedUser: User;
 let returnedUser1: User;
 let returnedUser2: User;
-
 
 jest.mock('../../src/services/user.services');
 
@@ -36,11 +36,11 @@ beforeAll(async () => {
 
 
 beforeEach(() => {
+  jest.clearAllMocks();
   jest.restoreAllMocks();
 });
 
 describe('User routes', () => {
-
   describe('POST /user', () => {
     const route : string = '/user';
 
@@ -253,5 +253,242 @@ describe('User routes', () => {
   });
 
 
+
+  describe('PUT /picture', () => {
+    test('#10: should return no corresponding user found', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+
+      jest.mock('multer', () => {
+        return {
+          single: jest.fn().mockImplementation((fieldname: string) => {
+            return (req: Request, res: Response, next: NextFunction) => {
+              const buffer = Buffer.from('fake file content', 'utf-8');
+              const stream = new Readable();
+              stream.push(buffer); // Add the buffer content to the stream
+              stream.push(null); // Indicate the end of the stream
+      
+              req.file = {
+                fieldname: 'picture',
+                originalname: 'testImage.jpg',
+                encoding: '7bit',
+                mimetype: 'image/jpeg',
+                destination: 'uploads/',
+                filename: 'mockedFileName.jpg',
+                path: 'uploads/mockedFileName.jpg',
+                size: buffer.length,
+                stream,
+                buffer,
+              };
+              next();
+            };
+          }),
+        };
+      });
+
+      const getToken = await request(app)
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+
+      const res = await request(app)
+        .put('/user/picture')
+        .attach('picture', Buffer.from('fake image data'), 'testImage.pdf')
+        .set('Authorization', validToken);
+
+      expect(res.statusCode).toEqual(404);
+    });
+    
+    test('#11: should return bad request because no picture given', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      // actions.getUserById(0);
+
+      jest.mock('multer', () => {
+        return {
+          single: jest.fn().mockImplementation((fieldname: string) => {
+            return jest.fn();
+          }),
+        };
+      });
+
+      const getToken = await request(app)
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+      const res = await request(app)
+        .put('/user/picture')
+        .set('Authorization', validToken);
+      console.log(res);
+      expect(res.statusCode).toEqual(400);
+    });
+
+
+    test('#12: should return bad request', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+
+      jest.mock('multer', () => {
+        return {
+          single: jest.fn().mockImplementation((fieldname: string) => {
+            return (req: Request, res: Response, next: NextFunction) => {
+              const buffer = Buffer.from('fake file content', 'utf-8');
+              const stream = new Readable();
+              stream.push(buffer); // Add the buffer content to the stream
+              stream.push(null); // Indicate the end of the stream
+      
+              req.file = {
+                fieldname: 'picture',
+                originalname: 'dummy.pdf',
+                encoding: '7bit',
+                mimetype: 'lol/pdf',
+                destination: 'uploads/',
+                filename: 'mockedFileName.pdf',
+                path: 'uploads/mockedFileName.pdf',
+                size: buffer.length,
+                stream,
+                buffer,
+              };
+              next();
+            };
+          }),
+        };
+      });
+
+      const getToken = await request(app)
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+      const res = await request(app)
+        .put('/user/picture')
+        .attach('picture', Buffer.from('fake image data'), 'testImage.pdf')
+        .set('Authorization', validToken);
+      expect(res.statusCode).toEqual(400);
+    });
+  });
+
+  test('#13: should return upload image successfully', async () => {
+    jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+    jest.spyOn(actions, 'getUserImage').mockImplementationOnce(() => Promise.resolve({img: null}));
+
+    jest.doMock('multer', () => {
+      return {
+        single: jest.fn().mockImplementation((fieldname: string) => {
+          return (req: Request, res: Response, next: NextFunction) => {
+            const buffer = Buffer.from('fake file content', 'utf-8');
+            const stream = new Readable();
+            stream.push(buffer); // Add the buffer content to the stream
+            stream.push(null); // Indicate the end of the stream
+      
+            req.file = {
+              fieldname: 'picture',
+              originalname: 'dummy.jpg',
+              encoding: '7bit',
+              mimetype: 'image/jpg',
+              destination: 'uploads/',
+              filename: 'mockedFileName.jpg',
+              path: 'uploads/mockedFileName.jpg',
+              size: buffer.length,
+              stream,
+              buffer,
+            };
+            next();
+          };
+        }),
+      };
+    });
+
+    const getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const res = await request(app)
+      .put('/user/picture')
+      .attach('picture', Buffer.from('fake image data'), 'testImage.jpg')
+      .set('Authorization', validToken);
+    expect(res.statusCode).toEqual(200);
+  });
+
+
+  describe('GET /user/picture', () => {
+    test('#16: should return no corresponding user', async () => {
+
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(undefined));
+
+      actions.getUserById(0);
+      const getToken = await request(app)
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+      const res = await request(app)
+        .get('/user/picture')
+        .set('Authorization', validToken);
+
+      expect(res.statusCode).toEqual(404);
+    });
+
+    test('#17: should return no corresponding picture', async () => {
+
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserImage').mockImplementationOnce(() => Promise.resolve({img: null}));
+
+      const getToken = await request(app)
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+      const res = await request(app)
+        .get('/user/picture')
+        .set('Authorization', validToken);
+
+      expect(res.statusCode).toEqual(404);
+    });
+
+    test('#18: should return no corresponding picture', async () => {
+
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserImage').mockImplementationOnce(() => Promise.resolve({img: 'image.png'}));
+      actions.getUserImage(0);
+
+      const getToken = await request(app)
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+      const res = await request(app)
+        .get('/user/picture')
+        .set('Authorization', validToken);
+
+      expect(res.statusCode).toEqual(200);
+    });
+  });
 
 });
