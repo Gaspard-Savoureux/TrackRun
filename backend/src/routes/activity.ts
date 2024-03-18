@@ -9,7 +9,7 @@ import {
 } from '../controllers/activitiesController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
-import { upload } from '../middlewares/uploadActivity';
+import { upload } from '../middlewares/fileTreatment';
 
 const router = express.Router();
 

@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { planned_activities } from '../models/planned_activities';
+import { planned_activities, PlannedActivity } from '../models/planned_activities';
 import { User } from '../models/users';
-import {  getUserById  } from '../services/user.services';
+import { getUserById } from '../services/user.services';
 import { db } from '../db/db';
 import { and, eq, gte } from 'drizzle-orm';
-import { deletePlannedActivityById, selectPlannedActivityById } from '../services/planned_activity.services';
+import { deletePlannedActivityById, selectPlannedActivityById, updatePlannedActivityById } from '../services/planned_activity.services';
 
 export const getPlannedActivities = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -19,17 +19,17 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
 
     // check for from in query param and validate
     let fromDate: Date | null = null;
-    if(req.query.from){
+    if (req.query.from) {
       fromDate = new Date(req.query.from.toString());
-      if(isNaN(fromDate.getTime()))
+      if (isNaN(fromDate.getTime()))
         return res.status(400).json({ error: 'Invalid from date format. Please use YYYY-MM-DD.' });
     }
 
     // check for activity type in query param and validate
     let activityType: 'Running' | 'Walking' | 'Biking' | null = null;
-    if(req.query.type){
-      const possibleTypes : string[] = ['Running', 'Walking', 'Biking'];
-      if(!possibleTypes.includes(req.query.type as string))
+    if (req.query.type) {
+      const possibleTypes: string[] = ['Running', 'Walking', 'Biking'];
+      if (!possibleTypes.includes(req.query.type as string))
         return res.status(400).json({ error: 'Invalid activity type. Please use a type that is either Running, Walking or Biking' });
       activityType = req.query.type as 'Running' | 'Walking' | 'Biking';
     }
@@ -38,10 +38,10 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
     const conditions = [eq(planned_activities.user_id, <number>user.id)];
 
     // add filters if present
-    if(fromDate){
+    if (fromDate) {
       conditions.push(gte(planned_activities.date, fromDate));
     }
-    if(activityType){
+    if (activityType) {
       conditions.push(eq(planned_activities.type, activityType));
     }
 
@@ -56,21 +56,87 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
   }
 };
 
+export const modifyPlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const user: User | undefined = await getUserById(userId);
+    const pActivityId = Number(req.params?.pActivityId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'No corresponding user' });
+    }
+
+    let { type, date, duration, name, comment } = req.body;
+    const updatedPlannedActivity: Partial<PlannedActivity> = {};
+
+
+    const validTypes = ['Running', 'Biking', 'Walking'];
+    if (!type || !validTypes.includes(type)) {
+      return res.status(400).json({ message: `Type must be one of the following: ${validTypes.join(', ')}` });
+    }
+
+    // Name dafault value
+    if (!name || name.length == 0) {
+      name = type.toString();
+    }
+
+    // Comment default value
+    if (!comment) {
+      comment = '';
+    }
+
+    updatedPlannedActivity.type = type;
+    updatedPlannedActivity.date = new Date(date);
+    updatedPlannedActivity.duration = duration;
+    updatedPlannedActivity.name = name;
+    updatedPlannedActivity.comment = comment;
+
+    await updatePlannedActivityById(userId, pActivityId, updatedPlannedActivity);
+
+    return res.status(200).json({ message: 'Planned activity successfully updated' });
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getPlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const user: User | undefined = await getUserById(userId);
+    const pActivityId = Number(req.params?.pActivityId);
+
+    const [plannedActivity] = await db.select()
+      .from(planned_activities)
+      .where(and(eq(planned_activities.user_id, userId), eq(planned_activities.id, pActivityId)))
+      .limit(1);
+
+    if (!plannedActivity) {
+      return res.status(404).json({ message: 'No corresponding planned activity found' });
+    }
+
+    return res.status(200).json({ plannedActivity });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createPlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let { type, date, duration, name, comment} = req.body;
+    let { type, date, duration, name, comment } = req.body;
 
     // Type validation
     const validTypes = ['Running', 'Biking', 'Walking'];
     if (!type || !validTypes.includes(type)) {
       return res.status(400).json({ message: `Type must be one of the following: ${validTypes.join(', ')}` });
     }
- 
+
     // Name dafault value
     if (!name || name.length == 0) {
       name = type.toString();
     }
-   
+
     // Comment default value
     if (!comment) {
       comment = '';
@@ -95,7 +161,7 @@ export const createPlannedActivity = async (req: Request, res: Response, next: N
     }
 
     const insertedId = result[0].insertId as number;
-    
+
     return res.status(201).json({
       message: 'Planned Activity added successfully',
       id: insertedId
@@ -106,7 +172,6 @@ export const createPlannedActivity = async (req: Request, res: Response, next: N
     next(error);
   }
 };
-
 
 export const deletePlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -131,4 +196,3 @@ export const deletePlannedActivity = async (req: Request, res: Response, next: N
     next(error);
   }
 };
-

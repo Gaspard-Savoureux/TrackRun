@@ -16,10 +16,10 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
   });
   if (!res.ok) {
     // Should not really happen since user is logged in but you never know
-    return error(404, { message: 'Could not load the ressource'});
+    return error(404, { message: 'Could not load the ressource' });
   }
   const json = await res.json();
-  const plannedActivities: PlannedActivity[] = json.plannedActivities; 
+  const plannedActivities: PlannedActivity[] = json.plannedActivities || [];
 
   return { plannedActivities };
 };

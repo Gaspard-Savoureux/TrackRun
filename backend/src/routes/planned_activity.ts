@@ -1,9 +1,14 @@
 import express from 'express';
-import {createPlannedActivity, getPlannedActivities} from '../controllers/plannedActivitiesController';
+import {
+  createPlannedActivity,
+  getPlannedActivities,
+  getPlannedActivity,
+  deletePlannedActivity,
+  modifyPlannedActivity,
+} from '../controllers/plannedActivitiesController';
 import { verifyUserToken } from '../middlewares/authentication';
 import { body } from 'express-validator';
-import {expressValidator} from '../middlewares/validation';
-import { deletePlannedActivity } from '../controllers/plannedActivitiesController';
+import { expressValidator } from '../middlewares/validation';
 
 const router = express.Router();
 
@@ -66,6 +71,120 @@ router.get('/', verifyUserToken, getPlannedActivities);
 
 /**
  * @swagger
+ * /plannedactivities/{pActivityId}:
+ *  get:
+ *    tags:
+ *    - planned_activities
+ *    summary: Get a planned activity of current user
+ *    description: Route to get a planned activity of a logged user
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *       - in: path
+ *         name: pActivityId
+ *         schema:
+ *           type: integer
+ *           required: true
+ *           description: the id of a planned activity
+ *    responses:
+ *      200:
+ *        description: Planned activity
+ *        content:
+ *          application/json:
+ *            schema:
+ *                type: object
+ *                properties:
+ *                  id:
+ *                    type: integer
+ *                  user_id:
+ *                    type: integer
+ *                  type:
+ *                    type: string
+ *                  date:
+ *                    type: string
+ *                    format: date-time
+ *                    example: 2024-02-26 16:30:00
+ *                  duration:
+ *                    type: integer
+ *                  name:
+ *                    type: string
+ *                  comment:
+ *                    type: string
+ *      401:
+ *        description: User is not logged in
+ *      404:
+ *        description: No corresponding planned activity found
+ *      500:
+ *        description: Server Error
+ */
+router.get('/:pActivityId', verifyUserToken, getPlannedActivity);
+
+/**
+ * @swagger
+ * /plannedactivities/{pActivityId}:
+ *  put:
+ *    tags:
+ *     - planned_activities
+ *    summary: update planned activity
+ *    description: update planned activity of the currently logged-in user
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *       - in: path
+ *         name: pActivityId
+ *         schema:
+ *           type: integer
+ *           required: true
+ *           description: the id of a planned activity
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              type:
+ *                type: string
+ *                description: Type of the planned activity
+ *                example: Running
+ *              date:
+ *                type: string($date-time)
+ *                description: The date and time of the activity
+ *                example: 2024-02-26 16:30:00
+ *              duration:
+ *                type: integer
+ *                description: The total duration of the activity in seconds
+ *                example: 1823
+ *              name:
+ *                type: string
+ *                description: The name of the activity
+ *                example: A run in the park
+ *              comment:
+ *                type: string
+ *                description: The comment of the activity
+ *                example: Remember to focus on your breath the entire time!
+ *    responses:
+ *     201:
+ *      description: Planned activity updated successfully
+ *     400:
+ *      description: Bad request
+ *     401:
+ *      description: User is not logged in
+ *     500:
+ *      description: Server error
+ */
+router.put('/:pActivityId',
+  [
+    body('type').optional({ values: 'null' }).isString().isLength({ max: 64 }),
+    body('date').optional().isISO8601(),
+    body('duration').optional().isInt({ min: 0, max: 1024 }),
+    body('name').optional({ values: 'null' }).isString().isLength({ max: 64 }),
+    body('comment').optional({ values: 'null' }).isString().isLength({ max: 256 }),
+  ],
+  expressValidator, verifyUserToken, modifyPlannedActivity);
+
+/**
+ * @swagger
  * /plannedactivities:
  *  post:
  *    tags:
@@ -113,14 +232,14 @@ router.get('/', verifyUserToken, getPlannedActivities);
  */
 router.post('/',
   [
-    body('type').isString(), 
+    body('type').isString(),
     body('date').isISO8601(),
-    body('duration').isInt({min: 0}),
-    body('name').optional({values: 'null'}).isString().isLength({max: 256}),
-    body('comment').optional({values: 'null'}).isString()
+    body('duration').isInt({ min: 0 }),
+    body('name').optional({ values: 'null' }).isString().isLength({ max: 256 }),
+    body('comment').optional({ values: 'null' }).isString()
   ],
   expressValidator,
-  verifyUserToken, 
+  verifyUserToken,
   createPlannedActivity);
 
 /**

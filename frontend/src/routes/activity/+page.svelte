@@ -1,65 +1,46 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
+    import GPXForm from './GPXForm.svelte';
+    import ManuelForm from './ManuelForm.svelte';
 
-    interface Activite {
-      nom: string;
-      ville: string;
-      typeActivite: 'Course' | 'Vélo';
-      date: string;
-      duree: string;
-      distance: string;
-      comment: string;
+    let afficherManuelForm = false;
+    let afficherGPXForm = false;
+    
+    function afficherManuel() {
+      afficherManuelForm = true;
+      afficherGPXForm = false;
     }
-  
-    const activites: Activite[] = [];
-    let nom = '';
-    let ville = '';
-    let typeActivite: 'Course' | 'Vélo' = 'Course';
-    let date = '';
-    let duree = '';
-    let distance = '';
-    let comment = '';
 
-    export let form;
-    </script>
+    function afficherGPX() {
+      afficherManuelForm = false;
+      afficherGPXForm = true;
+    }
 
-<form method="POST" action="?/ajouterActivite" use:enhance>
-    <label for="nom">Nom de l'activité:</label>
-    <input name="nom" type="text" bind:value={nom} required>
+    export let data;
+    const activities = data.activities.userActivities;
+</script>
 
-    <label for="ville">Ville:</label>
-    <input name="ville" type="text" bind:value={ville} required>
-  
-    <label for="typeActivite">Type d'activité:</label>
-    <select name="typeActivite" bind:value={typeActivite} required>
-      <option value="Running">Running</option>
-      <option value="Biking">Biking</option>
-      <option value="Walking">Walking</option>
-    </select>
+<h1>Page d'activiter</h1>
+<p>Choisiser votre formulaire</p>
 
-    <label for="date">Date:</label>
-    <input name="date" type="date" bind:value={date} required>
-  
-    <label for="duree">Durée:</label>
-    <input name="duree" type="text" bind:value={duree} required>
+<button on:click={afficherManuel}>Enregistrement Manuel</button>
+<button on:click={afficherGPX}>Enregistrement GPX</button>
 
-    <label for="distance">Distance:</label>
-    <input name="distance" type="text" bind:value={distance} required>
+{#if afficherManuelForm}
+    <ManuelForm />
+{/if}
 
-    <label for="comment">Commentaires:</label>
-    <input name="comment" type="text" bind:value={comment} required>
-    {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
-    <button class="link" type="submit">Ajouter l'activité</button>
-  </form>
-  
-  {#if activites.length > 0}
+{#if afficherGPXForm}
+    <GPXForm />
+{/if}
+
+  {#if activities.length > 0}
     <h2>Activités enregistrées</h2>
-    {#each activites as activite}
-      <div class="activite">
-        <h3>{activite.nom}</h3>
-        <p>Distance: {activite.distance}</p>
-        <p>Durée: {activite.duree}</p>
-        <p>Date: {activite.date}</p>
+    {#each activities as activity}
+      <div class="activity">
+        <h3>{activity.name}</h3>
+        <p>Distance: {activity.distanceTotal}</p>
+        <p>Durée: {activity.durationTotal}</p>
+        <p>Date: {activity.date}</p>
       </div>
     {/each}
   {:else}

@@ -1,6 +1,6 @@
 import {Parser, parseStringPromise} from 'xml2js';
 import {getDistance} from 'geolib';
-import { readFile } from 'fs/promises';
+import {readFile} from 'fs/promises';
 
 
 interface GpxPoint {
@@ -34,24 +34,11 @@ interface Gpx {
 }
 
 async function readGpxFileAsString(filePath: string): Promise<string> {
-  try {
-    // Read the file content as a string.
-    const fileContent: string = await readFile(filePath, { encoding: 'utf8' });
-    return fileContent;
-  } catch (error) {
-    console.error('Error reading the file:', error);
-    throw error; // Rethrow the error for further handling if necessary.
-  }
+  return await readFile(filePath, {encoding: 'utf8'});
 }
 
 async function convertGpxToJson(gpxContent: string): Promise<Gpx> {
-  try {
-    const result: Gpx = await parseStringPromise(gpxContent);
-    return result;
-  } catch (error) {
-    console.error('Error parsing GPX content:', error);
-    throw error;
-  }
+  return await parseStringPromise(gpxContent);
 }
 
 export class gpxParser {
@@ -62,17 +49,21 @@ export class gpxParser {
   }
 
   public async parseGpxFile(filePath: string): Promise<any> {
-    const gpxContent = await readGpxFileAsString(filePath);
-    const gpxJson = await convertGpxToJson(gpxContent);
-    const result = {
-      metadata: {
-        durationTotal: await this.getTotalDuration(gpxJson.gpx.trk[0].trkseg),
-        distanceTotal: await this.getTotalDistance(gpxJson.gpx.trk[0].trkseg),
-        date: gpxJson.gpx.metadata[0].time
-      },
-      segments: gpxJson.gpx.trk[0].trkseg
-    };
-    return result;
+    try {
+      const gpxContent = await readGpxFileAsString(filePath);
+      const gpxJson = await convertGpxToJson(gpxContent);
+      const result = {
+        metadata: {
+          durationTotal: await this.getTotalDuration(gpxJson.gpx.trk[0].trkseg),
+          distanceTotal: await this.getTotalDistance(gpxJson.gpx.trk[0].trkseg),
+          date: gpxJson.gpx.metadata[0].time
+        },
+        segments: gpxJson.gpx.trk[0].trkseg
+      };
+      return result;
+    } catch (error) {
+      return JSON.stringify(error);
+    }
   }
 
   private async getTotalDistance(data: GpxTrkSeg[]): Promise<number> {
