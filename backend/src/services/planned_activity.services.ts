@@ -1,6 +1,5 @@
-import { planned_activities } from '../models/planned_activities';
+import { planned_activities, PlannedActivity } from '../models/planned_activities';
 import { db } from '../db/db';
-import { User, users } from '../models/users';
 import { eq, and } from 'drizzle-orm';
 
 export const deletePlannedActivityById = async (activityId: number, userId: number) => {
@@ -13,7 +12,6 @@ export const deletePlannedActivityById = async (activityId: number, userId: numb
     );
 };
 
-
 export const selectPlannedActivityById = async (activityId: number, userId: number) => {
   return await db.select()
     .from(planned_activities)
@@ -25,3 +23,12 @@ export const selectPlannedActivityById = async (activityId: number, userId: numb
     )
     .limit(1);
 };
+
+export const updatePlannedActivityById = async (userId: number, pActivityId: number, plannedActivity: Partial<PlannedActivity>) => {
+  return await db.update(planned_activities)
+    .set(plannedActivity)
+    .where(and(
+      eq(planned_activities.user_id, userId),
+      eq(planned_activities.id, pActivityId)
+    ));
+}

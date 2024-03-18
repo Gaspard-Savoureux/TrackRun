@@ -85,6 +85,64 @@ describe('GET PlannedActivities', () => {
 });
 
 
+describe('PUT PlannedActivities', () => {
+  const route: string = '/plannedactivities';
+
+  beforeAll(async () => {
+    // Cleans DB
+    await db.delete(planned_activities);
+  });
+
+  afterAll(async () => {
+    // Cleans DB
+    await db.delete(planned_activities);
+  });
+
+  test('Should return 401: Unauthorized', async () => {
+
+    const res = await request(app)
+      .put(route + '/1')
+    expect(res.status).toBe(401);
+  });
+
+  test('Should return success message', async () => {
+    const pActivity = {
+      type: 'Running',
+      date: '2024-02-26 16:30:00',
+      duration: 1823,
+      name: 'A run in the park',
+      comment: 'Remember to focus on your breath the entire time!',
+    };
+
+    const resPost = await request(app)
+      .post(route)
+      .send(pActivity)
+      .set('Authorization', 'Bearer ' + auth_token);
+
+    const pActivityId = resPost.body.id;
+
+    pActivity.name = "A run in the field";
+    pActivity.duration = 666;
+
+    const resPut = await request(app)
+      .put(route + '/' + pActivityId)
+      .send(pActivity)
+      .set('Authorization', 'Bearer ' + auth_token);
+
+    const resGet = await request(app)
+      .get(route + '/' + pActivityId)
+      .set('Authorization', 'Bearer ' + auth_token);
+
+    expect(resGet.body).toEqual({
+      plannedActivity: expect.objectContaining({
+        name: 'A run in the field',
+        duration: 666
+      })
+    });
+  });
+});
+
+
 describe('POST PlannedActivities', () => {
   const route: string = '/plannedactivities';
   beforeAll(async () => {
