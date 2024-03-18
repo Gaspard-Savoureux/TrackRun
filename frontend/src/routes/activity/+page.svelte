@@ -14,9 +14,11 @@
       afficherManuelForm = false;
       afficherGPXForm = true;
     }
+    export let form: { success?: boolean, message?: string } = {};
 
     export let data;
     const activities = data.activities.userActivities;
+
 </script>
 
 <h1>Page d'activiter</h1>
@@ -32,6 +34,8 @@
 {#if afficherGPXForm}
     <GPXForm />
 {/if}
+
+{#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
 
   {#if activities.length > 0}
     <h2>Activités enregistrées</h2>
