@@ -10,15 +10,21 @@ import { userPayload } from '../types';
  *     BearerAuth:
  *       type: http
  *       scheme: bearer
+ *     CookieAuth:
+ *       type: apiKey
+ *       in: cookie
+ *       name: token
  */
 export const verifyUserToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeaders = req.headers.authorization;
 
-  if (!authHeaders || !authHeaders.startsWith('Bearer ')) {
+  const cookieToken: string | undefined = req.cookies.token;
+
+  if (!cookieToken && (!authHeaders || !authHeaders.startsWith('Bearer '))) {
     return res.status(401).json({ error: 'Unauthorized'});
   }
 
-  const token = authHeaders.split(' ')[1];
+  const token = cookieToken || authHeaders?.split(' ')[1] || '';
 
   try {
     const decoded = jwt.verify(token, process.env.SECRET as string || 'petit_secret') as userPayload;
