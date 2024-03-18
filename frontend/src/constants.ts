@@ -1,4 +1,4 @@
-import { browser } from "$app/environment";
+import { browser } from '$app/environment';
 
 const prodUrl = browser ? 'http://tse.info.uqam.ca/api' : 'http://backend:5001';
 

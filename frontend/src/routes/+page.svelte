@@ -5,12 +5,12 @@
 	
 	let backendData: string;
 	onMount(async () => {
-		try {
-			const response = await fetch(API_URL);
-			backendData = await response.text();
-		} catch (error: unknown) {
-			backendData = `Make sure your backend is running! Request failed with error: ${error}`;
-		}
+	  try {
+	    const response = await fetch(API_URL);
+	    backendData = await response.text();
+	  } catch (error: unknown) {
+	    backendData = `Make sure your backend is running! Request failed with error: ${error}`;
+	  }
 	});
 
 	export let data: PageData;
