@@ -6,7 +6,6 @@
   let fichierGPX: FileList  | null = null;
   let comment = '';
 
-  export let form: { success?: boolean, message?: string } = {};
 </script>
 
 <form method="POST" action="?/ajouterActiviteGPX" use:enhance enctype="multipart/form-data">
@@ -26,6 +25,5 @@
   <label for="comment">Commentaires:</label>
   <textarea name="comment" bind:value={comment} required></textarea>
 
-  {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
   <button class="link" type="submit">Ajouter l'activité</button>
 </form>

@@ -9,7 +9,6 @@
   let distance = '';
   let comment = '';
 
-  export let form: { success?: boolean, message?: string } = {};
 </script>
 
 <form method="POST" action="?/ajouterActiviteManuel" use:enhance>
@@ -37,6 +36,5 @@
 
   <label for="comment">Commentaires:</label>
   <input name="comment" type="text" bind:value={comment} required>
-  {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
   <button class="link" type="submit">Ajouter l'activité</button>
 </form>
