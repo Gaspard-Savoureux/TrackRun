@@ -1,8 +1,15 @@
 import express from 'express';
 import { body } from 'express-validator';
-import {createActivity, getActivity, getSpecifiedActivities} from '../controllers/activitiesController';
+import {
+  createActivityManual,
+  getActivity,
+  getSpecifiedActivities,
+  createActivityGPX,
+  getGPXDataByID
+} from '../controllers/activitiesController';
 import { expressValidator } from '../middlewares/validation';
-import {verifyUserToken} from '../middlewares/authentication';
+import { verifyUserToken } from '../middlewares/authentication';
+import { upload } from '../middlewares/fileTreatment';
 
 const router = express.Router();
 
@@ -12,7 +19,7 @@ const router = express.Router();
  * /activity/manual:
  *  post:
  *   tags:
- *    - name: Activity
+ *    - Activity
  *   summary: Create activity
  *   description: Create activity
  *   security:
@@ -35,26 +42,76 @@ const router = express.Router();
 router.post('/manual',
   [
     body('name').isString().notEmpty().withMessage('Name is required'),
-    body('city').isString().withMessage('City, optional'),
+    body('city').custom((value) => value === null || (typeof value === 'string' && value.trim().length > 0)).withMessage('City, optional'),
     body('type').isString().notEmpty().withMessage('Type of workout is required'),
-    body('date').isISO8601().withMessage('Date is required'),
-    body('durationTotal').isFloat().withMessage('Time in second'),
-    body('distanceTotal').isFloat().withMessage('Distance in kilometer'),
-    body('comment').isString().withMessage('Comment is optional'),
-    body('segments').isJSON().withMessage('Data of workout is optional')
+    body('date').isISO8601().notEmpty().withMessage('Date is required'),
+    body('durationTotal').custom((value) => value === null || (typeof value === 'number')).withMessage('Time in second'),
+    body('distanceTotal').custom((value) => value === null || (typeof value === 'number')).withMessage('Distance in kilometer'),
+    body('comment').custom((value) => value === null || (typeof value === 'string' && value.trim().length > 0)).withMessage('Comment is optional'),
   ],
   expressValidator,
   verifyUserToken,
-  createActivity
+  createActivityManual
 );
 
+/**
+ * @swagger
+ * /activity/gpxForm:
+ *  post:
+ *   tags:
+ *    - Activity
+ *   summary: Create activity using GPX file
+ *   description: Create new activity using a GPX file upload
+ *   security:
+ *      - BearerAuth: []
+ *   requestBody:
+ *    content:
+ *     multipart/form-data:
+ *      schema:
+ *       type: object
+ *       properties:
+ *        name:
+ *         type: string
+ *         description: The name of the activity
+ *        type:
+ *         type: string
+ *         enum: [Running, Biking, Walking]
+ *         description: The type of the activity
+ *        comment:
+ *         type: string
+ *         description: Comment on the activity
+ *        file:
+ *         type: string
+ *         format: binary
+ *         description: The GPX file for the activity
+ *   responses:
+ *    201:
+ *     description: Success
+ *    400:
+ *     description: Bad Request
+ *    401:
+ *     description: Unauthorized
+ *    500:
+ *     description: Server Error
+ */
+router.post('/gpxForm',
+  [
+    body('name').isString().notEmpty().withMessage('Name is required'),
+    body('type').isString().notEmpty().withMessage('Type of workout is required'),
+    body('comment').isString().withMessage('Comment is optional'),
+  ],
+
+  verifyUserToken,
+  upload.single('file'),
+  createActivityGPX
+);
 
 /**
  * @swagger
  * /activity/getActivity:
  *  get:
  *    tags:
- *    - name: Activity
+ *    - Activity
  *    summary: Get activity
  *    description: Route to get activities of a user using its token
  *    security:
@@ -72,13 +129,12 @@ router.get('/getActivity',
   getActivity
 );
 
-
 /**
  * @swagger
  * /activity/getSpecifiedActivities:
  *  get:
  *    tags:
- *    - name: Activity
+ *    - Activity
  *    summary: Get Specified activity
  *    description: Get Specified activity
  *    security:
@@ -101,6 +157,36 @@ router.get('/getActivity',
 router.get('/getSpecifiedActivities',
   verifyUserToken,
   getSpecifiedActivities
+);
+
+/**
+ * @swagger
+ * /activity/getGPXData:
+ *  get:
+ *    tags:
+ *    - Activity
+ *    summary: Get GPX data
+ *    description: Get GPX data by ID
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *      - in: query
+ *        name: id
+ *        required: true
+ *        description: The ID of the GPX data
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: Success
+ *      404:
+ *        description: No corresponding GPX data found
+ *      500:
+ *        description: Server Error
+ */
+router.get('/getGPXData',
+  verifyUserToken,
+  getGPXDataByID
 );
 
 export default router;
