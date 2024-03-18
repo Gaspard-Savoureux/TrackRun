@@ -188,9 +188,17 @@ export const actions: object = {
     };
   },
 
-  /*
-  // Fonction pour modifier une activité
-  modifierActivite: async ({ cookies, fetch }: RequestEvent, activiteId: string, nouvelleActivite: Activite) => {
+  modifierActivite: async ({ cookies, fetch, request }: RequestEvent, activiteId: string) => {
+    const data = await request.formData();
+    const nom = data.get('nom');
+    const ville = data.get('ville');
+    const typeActivite = data.get('typeActivite');
+    const date = data.get('date');
+    const duree = data.get('duree');
+    const distance = data.get('distance');
+    const comment = data.get('comment');
+    const segments = '{}';
+
     const token = cookies.get('token');
 
     const res = await fetch(`${API_URL}/activity/${activiteId}`, {
@@ -199,7 +207,7 @@ export const actions: object = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(nouvelleActivite),
+      body: JSON.stringify({ nom, ville, typeActivite, date, duree, distance, comment, segments }),
     });
 
     if (res.status === 400 || res.status === 401) {
@@ -211,7 +219,6 @@ export const actions: object = {
     }
 
     if (res.ok) {
-      // Activité modifiée avec succès
       return {
         status: 200,
         body: {
@@ -221,14 +228,12 @@ export const actions: object = {
       };
     }
 
-    // Erreur inattendue
     return fail(500, {
       success: false,
       message: 'Une erreur est survenue lors de la modification de l\'activité.',
     });
   },
 
-  // Fonction pour supprimer une activité
   supprimerActivite: async ({ cookies, fetch }: RequestEvent, activiteId: string) => {
     const token = cookies.get('token');
 
@@ -263,7 +268,7 @@ export const actions: object = {
       success: false,
       message: 'Une erreur est survenue lors de la suppression de l\'activité.',
     });
-  }*/
+  },
 };
 
 

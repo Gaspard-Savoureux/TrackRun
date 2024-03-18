@@ -60,16 +60,17 @@
     <h3>{activite.nom}</h3>
     <p>Distance: {activite.distance}</p>
     <p>Durée: {activite.duree}</p>
-    <p>Date: {activite.date}</p>
+    <p>Date: {activite.date}</p><div class="options">
+  <div class="options">
+    <button class="modifier">Modifier</button>
+    <button class="supprimer">Supprimer</button>
+  </div>
+</div>
   </div>
 {/each}
 {:else}
 <p>Aucune activité enregistrée pour le moment.</p>
 {/if}
-<div class="options">
-  <button class="modifier">Modifier</button>
-  <button class="supprimer">Supprimer</button>
-</div>
 
 <style>
   /* Styles existants */
@@ -94,5 +95,6 @@
       background-color: #dc3545;
       color: #fff;
   }
+
 
 </style>
