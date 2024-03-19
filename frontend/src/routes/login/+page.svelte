@@ -1,5 +1,9 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import { page } from '$app/stores';
+  import { AlertCircleIcon, AlertTriangleIcon } from 'svelte-feather-icons';
+
+  $: message = $page.url.searchParams.get('message') ?? '';
 
   export let form;
 </script>
@@ -9,12 +13,36 @@
 </svelte:head>
 
 <section>
+  {#if message && form?.success !== false}
+    <div class="notification-container">
+      <div class="notification-icon">
+        <AlertCircleIcon />
+      </div>
+      <p class="notification-text">
+        {message}
+      </p>
+    </div>
+  {/if}
+  {#if form?.success === false}
+    <div class="notification-container danger">
+      <div class="notification-icon danger">
+        <AlertTriangleIcon />
+      </div>
+      <p class="notification-text danger">
+        {form?.message}
+      </p>
+    </div>
+  {/if}
   <div class="container">
     <h1>Log in</h1>
     <form method="POST" use:enhance>
-      <input type="text" placeholder="Enter your username" name="username" value={form?.username ?? ''} />
+      <input
+        type="text"
+        placeholder="Enter your username"
+        name="username"
+        value={form?.username ?? ''}
+      />
       <input type="password" placeholder="Enter your password" name="password" />
-      {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
       <button class="link" type="submit">Log in</button>
       <hr />
       <div class="text-center">
@@ -28,6 +56,31 @@
 <style>
   section {
     padding: 3rem 1.5rem;
+  }
+
+  .notification-container {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    max-width: 32rem;
+    margin: 0 auto 1rem auto;
+    border-radius: 0.35rem;
+    color: var(--text-info);
+    background-color: var(--bg-info);
+  }
+
+  .notification-container.danger {
+    background-color: var(--bg-danger);
+  }
+
+  .notification-text {
+    font-style: italic;
+    padding: 0 0.6rem;
+  }
+
+  .notification-icon {
+    display: flex;
+    flex-shrink: 0;
   }
 
   .container {
