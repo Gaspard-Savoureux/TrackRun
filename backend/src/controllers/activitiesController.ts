@@ -276,6 +276,15 @@ export const getGPXDataByID = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+/**
+ * Performs suppression of an activity.
+ *
+ * @param {Request} req - The HTTP request.
+ * @param {Response} res - The HTTP response.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>} - Resolves after the suppression is complete.
+ * @throws {Error} - If there is an error during the suppression process.
+ */
 export const suppressionActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
@@ -303,6 +312,14 @@ export const suppressionActivity = async (req: Request, res: Response, next: Nex
   }
 };
 
+/**
+ * Modify activity.
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next function.
+ * @returns {Promise<void>} - A Promise that resolves with nothing.
+ */
 export const modifyActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
