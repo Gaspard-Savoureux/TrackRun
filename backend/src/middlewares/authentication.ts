@@ -49,7 +49,7 @@ export const verifyTrainerToken = (req: Request, res: Response, next: NextFuncti
   const token = cookieToken || authHeaders?.split(' ')[1] || '';
 
   try {
-    const { trainerId } = jwt.verify(token, process.env.SECRET as string || 'trainer_secret') as trainerPayload;
+    const { trainerId } = jwt.verify(token, process.env.SECRET as string || 'petit_secret') as trainerPayload;
     if (!trainerId) throw new Error();
     req.trainer = { trainerId };
     
