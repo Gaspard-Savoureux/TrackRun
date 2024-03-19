@@ -1,9 +1,9 @@
 export function validateName(name: any): boolean {
-  return !name || typeof name !== 'string' || name.length < 3 || name.length > 25);
+  return !name || typeof name !== 'string' || name.length < 3 || name.length > 25;
 }
 
 export function validateCity(city: any): boolean {
-  return !(!city || typeof city !== 'string' || city.length > 100);
+  return !city || typeof city !== 'string' || city.length > 100;
 }
 
 export function validateType(type: any): boolean {
