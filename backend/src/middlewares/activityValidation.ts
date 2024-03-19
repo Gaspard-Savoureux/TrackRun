@@ -24,5 +24,6 @@ export function validateComment(comment: any): boolean {
 }
 
 export function validateDate(date: any): boolean {
-  return !(date instanceof Date) || date < new Date();
+  const parsedDate = new Date(date);
+  return isNaN(parsedDate.getTime()) || parsedDate > new Date();
 }
