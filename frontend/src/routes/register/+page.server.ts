@@ -63,7 +63,7 @@ export const actions: object = {
         maxAge: 60 * 60 * 24 * 7, 
       });
 
-      return redirect(302, '/login'); 
+      return redirect(302, '/login?message=Your account was successfully created.'); 
     }
 
     return fail(500, {
