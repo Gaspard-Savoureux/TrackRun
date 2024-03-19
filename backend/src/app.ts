@@ -26,11 +26,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 // allow different origin for development
-if (process.env.NODE_ENV !== 'production') {
-  app.use(cors({
-    origin: 'http://localhost:5173'
-  }));
-}
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' ? 'http://tse.info.uqam.ca' : 'http://localhost:5173',
+  credentials: true,
+}));
 
 /**** Routes ****/
 app.use('/admin', basicAuth({
