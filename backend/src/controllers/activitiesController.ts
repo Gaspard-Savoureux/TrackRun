@@ -10,7 +10,7 @@ import {
   updateActivityById
 } from '../services/activity.services';
 import { gpxParser } from '../middlewares/gpxParser';
-import {deletefile} from '../middlewares/fileTreatment';
+import {deleteFile} from '../middlewares/fileTreatment';
 import {
   validateCity, validateComment, validateDate,
   validateDistance,
@@ -104,7 +104,6 @@ export const createActivityManual = async (req: Request, res: Response, next: Ne
 
     return res.status(201).json({ message: 'Activity added successfully' });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -121,8 +120,23 @@ export const createActivityManual = async (req: Request, res: Response, next: Ne
  */
 export const createActivityGPX = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let { name, type, comment } = req.body;
+    let segments; let metadata;
 
+    if (req.file) {
+      const gpxConverter = new gpxParser();
+      const conversionResult = await gpxConverter.parseGpxFile(req.file.path);
+      if (!conversionResult.segments || !conversionResult.metadata) {
+        await deleteFile(req.file.path);
+        return res.status(400).send('The GPX format isn\'t right');
+      }
+      await deleteFile(req.file.path);
+      segments = conversionResult.segments;
+      metadata = conversionResult.metadata;
+    } else {
+      return res.status(400).send('No GPX file uploaded or wrong format');
+    }
+
+    let { name, type, comment } = req.body;
     // Validation for `name`
     if (validateName(name)) {
       return res.status(400).json({ message: 'Name is required and must be between 3 and 256 characters' });
@@ -137,21 +151,6 @@ export const createActivityGPX = async (req: Request, res: Response, next: NextF
       comment = '';
     } else if (validateComment(comment)) {
       return res.status(400).json({ message: 'Comment must be a string' });
-    }
-
-    let segments; let metadata;
-
-    if (req.file) {
-      const gpxConverter = new gpxParser();
-      const conversionResult = await gpxConverter.parseGpxFile(req.file.path);
-      if (!conversionResult.segments || !conversionResult.metadata) {
-        return res.status(400).send('The GPX format isn\'t right');
-      }
-      await deletefile(req.file.path);
-      segments = conversionResult.segments;
-      metadata = conversionResult.metadata;
-    } else {
-      return res.status(400).send('No GPX file uploaded or wrong format');
     }
 
     const city = null; //TODO get city in the GPX file from the coordinate
@@ -210,7 +209,6 @@ export const getActivity = async (req: Request, res: Response, next: NextFunctio
 
     return res.status(200).json({ userActivities });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -249,7 +247,6 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
 
     return res.status(200).json(searchedActivities);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
