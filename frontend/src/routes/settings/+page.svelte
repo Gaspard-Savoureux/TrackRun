@@ -207,7 +207,7 @@
   }
 
   .button.danger {
-    background-color: var(--danger);
+    background-color: var(--danger-button);
   }
 
   .button.danger:hover {

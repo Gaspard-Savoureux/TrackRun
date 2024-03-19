@@ -8,5 +8,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
     secure: false,
   });
 
+  cookies.delete('in_sess', {
+    path: '/',
+    secure: false,
+  });
+
   return redirect(303, '/login');
 };
