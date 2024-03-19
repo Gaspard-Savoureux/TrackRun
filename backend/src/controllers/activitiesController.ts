@@ -1,12 +1,18 @@
 import { NextFunction, Request, Response}  from 'express';
-import { activities } from '../models/activities';
+import { activities, Activity } from '../models/activities';
 import { db } from '../db/db';
 import { User } from '../models/users';
 import { getUserById } from '../services/user.services';
-import {getActivityById, getUserActivities} from '../services/activity.services';
+import {
+  deleteActivityById,
+  getActivityById,
+  getUserActivities,
+  updateActivityById
+} from '../services/activity.services';
 import { gpxParser } from '../middlewares/gpxParser';
 import * as fs from 'node:fs';
 import {deletefile} from '../middlewares/fileTreatment';
+import {and, eq} from 'drizzle-orm';
 
 
 /**
@@ -44,13 +50,13 @@ export const createActivityManual = async (req: Request, res: Response, next: Ne
     // Validation de `durationTotal` et `distanceTotal`
     if (durationTotal == null) {
       durationTotal = 0;
-    } else if (typeof durationTotal !== 'number' || durationTotal < 0) {
+    } else if (typeof durationTotal !== 'number' || durationTotal <= 0) {
       return res.status(400).json({ message: 'DurationTotal is required and must be a non-negative number' });
     }
 
     if (distanceTotal == null) {
       distanceTotal = 0;
-    } else if (typeof distanceTotal !== 'number' || distanceTotal < 0) {
+    } else if (typeof distanceTotal !== 'number' || distanceTotal <= 0) {
       return res.status(400).json({ message: 'DistanceTotal is required and must be a non-negative number' });
     }
 
@@ -265,6 +271,70 @@ export const getGPXDataByID = async (req: Request, res: Response, next: NextFunc
     }
 
     return res.status(201).json({activityRequest});
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const suppressionActivity = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const activityId = parseInt(req.params.activityId);
+
+    if (isNaN(activityId) || !activityId) {
+      return res.status(400).json({ error: 'Invalid activityId' });
+    }
+
+    const activityRequest = await getActivityById(activityId, userId);
+
+    if (activityRequest.length !== 1) {
+      return res.status(200).json({ error: 'There where no activity' });
+    }
+
+    const result = deleteActivityById(activityId, userId);
+
+    if (!result) {
+      throw new Error('Database deletion failed.');
+    }
+
+    return res.status(200).json({ message: 'Activity deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const modifyActivity = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    const activityId = parseInt(req.params.activityId);
+
+    if (isNaN(activityId) || !activityId) {
+      return res.status(400).json({ error: 'Invalid activityId' });
+    }
+
+    const activityRequest = await getActivityById(activityId, userId);
+
+    const updateData: Partial<Activity> = {};
+
+    if (activityRequest.length !== 1) {
+      return res.status(404).json({ error: 'Activity not found' });
+    }
+    const { name, city, type, date, durationTotal, distanceTotal, comment} = req.body;
+
+    if (name && typeof name === 'string' && name.length >= 3 && name.length <= 256) updateData.name = name;
+    if (city && typeof city === 'string' && city.length <= 100) updateData.city = city; //TODO à changer quand la recup de la ville est fait dans le GPX
+    const activityOptions = ['Running', 'Biking', 'Walking'];
+    if (type && activityOptions.includes(type)) updateData.type = type;
+    if (typeof comment === 'string' && comment) updateData.comment = comment;
+    if (activityRequest[0].segments === '{}') {
+      if (date) updateData.date = new Date(date);
+      if (durationTotal && typeof durationTotal === 'number' && durationTotal > 0) updateData.durationTotal = durationTotal;
+      if (distanceTotal && typeof distanceTotal === 'number' && distanceTotal > 0) updateData.distanceTotal = distanceTotal;
+    }
+
+    await updateActivityById(activityId, userId, updateData);
+
+    return res.status(200).json({ message: 'Activity updated successfully' });
   } catch (error) {
     next(error);
   }
