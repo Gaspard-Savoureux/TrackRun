@@ -5,7 +5,7 @@ import {
   getActivity,
   getSpecifiedActivities,
   createActivityGPX,
-  getGPXDataByID
+  getGPXDataByID, suppressionActivity, modifyActivity
 } from '../controllers/activitiesController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
@@ -161,7 +161,7 @@ router.get('/getSpecifiedActivities',
 
 /**
  * @swagger
- * /activity/getGPXData:
+ * /activity/getGPXData/{activityId}:
  *  get:
  *    tags:
  *    - Activity
@@ -184,9 +184,103 @@ router.get('/getSpecifiedActivities',
  *      500:
  *        description: Server Error
  */
-router.get('/getGPXData',
+router.get('/getGPXData/:activityId',
   verifyUserToken,
   getGPXDataByID
+);
+
+
+/**
+ * @swagger
+ * /activity/updateActivity/{activityId}:
+ *  put:
+ *    tags:
+ *    - Activity
+ *    summary: Update activity data
+ *    description: Route to update the data of an activity using its ID
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *      - in: path
+ *        name: activityId
+ *        required: true
+ *        description: The id of the activity to delete
+ *        schema:
+ *          type: integer
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              name:
+ *                type: string
+ *                example: jean-papa
+ *              city:
+ *                type: string
+ *                example: Paris
+ *              type:
+ *                type: string
+ *                example: running
+ *              date:
+ *                type: string
+ *                example: 2022-10-20
+ *              durationTotal:
+ *                type: number
+ *                example: 90
+ *              distanceTotal:
+ *                type: number
+ *                example: 10
+ *              comment:
+ *                type: string
+ *                example: Good run!
+ *    responses:
+ *      200:
+ *        description: User updated successfully
+ *      404:
+ *        description: No corresponding user found
+ */
+router.put('/updateActivity/:activityId',
+  [
+    body('name').custom((value) => value === null || (typeof value === 'string' && value.trim().length > 0)),
+    body('city').custom((value) => value === null || (typeof value === 'string' && value.trim().length > 0)),
+    body('type').custom((value) => value === null || (typeof value === 'string' && value.trim().length > 0)),
+    body('date').custom((value) => value === null || (typeof value === 'string' && value.trim().length > 0)),
+    body('durationTotal').custom((value) => value === null || (typeof value === 'number')),
+    body('distanceTotal').custom((value) => value === null || (typeof value === 'number')),
+    body('comment').custom((value) => value === null || (typeof value === 'string' && value.trim().length > 0)),
+  ],
+  verifyUserToken,
+  modifyActivity
+);
+
+/**
+ * @swagger
+ *  /activity/suppression/{activityId}:
+ *    delete:
+ *      tags:
+ *        - Activity
+ *      summary: Deletes a specific activity
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: activityId
+ *          in: path
+ *          required: true
+ *          description: ID of the activity to delete
+ *          type: string
+ *      responses:
+ *        200:
+ *          description: Successfully deleted
+ *        401:
+ *          description: Unauthorized
+ *      security:
+ *        - BearerAuth: []
+ */
+router.delete('/suppression/:activityId',
+  verifyUserToken,
+  suppressionActivity
 );
 
 export default router;
