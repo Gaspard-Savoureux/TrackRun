@@ -28,6 +28,7 @@ export const verifyUserToken = (req: Request, res: Response, next: NextFunction)
 
   try {
     const { userId } = jwt.verify(token, process.env.SECRET as string || 'petit_secret') as userPayload;
+    if (!userId) throw new Error();
     req.user = { userId };
     
     next();
@@ -49,6 +50,7 @@ export const verifyTrainerToken = (req: Request, res: Response, next: NextFuncti
 
   try {
     const { trainerId } = jwt.verify(token, process.env.SECRET as string || 'trainer_secret') as trainerPayload;
+    if (!trainerId) throw new Error();
     req.trainer = { trainerId };
     
     next();
