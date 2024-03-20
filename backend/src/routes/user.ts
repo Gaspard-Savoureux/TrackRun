@@ -59,7 +59,6 @@ router.post('/',
   createUser
 );
 
-// TODO add response body for 200
 /**
  * @swagger
  * /user:

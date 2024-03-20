@@ -3,7 +3,7 @@ import { Trainer} from '../models/trainers';
 import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers } from '../services/trainer.services';
 // import { updateUserById, getUserByUsername } from '../services/user.services';
 import bcrypt from 'bcrypt';
-// import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 export const createTrainer = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -31,31 +31,30 @@ export const createTrainer = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-// TODO À valider plus tard, mauvaise branche
-// export const authenticateTrainer = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticateTrainer = async (req: Request, res: Response, next: NextFunction) => {
 
-//   try {
-//     const { username, password } = req.body;
-//     const trainer: Trainer | undefined = await getTrainerByUsername(username);
+  try {
+    const { username, password } = req.body;
+    const trainer: Trainer | undefined = await getTrainerByUsername(username);
 
-//     if (!trainer) {
-//       return res.status(401).json({ error: 'Invalid credentials' });
-//     }
+    if (!trainer) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-//     const isMatch = await bcrypt.compare(password, trainer.password as string);
-//     if (!isMatch) {
-//       return res.status(401).json({ error: 'Invalid credentials' });
-//     }
+    const isMatch = await bcrypt.compare(password, trainer.password as string);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-//     const payload = { trainerId: trainer.id };
-//     const secret: jwt.Secret = process.env.SECRET as string || 'petit_secret';
-//     const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+    const payload = { trainerId: trainer.id };
+    const secret: jwt.Secret = process.env.SECRET as string || 'petit_secret';
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
 
-//     return res.status(200).json({ token });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    return res.status(200).json({ token });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getTrainer = async (req: Request, res: Response, next: NextFunction) => {
   try {

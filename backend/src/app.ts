@@ -37,7 +37,7 @@ app.use('/admin', basicAuth({
     [process.env.ADMIN_NAME ?? 'admin' as string]: process.env.ADMIN_PASSWORD ?? 'defaultPassword', 
   }
 }), admin);
-app.use(auth);
+app.use('/auth', auth);
 app.use('/user', user);
 app.use('/trainer', trainer);
 app.use('/plannedactivities', planned_activities);
