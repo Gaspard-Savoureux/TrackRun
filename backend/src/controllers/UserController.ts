@@ -103,11 +103,11 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
       const hashedPassword = await bcrypt.hash(password, 10);
       updateData.password = hashedPassword;
     }
-    if (age) updateData.age = age;
-    if (height) updateData.height = height;
-    if (weight) updateData.weight = weight;
-    if (sex) updateData.sex = sex;
-    if (description) updateData.description = description;
+    if (age !== null) updateData.age = age;
+    if (height !== null) updateData.height = height;
+    if (weight !== null) updateData.weight = weight;
+    if (sex !== null) updateData.sex = sex;
+    if (description !== null) updateData.description = description;
 
     await updateUserById(userId, updateData);
     
