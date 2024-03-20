@@ -343,14 +343,14 @@ export const modifyActivity = async (req: Request, res: Response, next: NextFunc
     }
     const { name, city, type, date, durationTotal, distanceTotal, comment} = req.body;
 
-    if (validateName(name)) updateData.name = name;
-    if (validateCity(city)) updateData.city = city; //TODO à changer quand la recup de la ville est fait dans le GPX
-    if (validateType(type)) updateData.type = type;
-    if (validateComment(comment)) updateData.comment = comment;
+    if (!validateName(name)) updateData.name = name;
+    if (!validateCity(city)) updateData.city = city; //TODO à changer quand la recup de la ville est fait dans le GPX
+    if (!validateType(type)) updateData.type = type;
+    if (!validateComment(comment)) updateData.comment = comment;
     if (activityRequest[0].segments === '{}') {
-      if (validateDate(date)) updateData.date = new Date(date);
-      if (validateDuration(durationTotal)) updateData.durationTotal = durationTotal;
-      if (validateDistance(distanceTotal)) updateData.distanceTotal = distanceTotal;
+      if (!validateDate(date)) updateData.date = new Date(date);
+      if (!validateDuration(durationTotal)) updateData.durationTotal = durationTotal;
+      if (!validateDistance(distanceTotal)) updateData.distanceTotal = distanceTotal;
     }
 
     await updateActivityById(activityId, userId, updateData);
