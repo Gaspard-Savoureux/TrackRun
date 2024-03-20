@@ -17,7 +17,7 @@ export const DELETE = async ({ locals, params }) => {
 };
 
 
-export const PUT = async ({ request, locals, params }) => {
+export const PATCH = async ({ request, locals, params }) => {
   const trainer: Trainer = await request.json();
   if (trainer.username === '') delete trainer.username;
   if (trainer.name === '') delete trainer.name;
@@ -27,7 +27,7 @@ export const PUT = async ({ request, locals, params }) => {
   const { trainerId } = params;
 
   const res = await fetch(`${API_URL}/admin/trainer/${trainerId}`, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: { Authorization: locals.basicAuth as string, 'Content-Type': 'application/json' },
     body: JSON.stringify(trainer),
   });
