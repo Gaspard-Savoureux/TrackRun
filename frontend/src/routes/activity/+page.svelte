@@ -33,8 +33,10 @@
     if (!isConfirmed) {
       event.preventDefault();
     }
-  
-  }
+    export let form: { success?: boolean, message?: string } = {};
+
+    export let data;
+    const activities = data.activities.userActivities;
 
 </script>
 
@@ -52,8 +54,7 @@
     <GPXForm />
 {/if}
 
-
-
+{#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
 
   {#if activities.length > 0}
     <h2>Activités enregistrées</h2>

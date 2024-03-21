@@ -1,4 +1,4 @@
-import { JwtPayload } from 'jsonwebtoken';
+// import { JwtPayload } from 'jsonwebtoken';
 import 'express';
 
 
@@ -15,7 +15,6 @@ import 'express';
  */
 export type userPayload = {
   userId: number;
-  [key: string]: JwtPayload | string;
 };
 
 
@@ -32,10 +31,9 @@ export type userPayload = {
  *   type: integer
  *  example: 1
  */
-// export type trainerPayload = {
-//   trainerId: number;
-//   [key: string]: JwtPayload | string;
-// };
+export type trainerPayload = {
+  trainerId: number;
+};
 
 declare global {
   namespace Express {

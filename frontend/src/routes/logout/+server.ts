@@ -1,9 +1,12 @@
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from '../$types';
 
-export const load: PageServerLoad = async ({ cookies }) => {
-
+export const GET = async ({ cookies }) => {
   cookies.delete('token', {
+    path: '/',
+    secure: false,
+  });
+
+  cookies.delete('in_sess', {
     path: '/',
     secure: false,
   });
