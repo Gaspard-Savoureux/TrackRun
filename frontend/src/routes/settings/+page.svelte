@@ -54,11 +54,11 @@
     </label>
     <label>
       <p>Height <span class="units">cm</span></p>
-      <input type="number" name="height" value={data.user.height} />
+      <input type="number" step="any" name="height" value={data.user.height} />
     </label>
     <label>
       <p>Weight <span class="units">kg</span></p>
-      <input type="number" name="weight" value={data.user.weight} />
+      <input type="number" step="any" name="weight" value={data.user.weight} />
     </label>
     <label>
       Sex
