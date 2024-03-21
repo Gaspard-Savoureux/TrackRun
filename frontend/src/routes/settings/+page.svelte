@@ -50,23 +50,28 @@
     </label>
     <label>
       Age
-      <input type="text" name="age" value={data.user.age} />
+      <input type="number" name="age" value={data.user.age} />
     </label>
     <label>
-      Height
-      <input type="text" name="height" value={data.user.height} />
+      <p>Height <span class="units">cm</span></p>
+      <input type="number" step="any" name="height" value={data.user.height} />
     </label>
     <label>
-      Weight
-      <input type="text" name="weight" value={data.user.weight} />
+      <p>Weight <span class="units">kg</span></p>
+      <input type="number" step="any" name="weight" value={data.user.weight} />
     </label>
     <label>
       Sex
-      <input type="text" name="sex" value={data.user.sex} />
+      <select name="sex" bind:value={data.user.sex}>
+        <option value="Homme">Homme</option>
+        <option value="Femme">Femme</option>
+        <option value="Autre">Autre</option>
+      </select>
     </label>
     <label>
       Description
-      <input type="text" name="description" value={data.user.description} />
+      <textarea name="description" placeholder="No description" bind:value={data.user.description}
+      ></textarea>
     </label>
     {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
     {#if form?.success === true}<p class="success">{form?.message}</p>{/if}
@@ -150,6 +155,7 @@
     font-size: 0.85rem;
     font-weight: bold;
     text-transform: uppercase;
+    max-width: 30rem; /** MAYBE NOT*/
   }
 
   form {
@@ -170,6 +176,38 @@
     border-radius: 4px;
     border: 1px solid var(--text-light);
     background-color: inherit;
+  }
+
+  select {
+    width: 100%;
+    font-size: 1.15rem;
+    line-height: 1.5;
+    width: 100%;
+    height: 3.125rem;
+    padding: 0.5rem 0.2rem;
+    border-radius: 4px;
+    border: 1px solid var(--text-light);
+    background-color: inherit;
+  }
+
+  option {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    background-color: var(--bg-3);
+  }
+
+  textarea {
+    padding: 0.5rem 0.5rem;
+    height: 6rem;
+    border-radius: 4px;
+    border: 1px solid var(--text-light);
+    background-color: inherit;
+    font-family: 'Open Sans', sans-serif;
+    resize: none;
+  }
+
+  .units {
+    color: var(--text-light);
   }
 
   @media (width >= 576px) {
