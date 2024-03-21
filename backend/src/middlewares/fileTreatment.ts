@@ -1,8 +1,8 @@
 import multer from 'multer';
-import {NextFunction, Request, Response} from 'express';
-import * as fs from 'node:fs';
 import * as console from 'node:console';
-import {err} from 'drizzle-kit/cli/views';
+import fs from 'fs';
+import path from 'path';
+
 
 // Set up storage directory (adjust path as needed)
 const storage = multer.diskStorage({
@@ -26,13 +26,31 @@ const fileFilter = (req: Express.Request, file: Express.Multer.File, cb: multer.
   }
 };
 
-export const deletefile = async (filePath: string) => {
+export const deleteFile = async (filePath: string) => {
   try {
-    await fs.promises.unlink(filePath);
+    const absolutePath = path.resolve(filePath); // Ensure the path is absolute
+    if (fs.existsSync(absolutePath)) { // Check if the file exists
+      await fs.promises.unlink(absolutePath);
+      console.log(`File deleted: ${absolutePath}`);
+    } else {
+      console.log(`File does not exist: ${absolutePath}`);
+    }
   } catch (err) {
-    console.error(err);
+    // Type assertion to narrow down the type of 'err'
+    const error = err as NodeJS.ErrnoException;
+
+    if (error.code === 'ENOENT') {
+      console.error(`File not found: ${filePath}`);
+    } else if (error.code === 'EBUSY' || error.code === 'EPERM') {
+      console.error(`File is in use or protected: ${filePath}`);
+      // Implement retry logic here if desired
+    } else {
+      console.error(error.message); // Now safely accessing 'message' property
+    }
   }
 };
+
+
 
 // Then, when configuring multer, everything else remains the same
 export const upload = multer({ storage, fileFilter });

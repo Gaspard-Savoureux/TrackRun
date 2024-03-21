@@ -91,7 +91,6 @@ export class gpxParser {
   }
 
   private async getTotalDuration(data: GpxTrkSeg[]): Promise<number> {
-    console.log(data);
     let totalDuration = 0;
     for (let i = 0; i < data.length; i++) {
       const length = data[i].trkpt.length;

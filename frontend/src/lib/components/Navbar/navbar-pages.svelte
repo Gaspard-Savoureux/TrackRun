@@ -3,7 +3,7 @@
   import { ActivityIcon } from 'svelte-feather-icons';
 </script>
 
-<Modal href="/activities">
+<Modal href="/activity">
   <div class="nav-item">
     <ActivityIcon />
     <p>Activities</p>
