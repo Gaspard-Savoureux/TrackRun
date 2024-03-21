@@ -50,15 +50,15 @@
     </label>
     <label>
       Age
-      <input type="text" name="age" value={data.user.age} />
+      <input type="number" name="age" value={data.user.age} />
     </label>
     <label>
       <p>Height <span class="units">cm</span></p>
-      <input type="text" name="height" value={data.user.height} />
+      <input type="number" name="height" value={data.user.height} />
     </label>
     <label>
       <p>Weight <span class="units">kg</span></p>
-      <input type="text" name="weight" value={data.user.weight} />
+      <input type="number" name="weight" value={data.user.weight} />
     </label>
     <label>
       Sex
