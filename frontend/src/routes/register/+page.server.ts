@@ -3,7 +3,7 @@ import type { RequestEvent } from '../$types';
 import { API_URL } from '../../constants';
 
 export const actions: object = {
-  register: async ({ cookies, fetch, request }: RequestEvent) => {
+  default: async ({ cookies, fetch, request }: RequestEvent) => {
     const data = await request.formData();
     const username = data.get('username');
     const email = data.get('email');
