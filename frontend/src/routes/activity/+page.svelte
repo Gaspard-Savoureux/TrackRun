@@ -35,11 +35,7 @@
     <GPXForm />
 {/if}
 
-<form method="POST">
-  <input type="hidden" name="_action" value="supprimerActivite">
-  <input type="hidden" name="activityId" value="{activities.activityId}">
-  <button type="submit">Supprimer</button>
-</form>
+
 
 
   {#if activities.length > 0}
@@ -51,8 +47,22 @@
         <p>Durée: {activity.durationTotal}</p>
         <p>Date: {activity.date}</p>
         <div class="options">
-          <button class="modifier">Modifier</button>
-          <button class="supprimer" >Supprimer</button>
+          <form method="POST" action="?/modifierActivite">
+            <input type="hidden" name="activityId" value="{activity.id}">
+            <input type="hidden" name="name" value="{activity.name}">
+            <input type="hidden" name="city" value="{activity.city}">
+            <input type="hidden" name="type" value="{activity.type}">
+            <input type="hidden" name="date" value="{activity.date}">
+            <input type="hidden" name="durationTotal" value="{activity.durationTotal}">
+            <input type="hidden" name="distanceTotal" value="{activity.distanceTotal}">
+            <input type="hidden" name="comment" value="{activity.comment}">
+
+            <button type="submit">Modifier</button>
+          </form>
+          <form method="POST" action="?/supprimerActivite">
+            <input type="hidden" name="activityId" value="{activity.id}">
+            <button type="submit">Supprimer</button>
+          </form>
         </div>
       </div>
     {/each}
@@ -73,7 +83,7 @@
         cursor: pointer;
     }
 
-    .options .modifier {
+    /*.options .modifier {
         background-color: #007bff;
         color: #fff;
     }
@@ -81,5 +91,5 @@
     .options .supprimer {
         background-color: #dc3545;
         color: #fff;
-    }
+    }*/
 </style>
