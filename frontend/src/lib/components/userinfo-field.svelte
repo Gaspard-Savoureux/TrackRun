@@ -1,7 +1,4 @@
 <script lang="ts">
-  import { convertNewlinesToBreaks } from '$lib/utils/textFormatting';
-  import { removesHtmlTags } from '$lib/utils/xssVerification';
-
   export let name: string;
   export let value: unknown = undefined;
   export let lineBreaksAllowed = false;
@@ -10,9 +7,7 @@
 <div class={'item'}>
   <h3>{name}</h3>
   {#if value && lineBreaksAllowed}
-    <!-- Removes all html tags first, then convert newline into <br> -->
-    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-    <span>{@html convertNewlinesToBreaks(removesHtmlTags(value.toString()))}</span>
+    <span>{value}</span>
   {:else if value}
     <span>{value}</span>
   {:else}
@@ -28,6 +23,7 @@
 
   span {
     align-self: center;
+    white-space: pre-wrap;
   }
 
   .notset {
