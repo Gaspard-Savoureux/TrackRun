@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 import { createUser, getUser, deleteUser, updateUser } from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
+import { evTypes, isGivenTypeOrNull } from '../utils/expressValidatorUtils';
 
 const router = express.Router();
 
@@ -185,14 +186,14 @@ router.get('/', verifyUserToken, getUser);
  */
 router.put('/',
   [
-    body('username').isString().isLength({min: 1}).withMessage('Required, must be a string and cannot be null'),
-    body('email').isString().isEmail().withMessage('Required, must be a valid email'),
-    body('name').isString().withMessage('Required, must be a string'),
-    body('age').isInt().withMessage('Required, must be numerical value'),
-    body('height').isFloat().withMessage('Required, must be numerical. The value is in cm'),
-    body('weight').isFloat().withMessage('Required. Must be numerical. The value is in kg'),
+    body('username').custom(isGivenTypeOrNull(evTypes.STRING)).isLength({min: 1}).withMessage('Required, must be a string and cannot be null'),
+    body('email').custom(isGivenTypeOrNull(evTypes.EMAIL)).withMessage('Required, must be a valid email'),
+    body('name').custom(isGivenTypeOrNull(evTypes.STRING)).withMessage('Required, must be a string'),
+    body('age').custom(isGivenTypeOrNull(evTypes.INT)).withMessage('Required, must be numerical value'),
+    body('height').custom(isGivenTypeOrNull(evTypes.FLOAT)).withMessage('Required, must be numerical. The value is in cm'),
+    body('weight').custom(isGivenTypeOrNull(evTypes.FLOAT)).withMessage('Required. Must be numerical. The value is in kg'),
     body('sex').isString().matches(/\b(?:Homme|Femme|Autre)\b/).withMessage('Required, must be either Homme, Femme or Autre'),
-    body('description').isString().isLength({ min: 0, max: 1024 }).withMessage('Required, string with max length of 1024')
+    body('description').custom(isGivenTypeOrNull(evTypes.STRING)).isLength({ min: 0, max: 1024 }).withMessage('Required, string with max length of 1024')
   ],
   expressValidator,
   verifyUserToken,
