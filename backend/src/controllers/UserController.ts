@@ -175,6 +175,7 @@ export const uploadPicture = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+
 export const getPicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
@@ -193,6 +194,28 @@ export const getPicture = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+
+export const deletePicture = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId as number;
+    
+    const userImg = await getUserImage(userId);
+
+    if (!userImg || !userImg.img) {
+      return res.status(404).json({ message: 'No picture found for deletion' });
+    }
+
+    await fs.promises.unlink(path.join(userUploadDir, userImg.img));
+
+    await updateUserImage(userId, ''); 
+
+    return res.status(200).json({ message: 'Picture deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 // Deviendra une option pour télécharger un photo

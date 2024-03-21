@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { createUser, getUser, deleteUser, updateUser, uploadPicture, getPicture } from '../controllers/UserController';
+import { createUser, getUser, deleteUser, updateUser, uploadPicture, getPicture, deletePicture } from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 import { uploadUserPic } from '../middlewares/uploadPic';
@@ -295,9 +295,35 @@ router.put('/picture',
  *        description: User picture retrieved successfully
  *      404:
  *        description: User not found
- *      404:
+ *      405:
  *        description: User has no picture
  */
 router.get('/picture', verifyUserToken, getPicture);
+
+
+
+/**
+ * @swagger
+ * /user/picture:
+ *  delete:
+ *    tags:
+ *    - user
+ *    summary: Deletes the picture of a user
+ *    description: Delete the picture of user based on its token.
+ *    security:
+ *      - BearerAuth: []
+ *    responses:
+ *      200:
+ *        description: Picture successfully deleted
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: Picture successfully deleted
+ */
+router.delete('/picture', verifyUserToken, deletePicture);
 
 export default router;
