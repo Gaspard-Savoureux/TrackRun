@@ -2,8 +2,6 @@ import type { PageServerLoad, RequestEvent } from './$types';
 import { API_URL } from '../../constants';
 import type { User } from '$lib/types/user';
 import { fail, redirect } from '@sveltejs/kit';
-import { containsHtmlTags } from '$lib/utils/xssVerification';
-
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
   const res = await fetch(`${API_URL}/user`, {
@@ -16,7 +14,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 };
 
 const validateNewUser = (user: User) => {
-  const { username, age, height, weight, description } = user;
+  const { username, age, height, weight } = user;
 
   // Username
   if (!username) return 'What ? No username ? How are are you suppose to login if you do that?';
@@ -41,8 +39,6 @@ const validateNewUser = (user: User) => {
     if (weight <= 20) return 'Invalid weight: I know our trainers are good, but not that good.';
     if (weight > 650) return 'Invalid Weight: You do know the weight is in kg right? If you do I\'m gonna have to be real with you chief. I don\'t think we can help.';
   }
-
-  if (description && containsHtmlTags(description)) return 'Invalid Description: What are you trying to do here my friend?';
 
   return '';
 };

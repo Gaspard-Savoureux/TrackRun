@@ -203,6 +203,7 @@
     border: 1px solid var(--text-light);
     background-color: inherit;
     font-family: 'Open Sans', sans-serif;
+    resize: none;
   }
 
   .units {
