@@ -1,24 +1,41 @@
 <script lang="ts">
-    import GPXForm from './GPXForm.svelte';
-    import ManuelForm from './ManuelForm.svelte';
+  import GPXForm from './GPXForm.svelte';
+  import ManuelForm from './ManuelForm.svelte';
 
-    let afficherManuelForm = false;
-    let afficherGPXForm = false;
-    
-    
-    
-    function afficherManuel() {
-      afficherManuelForm = true;
-      afficherGPXForm = false;
+  let afficherManuelForm = false;
+  let afficherGPXForm = false;
+  
+  
+  
+  function afficherManuel() {
+    afficherManuelForm = true;
+    afficherGPXForm = false;
+  }
+
+  function afficherGPX() {
+    afficherManuelForm = false;
+    afficherGPXForm = true;
+  }
+
+  export let data;
+  const activities = data.activities.userActivities;
+
+  function confirmerEtModifier(event: SubmitEvent) {
+    const isConfirmed = confirm('Êtes-vous sûr de vouloir modifier cette activité ?');
+    if (!isConfirmed) {
+      event.preventDefault();
     }
+  
+  }
 
-    function afficherGPX() {
-      afficherManuelForm = false;
-      afficherGPXForm = true;
+  function confirmerEtSupprimer(event: SubmitEvent) {
+    const isConfirmed = confirm('Êtes-vous sûr de vouloir supprimer cette activité ?');
+    if (!isConfirmed) {
+      event.preventDefault();
     }
+  
+  }
 
-    export let data;
-    const activities = data.activities.userActivities;
 </script>
 
 <h1>Page d'activiter</h1>
@@ -47,7 +64,7 @@
         <p>Durée: {activity.durationTotal}</p>
         <p>Date: {activity.date}</p>
         <div class="options">
-          <form method="POST" action="?/modifierActivite">
+          <form on:submit|preventDefault={confirmerEtModifier} method="POST" action="?/modifierActivite">
             <input type="hidden" name="activityId" value="{activity.id}">
             <input type="hidden" name="name" value="{activity.name}">
             <input type="hidden" name="city" value="{activity.city}">
@@ -59,7 +76,7 @@
 
             <button type="submit">Modifier</button>
           </form>
-          <form method="POST" action="?/supprimerActivite">
+          <form on:submit|preventDefault={confirmerEtSupprimer} method="POST" action="?/supprimerActivite">
             <input type="hidden" name="activityId" value="{activity.id}">
             <button type="submit">Supprimer</button>
           </form>
@@ -83,13 +100,4 @@
         cursor: pointer;
     }
 
-    /*.options .modifier {
-        background-color: #007bff;
-        color: #fff;
-    }
-
-    .options .supprimer {
-        background-color: #dc3545;
-        color: #fff;
-    }*/
 </style>
