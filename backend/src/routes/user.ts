@@ -287,7 +287,7 @@ router.put('/picture',
  *    tags:
  *    - user
  *    summary: Get user picture
- *    description: Retrieve the picture of a user
+ *    description: Retrieve the picture of a user. The picture is also accessible through `GET /user`.
  *    security:
  *      - BearerAuth: []
  *    responses:
