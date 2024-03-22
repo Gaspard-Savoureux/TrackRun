@@ -3,6 +3,8 @@ import { getUser } from '../controllers/UserController';
 import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
+import { addUserToTrainer } from '../controllers/TrainerController';
+
 const router = express.Router();
 
 /**
@@ -75,9 +77,39 @@ router.get('/user/:userId',
   getUser
 );
 
+/**
+ * @swagger
+ * /trainer/user/{userId}:
+ *   post:
+ *     tags:
+ *       - trainer
+ *     summary: Trainer create association with user
+ *     security:
+ *       - BearerAuth: []
+ *     description: Route to associate a trainer with a user.
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: integer
+ *           required: true
+ *           description: the id of a selected user
+ *     responses:
+ *       200:
+ *         description: Association created
+ *       404:
+ *         description: No corresponding user found
+ *       500:
+ *         description: Server Error
+ */
+router.post('/user/:userId', 
+  verifyTrainerToken,
+  [param('userId').notEmpty().isNumeric().withMessage('userId must be given and numeric')],
+  addUserToTrainer
+);
+
 // TODO À valider plus tard, mauvaise branche
 // ROUTES TO IMPLEMENT
-// router.post('/users/:username', addUserToTrainer);
 // router.delete('/users/:username', removeUserFromTrainer);
 
 export default router;

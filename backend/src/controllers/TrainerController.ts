@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { Trainer} from '../models/trainers';
-import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers } from '../services/trainer.services';
+import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers, getTrainerUser, createTrainerUserRelation } from '../services/trainer.services';
 // import { updateUserById, getUserByUsername } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { getUserById } from '../services/user.services';
 
 export const createTrainer = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -23,7 +24,7 @@ export const createTrainer = async (req: Request, res: Response, next: NextFunct
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    insertTrainer({ username, password: hashedPassword, email, name });
+    await insertTrainer({ username, password: hashedPassword, email, name });
 
     return res.status(201).json({ message: 'Trainer added succesfully' });
   } catch (error) {
@@ -148,35 +149,27 @@ export const deleteTrainer = async (req: Request, res: Response, next: NextFunct
 };
 
 
-// TODO À valider plus tard, mauvaise branche
-// export const addUserToTrainer = async (req: Request, res: Response) => {
-//   const { username } = req.body;
-//   const trainerId = req.trainer?.trainerId as number;
+export const addUserToTrainer = async (req: Request, res: Response) => {
+  const userId = Number(req.params.userId);
+  const trainerId = req.trainer?.trainerId as number;
 
-//   const user = await getUserByUsername(username);
-//   if (!user) {
-//     return res.status(404).json({ error: 'User not found' });
-//   }
+  const user = await getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
 
-//   const trainer = await getTrainerById(trainerId);
-//   if (!trainer) {
-//     return res.status(404).json({ error: 'Trainer not found' });
-//   }
+  const trainer = await getTrainerById(trainerId);
+  if (!trainer) {
+    return res.status(404).json({ error: 'Trainer not found' });
+  }
 
-//   const usersList = trainer.users ? trainer.users.split(',') : [];
-//   const id = user.id as number;
+  const relationExist = await getTrainerUser(trainerId, userId);
+  if (relationExist) return res.status(409).json({ error: 'Relation already exists' });
 
-//   if (usersList.includes(id.toString())) {
-//     return res.status(409).json({ error: 'User already added to trainer' });
-//   }
+  await createTrainerUserRelation(trainerId, userId);
 
-//   usersList.push(id.toString());
-//   await updateTrainerById(trainerId, { users: usersList.join(',') });
-
-//   // Update trainerId field in user's record
-//   await updateUserById(Number(id), { trainerId });
-//   res.status(200).json({ message: 'User added to trainer' });
-// };
+  res.status(200).json({ message: 'User added to trainer' });
+};
 
 // export const removeUserFromTrainer = async (req: Request, res: Response) => {
 //   const { username } = req.body;
