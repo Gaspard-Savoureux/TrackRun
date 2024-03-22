@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { page } from '$app/stores';
-  import { AlertCircleIcon, AlertTriangleIcon } from 'svelte-feather-icons';
+  import FormNotification from '$lib/components/form-notification.svelte';
 
   $: message = $page.url.searchParams.get('message') ?? '';
 
@@ -14,24 +14,10 @@
 
 <section>
   {#if message && form?.success !== false}
-    <div class="notification-container">
-      <div class="notification-icon">
-        <AlertCircleIcon />
-      </div>
-      <p class="notification-text">
-        {message}
-      </p>
-    </div>
+    <FormNotification>{message}</FormNotification>
   {/if}
   {#if form?.success === false}
-    <div class="notification-container danger">
-      <div class="notification-icon danger">
-        <AlertTriangleIcon />
-      </div>
-      <p class="notification-text danger">
-        {form?.message}
-      </p>
-    </div>
+    <FormNotification danger>{form?.message}</FormNotification>
   {/if}
   <div class="container">
     <h1>Log in</h1>
@@ -43,12 +29,12 @@
         value={form?.username ?? ''}
       />
       <input type="password" placeholder="Enter your password" name="password" />
-      <button class="link" type="submit">Log in</button>
+      <button type="submit">Log in</button>
       <hr />
-      <div class="text-center">
+      <span>
         Don't have an account?
         <a href="/register">Register</a>
-      </div>
+      </span>
     </form>
   </div>
 </section>
@@ -56,31 +42,6 @@
 <style>
   section {
     padding: 3rem 1.5rem;
-  }
-
-  .notification-container {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    max-width: 32rem;
-    margin: 0 auto 1rem auto;
-    border-radius: 0.35rem;
-    color: var(--text-info);
-    background-color: var(--bg-info);
-  }
-
-  .notification-container.danger {
-    background-color: var(--bg-danger);
-  }
-
-  .notification-text {
-    font-style: italic;
-    padding: 0 0.6rem;
-  }
-
-  .notification-icon {
-    display: flex;
-    flex-shrink: 0;
   }
 
   .container {
@@ -99,33 +60,29 @@
 
   h1 {
     font-size: 2.5rem;
-    margin: 0 0 1.5rem 0;
     text-align: center;
   }
 
   form {
     display: flex;
+    margin: 1.5rem 0 0 0;
     flex-direction: column;
     gap: 0.7rem;
   }
 
   input {
     font-size: 1.15rem;
-    line-height: 1.5;
     box-sizing: border-box;
-    display: inline-flex;
     height: 3.125rem;
-    width: 100%;
-    max-width: 100%;
-    padding: 0.5rem 0.5rem;
+    padding: 0.5rem;
     border-radius: 4px;
     border: 1px solid var(--text-light);
     background-color: inherit;
   }
 
   input:focus-visible {
-    outline: var(--link) solid 1px;
-    border-color: var(--link);
+    outline: var(--blue) solid 1px;
+    border-color: var(--blue);
   }
 
   button {
