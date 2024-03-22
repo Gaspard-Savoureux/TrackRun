@@ -305,24 +305,44 @@ router.get('/picture', verifyUserToken, getPicture);
 /**
  * @swagger
  * /user/picture:
- *  delete:
- *    tags:
- *    - user
- *    summary: Deletes the picture of a user
- *    description: Delete the picture of user based on its token.
- *    security:
- *      - BearerAuth: []
- *    responses:
- *      200:
- *        description: Picture successfully deleted
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                message:
- *                  type: string
- *                  example: Picture successfully deleted
+ *   delete:
+ *     tags:
+ *     - user
+ *     summary: Deletes the picture of a user
+ *     description: Delete the picture of user based on its token.
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Picture successfully deleted
+ *         content:
+ *           application/json: 
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Picture successfully deleted
+ *       404:
+ *         description: No corresponding user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No corresponding user
+ *       405:
+ *         description: No picture found to delete
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No picture found for deletion
  */
 router.delete('/picture', verifyUserToken, deletePicture);
 

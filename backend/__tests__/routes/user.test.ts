@@ -6,6 +6,7 @@ import { beforeEach, describe } from 'node:test';
 import { User } from '../../src/models/users';
 import { NextFunction, Request, Response } from 'express';
 import { Readable } from 'stream';
+import fs from 'fs';
 
 // Base user should always work
 const user = {username: 'test-user', password: '1234', email: 'testing@gmail.com', name: 'Test User'};
@@ -326,7 +327,7 @@ describe('User routes', () => {
       const res = await request(app)
         .put('/user/picture')
         .set('Authorization', validToken);
-      console.log(res);
+      //console.log(res);
       expect(res.statusCode).toEqual(400);
     });
 
@@ -491,4 +492,77 @@ describe('User routes', () => {
     });
   });
 
+
+
+  describe('DELETE /user/picture', () => {
+
+
+    test('#19: should return no corresponding user', async () => {
+      
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(null))));
+      
+      const getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+      const res = await request(app)
+      .delete('/user/picture')
+      .set('Authorization', validToken);
+
+      expect(res.statusCode).toEqual(404);
+    });
+
+
+    test('#20: should return no corresponding picture to delete', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserImage').mockImplementationOnce(() => Promise.resolve({ img: null }));
+
+      const getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;      
+
+      const res = await request(app)
+      .delete('/user/picture')
+      .set('Authorization', validToken);
+
+      expect(res.statusCode).toEqual(405);
+    });
+
+
+
+    test('#21: should successfully delete user picture', async () => {
+      jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
+      jest.spyOn(actions, 'getUserImage').mockImplementationOnce(() => Promise.resolve({ img: 'image.png' }));
+      jest.spyOn(fs.promises, 'unlink').mockImplementationOnce(() => Promise.resolve());
+
+      const getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+
+      const { token } = getToken.body;
+      const validToken = `Bearer ${token}`;
+
+      const res = await request(app)
+      .delete('/user/picture')
+      .set('Authorization', validToken);
+
+      expect(res.statusCode).toEqual(200);
+    });
+
+
+  });
+
 });
+
+
+

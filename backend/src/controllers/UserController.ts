@@ -199,14 +199,19 @@ export const getPicture = async (req: Request, res: Response, next: NextFunction
 export const deletePicture = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
-    
-    const userImg = await getUserImage(userId);
+    const user: User | undefined = await getUserById(userId);
 
-    if (!userImg || !userImg.img) {
-      return res.status(404).json({ message: 'No picture found for deletion' });
+    if (!user) {
+      return res.status(404).json({ error: 'No corresponding user found' });
     }
 
-    await fs.promises.unlink(path.join(userUploadDir, userImg.img));
+    const { img } = await getUserImage(userId);
+
+    if (!img || img == '') {
+      return res.status(405).json({ message: 'No picture found for deletion' });
+    }
+
+    await fs.promises.unlink(path.join(userUploadDir, img));
 
     await updateUserImage(userId, ''); 
 
