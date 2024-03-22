@@ -1,14 +1,11 @@
 <script lang="ts">
   export let name: string;
   export let value: unknown = undefined;
-  export let lineBreaksAllowed = false;
 </script>
 
 <div class={'item'}>
   <h3>{name}</h3>
-  {#if value && lineBreaksAllowed}
-    <span>{value}</span>
-  {:else if value}
+  {#if value}
     <span>{value}</span>
   {:else}
     <span class="notset">Not specified</span>
