@@ -224,7 +224,6 @@ describe('User routes', () => {
         .put('/user')
         .send(user)
         .set('Authorization', validToken);
-      console.log(res.error);
 
       expect(res.statusCode).toEqual(200);
     });

@@ -24,7 +24,7 @@ export const createTrainer = async (req: Request, res: Response, next: NextFunct
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    insertTrainer({ username, password: hashedPassword, email, name });
+    await insertTrainer({ username, password: hashedPassword, email, name });
 
     return res.status(201).json({ message: 'Trainer added succesfully' });
   } catch (error) {
