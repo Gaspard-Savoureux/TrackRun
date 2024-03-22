@@ -3,7 +3,7 @@ import { getUser } from '../controllers/UserController';
 import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
-import { addUserToTrainer } from '../controllers/TrainerController';
+import { addUserToTrainer, removeUserFromTrainer } from '../controllers/TrainerController';
 
 const router = express.Router();
 
@@ -98,7 +98,9 @@ router.get('/user/:userId',
  *       200:
  *         description: Association created
  *       404:
- *         description: No corresponding user found
+ *         description: No corresponding user|trainer found
+ *       409:
+ *         description: relation already exist
  *       500:
  *         description: Server Error
  */
@@ -108,8 +110,35 @@ router.post('/user/:userId',
   addUserToTrainer
 );
 
-// TODO À valider plus tard, mauvaise branche
-// ROUTES TO IMPLEMENT
-// router.delete('/users/:username', removeUserFromTrainer);
+/**
+ * @swagger
+ * /trainer/user/{userId}:
+ *   delete:
+ *     tags:
+ *       - trainer
+ *     summary: Trainer delete association with user
+ *     security:
+ *       - BearerAuth: []
+ *     description: Route to delete an association of a trainer and a user.
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: integer
+ *           required: true
+ *           description: the id of a selected user
+ *     responses:
+ *       200:
+ *         description: Association successfully deleted
+ *       404:
+ *         description: No corresponding user|trainer|relation found
+ *       500:
+ *         description: Server Error
+ */
+router.delete('/user/:userId', 
+  verifyTrainerToken,
+  [param('userId').notEmpty().isNumeric().withMessage('userId must be given and numeric')],
+  removeUserFromTrainer
+);
 
 export default router;

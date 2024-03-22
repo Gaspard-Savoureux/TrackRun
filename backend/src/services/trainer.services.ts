@@ -65,3 +65,8 @@ export const getTrainerUser = async (trainerId: number, userId: number) => {
 export const createTrainerUserRelation = async (trainerId: number, userId: number) => {
   return await db.insert(trainerUserAssociation).values([{trainerId, userId}]);
 };
+
+export const deleteTrainerUserRelation = async (trainerId: number, userId: number) => {
+  return await db.delete(trainerUserAssociation)
+    .where(eq(trainerUserAssociation.trainerId, trainerId) && eq(trainerUserAssociation.userId, userId));
+};
