@@ -4,6 +4,7 @@
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import type { ActionResult } from '@sveltejs/kit';
   import type { ActionData, PageServerData } from './$types';
+  import { API_URL } from '../../constants';
 
   export let data: PageServerData;
   export let form: ActionData;
@@ -35,6 +36,14 @@
 <section>
   <h1>Settings</h1>
   <h2>Update user profile</h2>
+  <section>
+    <img src="{API_URL}/{data.user.img}" alt="Profile Pic" />
+
+    <form method="PUT" action="?/picture" use:enhance>
+      <input type="file" name="file" accept="image/*" />
+      <button type="submit">Update Profile Picture</button>
+    </form>
+  </section>
   <form method="POST" action="?/user" on:submit|preventDefault={submitUpdateUser}>
     <label>
       Username
