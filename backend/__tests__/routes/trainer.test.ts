@@ -51,7 +51,7 @@ describe('Tests route POST /trainer/user/{userId}', () => {
     const validToken = `Bearer ${token}`;
 
     const res = await request(app)
-      .post(route + 1)
+      .post(route + 0)
       .set('Authorization', validToken);
 
     expect(res.status).toBe(404);
@@ -128,3 +128,99 @@ describe('Tests route POST /trainer/user/{userId}', () => {
     expect(res.status).toBe(409);
   });
 });
+
+describe('Tests route DELETE /trainer/user/{userId}', () => {
+  const route = '/trainer/user/';
+
+  test('Should return 401 | Unauthorized', async () => {
+
+    const res = await request(app)
+      .delete(route + 0);
+    expect(res.status).toBe(401);
+  });
+
+  test('Should delete relation successfully', async () => {
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+    
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const createdUser = await getUserByUsername(user.username);
+
+    const res = await request(app)
+      .delete(route + createdUser?.id)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(200);
+  });
+
+  test('Should return 404 | Relation not found', async () => {
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+    
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const createdUser = await getUserByUsername(user.username);
+
+    const res = await request(app)
+      .delete(route + createdUser?.id)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(404);
+    expect(res.text).toBe('{"error":"No association to delete found"}');
+  });
+
+  test('Should return 404 | Trainer not found', async () => {
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+    
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    await db.delete(trainers).where(eq(trainers.username, trainer.username));
+    const createdUser = await getUserByUsername(user.username);
+
+    const res = await request(app)
+      .delete(route + createdUser?.id)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(404);
+    expect(res.text).toBe('{"error":"Trainer not found"}');
+  });
+
+  test('Should return 404 | User not found', async () => {
+    // CREATE TRAINER
+    await request(app)
+      .post('/admin/trainer')
+      .send(trainer)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `Basic ${basicAuthCredentials}`);
+
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+    
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const createdUser = await getUserByUsername(user.username);
+    await db.delete(users).where(eq(users.username, users.username));
+
+    const res = await request(app)
+      .delete(route + createdUser?.id)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(404);
+    expect(res.text).toBe('{"error":"User not found"}');
+  });
+});
+
