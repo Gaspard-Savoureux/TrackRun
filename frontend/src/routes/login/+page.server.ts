@@ -7,6 +7,7 @@ export const actions: object = {
     const data = await request.formData();
     const username = data.get('username');
     const password = data.get('password');
+    const isTrainer = data.get('isTrainer') === 'on'; // checkbox
 
     if (!username) return fail(400, {
       success: false,
@@ -20,7 +21,7 @@ export const actions: object = {
       username,
     });
 
-    const res = await fetch(`${API_URL}/auth`, {
+    const res = await fetch(isTrainer ? `${API_URL}/auth/trainer` : `${API_URL}/auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -54,7 +55,7 @@ export const actions: object = {
       if (next) {
         redirect(302, `/${next.slice(1)}`);
       }
-      redirect(302, '/');
+      redirect(302, isTrainer ? '/trainer' : '/');
     }
 
     return fail(500, {

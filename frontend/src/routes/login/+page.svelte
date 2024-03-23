@@ -29,6 +29,10 @@
         value={form?.username ?? ''}
       />
       <input type="password" placeholder="Enter your password" name="password" />
+      <label>
+        <input type="checkbox" name="isTrainer" />
+        Log in as a trainer
+      </label>
       <button type="submit">Log in</button>
       <hr />
       <span>
