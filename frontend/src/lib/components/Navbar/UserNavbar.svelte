@@ -72,4 +72,4 @@
         display: block;
       }
     }
-  </style>
+</style>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import TrainerNavbar from './TrainerNavbar.svelte';
-  import UserNavbar from './UserNavbar.svelte'
+  import UserNavbar from './UserNavbar.svelte';
 
   let isTrainer = false;
 

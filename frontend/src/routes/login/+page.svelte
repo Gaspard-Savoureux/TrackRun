@@ -8,8 +8,8 @@
   export let form;
 
   let isTrainer = false;
-  let username = '';
-  let password = '';
+  const username = '';
+  const password = '';
 
   const onSubmit = async () => {
     // Send a request to your login endpoint
@@ -31,7 +31,7 @@
     if (loginSuccessful) {
       localStorage.setItem('isTrainer', isTrainer ? 'true' : 'false');
     }
-  }
+  };
 </script>
 
 <svelte:head>
