@@ -1,9 +1,10 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { createUser, getUser, deleteUser, updateUser } from '../controllers/UserController';
+import { createUser, getUser, deleteUser, updateUser, uploadPicture, getPicture, deletePicture } from '../controllers/UserController';
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 import { evTypes, isGivenTypeOrNull } from '../utils/expressValidatorUtils';
+import { uploadUserPic } from '../middlewares/uploadPic';
 
 const router = express.Router();
 
@@ -63,56 +64,78 @@ router.post('/',
 /**
  * @swagger
  * /user:
- *  get:
- *    tags:
- *    - user
- *    summary: Get user data
- *    description: Route to get the data of a user using its token
- *    security:
- *      - BearerAuth: []
- *    responses:
- *      200:
- *        description: Information obtained successfully
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *               username:
- *                 type: string
- *                 example: jean-papa
- *               password:
- *                 type: string
- *                 description: The password of a user
- *                 example: voici mon mot de passe
- *               age:
- *                 type: integer
- *                 description: The age of a user
- *                 example: 30
- *               height:
- *                 type: number
- *                 format: float
- *                 description: The height of a user in cm
- *                 example: 180.5
- *               weight:
- *                 type: number
- *                 format: float
- *                 description: The weight of a user in kg
- *                 example: 75.5
- *               sex:
- *                 type: string
- *                 description: The sex of a user
- *                 example: male
- *               description:
- *                 type: string
- *                 description: Description of a user
- *                 example: Timothé le 6e du nom, aime les oranges
- *      404:
- *        description: No corresponding user found
- *      500:
- *        description: Server Error
+ *   get:
+ *     tags:
+ *       - user
+ *     summary: Get user data
+ *     description: Route to get the data of a user using its token
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Information obtained successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   required: true
+ *                   type: string
+ *                   example: jean-papa
+ *                 password:
+ *                   required: true
+ *                   type: string
+ *                   description: The password of a user
+ *                   example: 1234
+ *                 email:
+ *                   required: true
+ *                   type: string
+ *                   description: The email of a user
+ *                   example: jeanpapa@gmail.com
+ *                 name:
+ *                   required: true
+ *                   type: string
+ *                   description: The name of a user
+ *                   example: jean-papa Juanpadre
+ *                 age:
+ *                   required: true
+ *                   type: integer
+ *                   description: The age of a user
+ *                   example: 30
+ *                 height:
+ *                   required: false
+ *                   type: number
+ *                   format: float
+ *                   description: The height of a user in cm
+ *                   example: 180.5
+ *                 weight:
+ *                   required: false  
+ *                   type: number
+ *                   format: float
+ *                   description: The weight of a user in kg
+ *                   example: 75.5
+ *                 sex:
+ *                   required: false
+ *                   type: string
+ *                   description: The sex of a user
+ *                   example: male
+ *                 img:
+ *                   type: string
+ *                   description: The name of the user's image
+ *                   example: 1-djaskhfgads08fwdsfnb234f890.png
+ *                 description:
+ *                   required: false
+ *                   type: string
+ *                   description: Description of a user
+ *                   example: Timothé le 6e du nom, aime les oranges
+ *       404:
+ *         description: No corresponding user found
+ *       500:
+ *         description: Server Error
  */
 router.get('/', verifyUserToken, getUser);
+
 
 /**
  * @swagger
@@ -279,8 +302,10 @@ router.patch('/',
   ],
   expressValidator,
   verifyUserToken,
-  updateUser
+  updateUser,
 );
+
+
 
 /**
  * @swagger
@@ -305,5 +330,110 @@ router.patch('/',
  *                  example: User successfully deleted
  */
 router.delete('/', verifyUserToken, deleteUser);
+
+
+/**
+ * @swagger
+ * /user/picture:
+ *  put:
+ *    tags:
+ *    - user
+ *    summary: Upload user picture
+ *    description: Upload the picture of a user
+ *    security:
+ *      - BearerAuth: []
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              picture:
+ *                type: string
+ *                format: binary
+ *                description: The picture of a user
+ *    responses:
+ *      200:
+ *        description: User picture updated successfully
+ *      400:
+ *        description: Failed to upload the picture
+ *      402:
+ *        description: No picture uploaded
+ *      404:
+ *        description: User not found
+ */
+router.put('/picture',
+  verifyUserToken,  
+  uploadUserPic.single('picture'),
+  uploadPicture,
+);
+
+
+/**
+ * @swagger
+ * /user/picture:
+ *  get:
+ *    tags:
+ *    - user
+ *    summary: Get user picture
+ *    description: Retrieve the picture of a user
+ *    security:
+ *      - BearerAuth: []
+ *    responses:
+ *      200:
+ *        description: User picture retrieved successfully
+ *      404:
+ *        description: User not found
+ *      405:
+ *        description: User has no picture
+ */
+router.get('/picture', verifyUserToken, getPicture);
+
+
+
+/**
+ * @swagger
+ * /user/picture:
+ *   delete:
+ *     tags:
+ *     - user
+ *     summary: Deletes the picture of a user
+ *     description: Delete the picture of user based on its token.
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Picture successfully deleted
+ *         content:
+ *           application/json: 
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Picture successfully deleted
+ *       404:
+ *         description: No corresponding user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No corresponding user
+ *       405:
+ *         description: No picture found to delete
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No picture found for deletion
+ */
+router.delete('/picture', verifyUserToken, deletePicture);
 
 export default router;

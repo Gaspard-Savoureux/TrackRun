@@ -25,6 +25,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+
 // allow different origin for development
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' ? 'http://tse.info.uqam.ca' : 'http://localhost:5173',
@@ -44,6 +45,8 @@ app.use('/plannedactivities', planned_activities);
 app.use('/', stub);
 app.use('/activity', activity);
 
+// Statics assets
+app.use('/uploads', express.static('uploads'));
 
 // Needs to be last
 app.use(ErrorHandler);
