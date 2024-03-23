@@ -6,6 +6,32 @@
   $: message = $page.url.searchParams.get('message') ?? '';
 
   export let form;
+
+  let isTrainer = false;
+  let username = '';
+  let password = '';
+
+  const onSubmit = async () => {
+    // Send a request to your login endpoint
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+        isTrainer,
+      }),
+    });
+
+    // Check if the login was successful
+    const loginSuccessful = response.ok;
+
+    if (loginSuccessful) {
+      localStorage.setItem('isTrainer', isTrainer ? 'true' : 'false');
+    }
+  }
 </script>
 
 <svelte:head>
@@ -21,7 +47,7 @@
   {/if}
   <div class="container">
     <h1>Log in</h1>
-    <form method="POST" use:enhance>
+    <form method="POST" use:enhance on:submit|preventDefault={onSubmit}>
       <input
         type="text"
         placeholder="Enter your username"
@@ -30,7 +56,7 @@
       />
       <input type="password" placeholder="Enter your password" name="password" />
       <label>
-        <input type="checkbox" name="isTrainer" />
+        <input type="checkbox" name="isTrainer" bind:checked={isTrainer}/>
         Log in as a trainer
       </label>
       <button type="submit">Log in</button>
