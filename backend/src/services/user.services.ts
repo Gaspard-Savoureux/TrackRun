@@ -2,6 +2,7 @@ import { db } from '../db/db';
 import { User, users } from '../models/users';
 import { eq } from 'drizzle-orm';
 
+
 export const getUserByUsername = async ( username: string) : Promise<User | undefined> => {
   const [ user ] = await db.select()
     .from(users)
@@ -26,7 +27,6 @@ export const getUserByEmail = async (email: string) : Promise<User | undefined> 
   return user;
 };
 
-
 export const insertUser = async (user: User) => {
   return await db.insert(users).values([{...user}]);
 };
@@ -42,3 +42,15 @@ export const deleteUserById = async (id: number) => {
     .where(eq(users.id, id));
 };
 
+
+/**User image**/
+export const getUserImage = async (userId: number) => {
+  const [ userImg ] = await db.select({img: users.img})
+    .from(users)
+    .where(eq(users.id, userId));
+  return userImg;
+};
+
+export const updateUserImage = async (userId: number, imgName: string) => {
+  return await db.update(users).set({ img: imgName }).where(eq(users.id, userId));
+};
