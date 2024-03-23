@@ -2,7 +2,5 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  coverageReporters: ['text', 'text-summary', 'cobertura', 'html'],
+  coverageReporters: ["text", "text-summary", "cobertura", "html"],
 };
-
-process.env.NODE_ENV = 'test';
