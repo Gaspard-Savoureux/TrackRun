@@ -60,7 +60,9 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
 
     const payload = {userId: user.id};
     const secret: jwt.Secret = process.env.SECRET as string || 'petit_secret';
-    const token = jwt.sign(payload, secret, { expiresIn: '1h'});
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+
+    res.setHeader('Set-Cookie', `token=${token}; Max-Age=${60 * 60}; Path=/; HttpOnly; SameSite=Strict`);
 
     return res.status(200).json({ token });
   } catch (error) {
@@ -110,13 +112,12 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
       const hashedPassword = await bcrypt.hash(password, 10);
       updateData.password = hashedPassword;
     }
-    if (email) updateData.email = email;
-    if (name) updateData.name = name;
-    if (age) updateData.age = age;
-    if (height) updateData.height = height;
-    if (weight) updateData.weight = weight;
-    if (sex) updateData.sex = sex;
-    if (description) updateData.description = description;
+
+    if (age !== undefined) updateData.age = age;
+    if (height !== undefined) updateData.height = height;
+    if (weight !== undefined) updateData.weight = weight;
+    if (sex !== undefined) updateData.sex = sex;
+    if (description !== undefined) updateData.description = description;
 
     await updateUserById(userId, updateData);
     

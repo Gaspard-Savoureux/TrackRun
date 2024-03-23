@@ -254,7 +254,7 @@ router.delete('/trainer/:trainerId',
  * 
  * @swagger
  * /admin/trainer/{trainerId}:
- *   put:
+ *   patch:
  *     tags:
  *       - admin
  *     security:
@@ -323,7 +323,7 @@ router.delete('/trainer/:trainerId',
  *       500:
  *         description: Server Internal Error
  */
-router.put('/trainer/:trainerId',
+router.patch('/trainer/:trainerId',
   [
     param('trainerId').exists().isInt(),
     body('username').optional().isString(),

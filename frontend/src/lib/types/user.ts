@@ -1,10 +1,10 @@
 export type User = {
   username?: string;
-  email?: string;
-  name?: string;
-  age?: number;
-  height?: number;
-  weight?: number;
-  sex?: string;
-  description?: string;
+  email?: string | null;
+  name?: string | null;
+  age?: number | null;
+  height?: number | null;
+  weight?: number | null;
+  sex?: string | null;
+  description?: string | null;
 }

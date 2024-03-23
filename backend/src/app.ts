@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import basicAuth from 'express-basic-auth';
@@ -22,14 +23,14 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 
 // allow different origin for development
-if (process.env.NODE_ENV !== 'production') {
-  app.use(cors({
-    origin: 'http://localhost:5173'
-  }));
-}
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' ? 'http://tse.info.uqam.ca' : 'http://localhost:5173',
+  credentials: true,
+}));
 
 /**** Routes ****/
 app.use('/admin', basicAuth({
@@ -37,7 +38,7 @@ app.use('/admin', basicAuth({
     [process.env.ADMIN_NAME ?? 'admin' as string]: process.env.ADMIN_PASSWORD ?? 'defaultPassword', 
   }
 }), admin);
-app.use(auth);
+app.use('/auth', auth);
 app.use('/user', user);
 app.use('/trainer', trainer);
 app.use('/plannedactivities', planned_activities);

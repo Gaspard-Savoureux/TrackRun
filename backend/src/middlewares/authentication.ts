@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { userPayload } from '../types';
+import { trainerPayload, userPayload } from '../types';
 
 
 /**
@@ -10,19 +10,26 @@ import { userPayload } from '../types';
  *     BearerAuth:
  *       type: http
  *       scheme: bearer
+ *     CookieAuth:
+ *       type: apiKey
+ *       in: cookie
+ *       name: token
  */
 export const verifyUserToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeaders = req.headers.authorization;
 
-  if (!authHeaders || !authHeaders.startsWith('Bearer ')) {
+  const cookieToken: string | undefined = req.cookies.token;
+
+  if (!cookieToken && (!authHeaders || !authHeaders.startsWith('Bearer '))) {
     return res.status(401).json({ error: 'Unauthorized'});
   }
 
-  const token = authHeaders.split(' ')[1];
+  const token = cookieToken || authHeaders?.split(' ')[1] || '';
 
   try {
-    const decoded = jwt.verify(token, process.env.SECRET as string || 'petit_secret') as userPayload;
-    req.user = decoded;
+    const { userId } = jwt.verify(token, process.env.SECRET as string || 'petit_secret') as userPayload;
+    if (!userId) throw new Error();
+    req.user = { userId };
     
     next();
   } catch (err) {
@@ -30,22 +37,24 @@ export const verifyUserToken = (req: Request, res: Response, next: NextFunction)
   }
 };
 
-// TODO À valider plus tard, mauvaise branche
-// export const verifyTrainerToken = (req: Request, res: Response, next: NextFunction) => {
-//   const authHeaders = req.headers.authorization;
+export const verifyTrainerToken = (req: Request, res: Response, next: NextFunction) => {
+  const authHeaders = req.headers.authorization;
 
-//   if (!authHeaders || !authHeaders.startsWith('Bearer ')) {
-//     return res.status(401).json({ error: 'Unauthorized'});
-//   }
+  const cookieToken: string | undefined = req.cookies.token;
 
-//   const token = authHeaders.split(' ')[1];
+  if (!cookieToken && (!authHeaders || !authHeaders.startsWith('Bearer '))) {
+    return res.status(401).json({ error: 'Unauthorized'});
+  }
 
-//   try {
-//     const decoded = jwt.verify(token, process.env.SECRET as string || 'trainer_secret') as trainerPayload;
-//     req.trainer = decoded;
+  const token = cookieToken || authHeaders?.split(' ')[1] || '';
+
+  try {
+    const { trainerId } = jwt.verify(token, process.env.SECRET as string || 'petit_secret') as trainerPayload;
+    if (!trainerId) throw new Error();
+    req.trainer = { trainerId };
     
-//     next();
-//   } catch (err) {
-//     return res.status(401).json({ error: 'Unauthorized - Invalid token'});
-//   }
-// };
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Unauthorized - Invalid token'});
+  }
+};

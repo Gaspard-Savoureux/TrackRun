@@ -3,6 +3,8 @@ import {error, fail, redirect} from '@sveltejs/kit';
 import type {PageServerLoad, RequestEvent} from '../$types';
 import { API_URL } from '../../constants';
 
+
+
 // Enumération des codes d'erreur
 enum ErrorCode {
     Missing,
@@ -12,7 +14,9 @@ enum ErrorCode {
     InvalidDate,
     InvalidDuree,
     InvalidDistance,
-    InvalidComment
+    InvalidComment,
+    InvalidGPX,
+    InvalidId
 }
 
 // Fonction pour récupérer les messages d'erreur en fonction du code d'erreur
@@ -41,6 +45,10 @@ function getErrorMessage(errorCode: ErrorCode, variable: string): string {
     return `Le champ "${variable}" de l'activité doit être un nombre positif.`;
   case ErrorCode.InvalidComment:
     return `Le champ "${variable}" de l'activité doit être une chaîne de caractères d'une longueur maximale de 1000 caractères.`;
+  case ErrorCode.InvalidGPX:
+    return `Le champ "${variable}" de l'activité doit être au format GPX.`;
+  case ErrorCode.InvalidId:
+    return `Le champ "${variable}" de l'activité est manquant ou invalide.`;
   default:
     return 'Une erreur inconnue s\'est produite.';
   }
@@ -120,6 +128,10 @@ function isValidComment(comment: string): boolean {
   return comment.length <= 1000;
 }
 
+function isGPXFile(file: File): boolean {
+  return file.name.toLowerCase().endsWith('.gpx');
+}
+
 /**
  * Converts given duration string to seconds.
  *
@@ -144,7 +156,7 @@ export const actions: object = {
    * @param {Object} requestEvent - The request event object containing the cookies, fetch, and request properties.
    * @returns {Object} - The response object containing the status code and body.
    */
-  ajouterActivite: async ({ cookies, fetch, request }: RequestEvent) => {
+  ajouterActiviteManuel: async ({ cookies, fetch, request }: RequestEvent) => {
     //const activiteData = await extractFormData(request);
     const data = await request.formData();
     const name = data.get('nom');
@@ -224,7 +236,7 @@ export const actions: object = {
     }
 
     if (res.ok) {
-      redirect(302, '/');
+      redirect(302, '?/activity/');
     }
 
     return {
@@ -234,6 +246,224 @@ export const actions: object = {
         message: 'Activité ajoutée avec succès!',
       },
     };
+  },
+  ajouterActiviteGPX: async ({ cookies, fetch, request }: RequestEvent) => {
+    const data = await request.formData();
+    const name = data.get('name');
+    const type = data.get('typeActivite');
+    const comment = data.get('comment');
+    const fichierGPX = data.get('fichierGPX') as File;
+    
+    // Validation des champs
+    if (!name || !type || !comment || !fichierGPX) {
+      return fail(400, { 
+        success: false, 
+        message: getErrorMessage(ErrorCode.Missing, 'vide'), 
+      });
+    }
+    if (!isValidNom(<string>name)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+      });
+    }
+    if (!isValidTypeActivite(<string>type)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+      });
+    }
+    if (!isValidComment(<string>comment)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidComment, 'comment'),
+      });
+    }
+    if (!isGPXFile(fichierGPX)) {
+      return fail(400, { 
+        success: false, 
+        message: getErrorMessage(ErrorCode.InvalidGPX, 'FormatGPX'), 
+      });
+    }
+
+    const token = cookies.get('token');
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('type', type);
+    formData.append('comment', comment);
+    formData.append('file', fichierGPX);
+
+    const res = await fetch(`${API_URL}/activity/gpxForm`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (res.status === 400 || res.status === 401) {
+
+      const errorData = await res.json();
+      return fail(res.status, {
+        success: false,
+        message: errorData.message,
+      });
+    }
+
+    if (res.ok) {
+      redirect(302, '?/activity/');
+    }
+
+    return {
+      status: 200,
+      body: {
+        success: true,
+        message: 'Activité ajoutée avec succès!',
+      },
+    };
+
+  },
+
+  modifierActivite: async ({ cookies, fetch, request }: RequestEvent) => {
+    const data = await request.formData();
+    const activityId = data.get('activityId');
+    const name = data.get('name');
+    const city = data.get('city');
+    const type = data.get('type');
+    const date = data.get('date');
+    const duree = data.get('durationTotal');
+    const distance = data.get('distanceTotal');
+    const comment = data.get('comment');
+    const segments = '{}';
+
+    // Validation des champs
+    if (!activityId || !name || !city || !type || !date || !duree || !distance || !comment) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidId, 'vide'),
+      });
+    }
+    if (!isValidNom(<string>name)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+      });
+    }
+    if (!isValidVille(<string>city)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidVille, 'ville'),
+      });
+    }
+    if (!isValidTypeActivite(<string>type)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+      });
+    }
+    if (!isValidDate(<string>date)) {
+      redirect(302, '/');
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidDate, 'Date'),
+      });
+    }
+    if (!isValidDuree(<string>duree)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
+      });
+    }
+    if (!isValidDistance(<string>distance)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
+      });
+    }
+    if (!isValidComment(<string>comment)) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
+      });
+    }
+
+    const durationTotal = convertDureeToSecondes(<string>duree);
+    const distanceTotal = Number(distance);
+
+    const token = cookies.get('token');
+
+    const updateRes = await fetch(`${API_URL}/activity/${activityId}`, {//Route a modifier au besoin pour le backend
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, city , type, date, durationTotal, distanceTotal, comment, segments }),
+    });
+
+    if (!updateRes.ok) {
+      const errorData = await updateRes.json();
+      return {
+        status: updateRes.status,
+        body: {
+          success: false,
+          message: errorData.message || 'Erreur lors de la mise a jour', 
+        },
+      };
+    }
+
+    return {
+      status: 200,
+      body: {
+        success: true,
+        message: 'Activité modifiée avec succès!',
+      },
+    };
+  },
+
+  supprimerActivite: async ({ cookies, fetch, request }: RequestEvent) => {
+    const data = await request.formData();
+    const activityId = data.get('activityId');
+    if (!activityId) {
+      return fail(400, {
+        success: false,
+        message: getErrorMessage(ErrorCode.InvalidNom, 'id'),
+      });
+    }
+
+    const token = cookies.get('token');
+
+    const res = await fetch(`${API_URL}/activity/${activityId}`, {//Route a modifier au besoin pour le backend
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (res.status === 400 || res.status === 401) {
+      const errorData = await res.json();
+      return fail(res.status, {
+        success: false,
+        message: errorData.message,
+      });
+    }
+
+    if (res.ok) {
+      return {
+        status: 200,
+        body: {
+          success: true,
+          message: 'Activité supprimée avec succès!',
+        },
+      };
+    }
+
+    return fail(500, {
+      success: false,
+      message: 'Une erreur est survenue lors de la suppression de l\'activité.',
+    });
   },
 };
 
@@ -259,4 +489,4 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
   const activities = await res.json();
 
   return { activities };
-};
+}; 

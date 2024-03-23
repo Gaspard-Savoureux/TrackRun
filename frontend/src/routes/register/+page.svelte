@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
   import { enhance } from '$app/forms';
   import type { formDataRegister } from '$lib/types/registerForm.js';
   import type { registerFields } from '$lib/types/registerForm.js';
@@ -41,57 +41,57 @@
   };
 </script>
 
-<form
-  class='container'
-  method='POST'
-  action='?/register'
-  on:submit={handleSubmit}
-  use:enhance
->
-  {#if form?.success === false}<p style='color: red;'>{form?.message}</p>{/if}
+<section>
+  <form class="container" method="POST" action="?/register" on:submit={handleSubmit} use:enhance>
+    {#if form?.success === false}<p style="color: red;">{form?.message}</p>{/if}
 
-  <h1>Register</h1>
-  <label>
-    Username
-    <input type='text' name='username' bind:value={username} />
-    {#if errors.username}<p style='color: red;'>{errors.username}</p>{/if}
-  </label>
+    <h1>Register</h1>
+    <label>
+      Username
+      <input type="text" name="username" bind:value={username} />
+      {#if errors.username}<p style="color: red;">{errors.username}</p>{/if}
+    </label>
 
-  <label>
-    Email
-    <input type='email' name='email' bind:value={email} />
-    {#if errors.email}<p style='color: red;'>{errors.email}</p>{/if}
-  </label>
+    <label>
+      Email
+      <input type="email" name="email" bind:value={email} />
+      {#if errors.email}<p style="color: red;">{errors.email}</p>{/if}
+    </label>
 
-  <label>
-    Password
-    <input type='password' name='password' bind:value={password} />
-    {#if errors.password}<p style='color: red;'>{errors.password}</p>{/if}
-  </label>
+    <label>
+      Password
+      <input type="password" name="password" bind:value={password} />
+      {#if errors.password}<p style="color: red;">{errors.password}</p>{/if}
+    </label>
 
-  <label>
-    Last Name
-    <input type='text' name='lastname' bind:value={lastname} />
-    {#if errors.lastname}<p style='color: red;'>{errors.lastname}</p>{/if}
-  </label>
+    <label>
+      Last Name
+      <input type="text" name="lastname" bind:value={lastname} />
+      {#if errors.lastname}<p style="color: red;">{errors.lastname}</p>{/if}
+    </label>
 
-  <label>
-    First Name
-    <input type='text' name='firstname' bind:value={firstname} />
-    {#if errors.firstname}<p style='color: red;'>{errors.firstname}</p>{/if}
-  </label>
+    <label>
+      First Name
+      <input type="text" name="firstname" bind:value={firstname} />
+      {#if errors.firstname}<p style="color: red;">{errors.firstname}</p>{/if}
+    </label>
 
-  <label>
-    Date of Birth
-    <input type='date' name='birthdate' bind:value={birthdate} />
-    {#if errors.birthdate}<p style='color: red;'>{errors.birthdate}</p>{/if}
-  </label>
+    <label>
+      Date of Birth
+      <input type="date" name="birthdate" bind:value={birthdate} />
+      {#if errors.birthdate}<p style="color: red;">{errors.birthdate}</p>{/if}
+    </label>
 
-  <button type='submit'>Sign up</button>
-  <a href='/login'>Login</a>
-</form>
+    <button type="submit">Sign up</button>
+    <a href="/login">Login</a>
+  </form>
+</section>
 
 <style>
+  section {
+    padding: 3rem 1.5rem;
+  }
+
   h1 {
     font-size: 2rem;
     text-align: center;

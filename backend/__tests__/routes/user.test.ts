@@ -9,7 +9,17 @@ import { Readable } from 'stream';
 import fs from 'fs';
 
 // Base user should always work
-const user = {username: 'test-user', password: '1234', email: 'testing@gmail.com', name: 'Test User'};
+const user = {
+  username: 'test-user', 
+  password: '1234', 
+  email: 'testing@gmail.com',
+  name: 'Test User',
+  age: 30,
+  sex: 'Homme',
+  height: 180.5,
+  weight: 75.5,
+  description: 'Empereur incontesté de l\'uqam'
+};
 
 // this user as the same name
 const user1 = {username: 'test-user', password: '4567', email: 'usertesting@gmail.com', name: 'Test User the 2nd'};
@@ -17,10 +27,9 @@ const user1 = {username: 'test-user', password: '4567', email: 'usertesting@gmai
 // this user has the same email
 const user2 = {username: 'testing user', password: '4567',email: 'testing@gmail.com', name: 'Test User the 3nd'};
 
-
 let returnedUser: User;
-let returnedUser1: User;
-let returnedUser2: User;
+// let returnedUser1: User;
+// let returnedUser2: User;
 
 jest.mock('../../src/services/user.services');
 
@@ -28,11 +37,11 @@ beforeAll(async () => {
   const hashedPassword = await bcrypt.hash(user.password, 10);
   returnedUser = {id: 1, username: user.username, password: hashedPassword, };
 
-  const hashedPassword1 = await bcrypt.hash(user1.password, 10);
-  returnedUser1 = {id: 2, username: user1.username, password: hashedPassword1, email: user1.email, name: user1.name};
+  // const hashedPassword1 = await bcrypt.hash(user1.password, 10);
+  // returnedUser1 = {id: 2, username: user1.username, password: hashedPassword1, email: user1.email, name: user1.name};
 
-  const hashedPassword2 = await bcrypt.hash(user2.password, 10);
-  returnedUser2 = {id: 3, username: user2.username, password: hashedPassword2, email: user2.email, name: user2.name};
+  // const hashedPassword2 = await bcrypt.hash(user2.password, 10);
+  // returnedUser2 = {id: 3, username: user2.username, password: hashedPassword2, email: user2.email, name: user2.name};
 });
 
 
@@ -206,7 +215,7 @@ describe('User routes', () => {
 
       const getToken = await request(app)
         .post('/auth')
-        .send(user)
+        .send({username: user.name, password: user.password})
         .set('Content-Type', 'application/json');
 
       const { token } = getToken.body;
@@ -214,26 +223,27 @@ describe('User routes', () => {
 
       const res = await request(app)
         .put('/user')
-        .send({ username: 'new-username' })
+        .send(user)
         .set('Authorization', validToken);
+      console.log(res.error);
 
       expect(res.statusCode).toEqual(200);
     });
 
-    test('#8: should not be able to update user', async () => {
+    test('#8: should not be able to update user | invalid token', async () => {
       jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(undefined));
-      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(undefined));
+      // jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(undefined));
 
       const invalidToken = 'Bearer invalid';
 
       const res = await request(app)
         .put('/user')
-        .send({ username: 'new-username' })
+        .send(user)
         .set('Authorization', invalidToken);
       expect(res.statusCode).toEqual(401);
     });
 
-    test('#9: should not be able to update user', async () => {
+    test('#9: should not be able to update user | not every field were send', async () => {
       jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
       jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
 
@@ -249,7 +259,7 @@ describe('User routes', () => {
         .put('/user')
         .send({ username: 'new-username' })
         .set('Authorization', validToken);
-      expect(res.statusCode).toEqual(401);
+      expect(res.statusCode).toEqual(400);
     });
   });
 

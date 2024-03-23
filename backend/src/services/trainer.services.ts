@@ -1,3 +1,4 @@
+import { trainerUserAssociation } from '../models/trainerUsersRelation';
 import { db } from '../db/db';
 import { Trainer, trainers } from '../models/trainers';
 import { eq } from 'drizzle-orm';
@@ -52,3 +53,20 @@ export const deleteTrainerById = async (id: number) => {
     .where(eq(trainers.id, id));
 };
 
+/*** Relation between trainer and id ***/
+
+export const getTrainerUser = async (trainerId: number, userId: number) => {
+  const [ relation ] = await db.select()
+    .from(trainerUserAssociation)
+    .where(eq(trainerUserAssociation.trainerId, trainerId) && eq(trainerUserAssociation.userId, userId));
+  return relation;
+};
+
+export const createTrainerUserRelation = async (trainerId: number, userId: number) => {
+  return await db.insert(trainerUserAssociation).values([{trainerId, userId}]);
+};
+
+export const deleteTrainerUserRelation = async (trainerId: number, userId: number) => {
+  return await db.delete(trainerUserAssociation)
+    .where(eq(trainerUserAssociation.trainerId, trainerId) && eq(trainerUserAssociation.userId, userId));
+};

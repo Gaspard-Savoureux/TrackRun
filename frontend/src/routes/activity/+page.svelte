@@ -1,59 +1,103 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
+  import GPXForm from './GPXForm.svelte';
+  import ManuelForm from './ManuelForm.svelte';
 
-    export let data;
-    const activities = data.activities.userActivities;
+  let afficherManuelForm = false;
+  let afficherGPXForm = false;
 
-    let nom = '';
-    let ville = '';
-    let typeActivite: 'Course' | 'Vélo' = 'Course';
-    let date = '';
-    let duree = '';
-    let distance = '';
-    let comment = '';
+  function afficherManuel() {
+    afficherManuelForm = true;
+    afficherGPXForm = false;
+  }
 
-    export let form;
-    </script>
+  function afficherGPX() {
+    afficherManuelForm = false;
+    afficherGPXForm = true;
+  }
+  export let form: { success?: boolean, message?: string } = {};
 
-<form method="POST" action="?/ajouterActivite" use:enhance>
-    <label for="nom">Nom de l'activité:</label>
-    <input name="nom" type="text" bind:value={nom} required>
+  export let data;
+  const activities = data.activities.userActivities;
 
-    <label for="ville">Ville:</label>
-    <input name="ville" type="text" bind:value={ville} required>
-  
-    <label for="typeActivite">Type d'activité:</label>
-    <select name="typeActivite" bind:value={typeActivite} required>
-      <option value="Running">Running</option>
-      <option value="Biking">Biking</option>
-      <option value="Walking">Walking</option>
-    </select>
+  function confirmerEtModifier(event: SubmitEvent) {
+    const isConfirmed = confirm('Êtes-vous sûr de vouloir modifier cette activité ?');
+    if (!isConfirmed) {
+      event.preventDefault();
+    }
 
-    <label for="date">Date:</label>
-    <input name="date" type="date" bind:value={date} required>
-  
-    <label for="duree">Durée:</label>
-    <input name="duree" type="text" bind:value={duree} required>
+  }
 
-    <label for="distance">Distance:</label>
-    <input name="distance" type="text" bind:value={distance} required>
+  function confirmerEtSupprimer(event: SubmitEvent) {
+    const isConfirmed = confirm('Êtes-vous sûr de vouloir supprimer cette activité ?');
+    if (!isConfirmed) {
+      event.preventDefault();
+    }
 
-    <label for="comment">Commentaires:</label>
-    <input name="comment" type="text" bind:value={comment} required>
-    {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
-    <button class="link" type="submit">Ajouter l'activité</button>
-  </form>
+  }
 
-  {#if activities.length > 0}
-    <h2>Activités enregistrées</h2>
-    {#each activities as activity}
-      <div class="activity">
-        <h3>{activity.name}</h3>
-        <p>Distance: {activity.distanceTotal}</p>
-        <p>Durée: {activity.durationTotal}</p>
-        <p>Date: {activity.date}</p>
+
+</script>
+
+<h1>Page d'activiter</h1>
+<p>Choisiser votre formulaire</p>
+
+<button on:click={afficherManuel}>Enregistrement Manuel</button>
+<button on:click={afficherGPX}>Enregistrement GPX</button>
+
+{#if afficherManuelForm}
+  <ManuelForm />
+{/if}
+
+{#if afficherGPXForm}
+  <GPXForm />
+{/if}
+
+{#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
+
+{#if activities.length > 0}
+  <h2>Activités enregistrées</h2>
+  {#each activities as activity}
+    <div class="activity">
+      <h3>{activity.name}</h3>
+      <p>Distance: {activity.distanceTotal}</p>
+      <p>Durée: {activity.durationTotal}</p>
+      <p>Date: {activity.date}</p>
+      <div class="options">
+        <form on:submit|preventDefault={confirmerEtModifier} method="POST" action="?/modifierActivite">
+          <input type="hidden" name="activityId" value="{activity.id}">
+          <input type="hidden" name="name" value="{activity.name}">
+          <input type="hidden" name="city" value="{activity.city}">
+          <input type="hidden" name="type" value="{activity.type}">
+          <input type="hidden" name="date" value="{activity.date}">
+          <input type="hidden" name="durationTotal" value="{activity.durationTotal}">
+          <input type="hidden" name="distanceTotal" value="{activity.distanceTotal}">
+          <input type="hidden" name="comment" value="{activity.comment}">
+
+          <button type="submit">Modifier</button>
+        </form>
+        <form on:submit|preventDefault={confirmerEtSupprimer} method="POST" action="?/supprimerActivite">
+          <input type="hidden" name="activityId" value="{activity.id}">
+          <button type="submit">Supprimer</button>
+        </form>
       </div>
-    {/each}
-  {:else}
-    <p>Aucune activité enregistrée pour le moment.</p>
-  {/if}
+    </div>
+  {/each}
+{:else}
+  <p>Aucune activité enregistrée pour le moment.</p>
+{/if}
+
+<style>
+  .options {
+    display: flex;
+  }
+
+  .options button {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+</style>
+

@@ -39,7 +39,7 @@
     const data = Object.fromEntries(formData);
 
     const res = await fetch(`/admin/dashboard/${currentTrainer?.id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -170,7 +170,8 @@
           use:enhance
           action="?/createTrainer"
           on:submit={() => {
-            if (trainerFormFilled) fillTemplateTrainer;
+            if (trainerFormFilled) fillTemplateTrainer();
+            trainerFormFilled = false;
           }}
         >
           <input
@@ -269,13 +270,13 @@
   .delete-btn {
     color: var(--text-button);
     border-color: var(--text);
-    background-color: var(--danger);
+    background-color: var(--danger-button);
     border-radius: 4px;
     border: none;
   }
 
   .delete-btn:hover {
-    background-color: var(--success);
+    background-color: var(--danger-darker);
   }
 
   /* MAIN/INFO */

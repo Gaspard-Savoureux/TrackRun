@@ -1,6 +1,6 @@
 import { db } from '../db/db';
 import {and, eq} from 'drizzle-orm';
-import {activities} from '../models/activities';
+import {activities, Activity} from '../models/activities';
 
 
 export const getActivityById = async (activityId: number, userId: number) => {
@@ -19,4 +19,25 @@ export const getUserActivities = async (userId: number) => {
   return await db.select()
     .from(activities)
     .where(eq(activities.user_id, userId));
+};
+
+export const updateActivityById = async  (activityId: number, userId: number, activity: Partial<Activity>) => {
+  return await db.update(activities)
+    .set(activity)
+    .where(
+      and(
+        eq(activities.id, activityId),
+        eq(activities.user_id, userId)
+      )
+    );
+};
+
+export const deleteActivityById = async (activityId: number, userId: number) => {
+  return await db.delete(activities)
+    .where(
+      and(
+        eq(activities.id, activityId),
+        eq(activities.user_id, userId)
+      )
+    );
 };
