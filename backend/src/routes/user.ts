@@ -4,6 +4,7 @@ import { createUser, getUser, deleteUser, updateUser, uploadPicture, getPicture,
 import { expressValidator } from '../middlewares/validation';
 import { verifyUserToken } from '../middlewares/authentication';
 import { evTypes, isGivenTypeOrNull } from '../utils/expressValidatorUtils';
+import { uploadUserPic } from '../middlewares/uploadPic';
 
 const router = express.Router();
 

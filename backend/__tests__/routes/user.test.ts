@@ -225,7 +225,6 @@ describe('User routes', () => {
         .put('/user')
         .send(user)
         .set('Authorization', validToken);
-      console.log(res.error);
 
       expect(res.statusCode).toEqual(200);
     });
@@ -245,7 +244,6 @@ describe('User routes', () => {
 
     test('#9: should not be able to update user | not every field were send', async () => {
       jest.spyOn(actions, 'getUserByUsername').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
-      jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(returnedUser))));
 
       const getToken = await request(app)
         .post('/auth')
@@ -307,9 +305,10 @@ describe('User routes', () => {
 
       const res = await request(app)
         .put('/user/picture')
-        .attach('picture', Buffer.from('fake image data'), 'testImage.pdf')
+        .attach('picture', Buffer.from('fake image data'), 'testImage.jpg')
         .set('Authorization', validToken);
 
+      console.log(res.text);
       expect(res.statusCode).toEqual(404);
     });
     
@@ -512,15 +511,15 @@ describe('User routes', () => {
       jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(JSON.parse(JSON.stringify(null))));
       
       const getToken = await request(app)
-      .post('/auth')
-      .send(user)
-      .set('Content-Type', 'application/json');
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
 
       const { token } = getToken.body;
       const validToken = `Bearer ${token}`;
       const res = await request(app)
-      .delete('/user/picture')
-      .set('Authorization', validToken);
+        .delete('/user/picture')
+        .set('Authorization', validToken);
 
       expect(res.statusCode).toEqual(404);
     });
@@ -532,16 +531,16 @@ describe('User routes', () => {
       jest.spyOn(actions, 'getUserImage').mockImplementationOnce(() => Promise.resolve({ img: null }));
 
       const getToken = await request(app)
-      .post('/auth')
-      .send(user)
-      .set('Content-Type', 'application/json');
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
 
       const { token } = getToken.body;
       const validToken = `Bearer ${token}`;      
 
       const res = await request(app)
-      .delete('/user/picture')
-      .set('Authorization', validToken);
+        .delete('/user/picture')
+        .set('Authorization', validToken);
 
       expect(res.statusCode).toEqual(405);
     });
@@ -555,16 +554,16 @@ describe('User routes', () => {
       jest.spyOn(fs.promises, 'unlink').mockImplementationOnce(() => Promise.resolve());
 
       const getToken = await request(app)
-      .post('/auth')
-      .send(user)
-      .set('Content-Type', 'application/json');
+        .post('/auth')
+        .send(user)
+        .set('Content-Type', 'application/json');
 
       const { token } = getToken.body;
       const validToken = `Bearer ${token}`;
 
       const res = await request(app)
-      .delete('/user/picture')
-      .set('Authorization', validToken);
+        .delete('/user/picture')
+        .set('Authorization', validToken);
 
       expect(res.statusCode).toEqual(200);
     });

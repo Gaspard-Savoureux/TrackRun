@@ -113,6 +113,8 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
       updateData.password = hashedPassword;
     }
 
+    if (email !== undefined) updateData.email = email;
+    if (name !== undefined) updateData.name = name;
     if (age !== undefined) updateData.age = age;
     if (height !== undefined) updateData.height = height;
     if (weight !== undefined) updateData.weight = weight;
