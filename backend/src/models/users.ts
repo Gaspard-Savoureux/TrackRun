@@ -41,10 +41,6 @@ import { int, mysqlTable, uniqueIndex, varchar, float } from 'drizzle-orm/mysql-
  *           type: string
  *           description: The sex of a user
  *           example: male
- *         img:
- *           type: string
- *           description: The name of the user's image
- *           example: 1-djaskhfgads08fwdsfnb234f890.png
  *         description:
  *           type: string
  *           description: The description of a user
@@ -56,11 +52,11 @@ export const users = mysqlTable('users', {
   password: varchar('password', { length: 72 }),
   email: varchar('email', { length: 256 }),
   name: varchar('name', { length: 256 }),
+
   age: int('age'),
   height: float('height'),
   weight: float('weight'),
   sex: varchar('sex', { length: 6 }),
-  img: varchar('img', { length: 256 }),
   description: varchar('description', { length: 1024 }),
 }, (users) => ({
   nameIndex: uniqueIndex('username_idx').on(users.username),
