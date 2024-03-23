@@ -16,7 +16,8 @@
     </div>
   </Modal>
   
-  <Modal info="Settings" href="/trainer/settings">
+  <Modal info="Settings" href="/settings">
+  <!-- <Modal info="Settings" href="/trainer/settings"> -->
     <div class="nav-item">
       <SettingsIcon />
       <p>Settings</p>

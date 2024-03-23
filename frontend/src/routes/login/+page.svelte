@@ -8,30 +8,6 @@
   export let form;
 
   let isTrainer = false;
-  const username = '';
-  const password = '';
-
-  const onSubmit = async () => {
-    // Send a request to your login endpoint
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username,
-        password,
-        isTrainer,
-      }),
-    });
-
-    // Check if the login was successful
-    const loginSuccessful = response.ok;
-
-    if (loginSuccessful) {
-      localStorage.setItem('isTrainer', isTrainer ? 'true' : 'false');
-    }
-  };
 </script>
 
 <svelte:head>
@@ -47,7 +23,7 @@
   {/if}
   <div class="container">
     <h1>Log in</h1>
-    <form method="POST" use:enhance on:submit|preventDefault={onSubmit}>
+    <form method="POST" use:enhance>
       <input
         type="text"
         placeholder="Enter your username"
