@@ -170,11 +170,15 @@ export function isValidDistance(distance: string): boolean {
  * @return {boolean} - True if the comment is valid, false otherwise.
  */
 export function isValidComment(comment: string): boolean {
-  return comment.length <= 1000;
+  return comment.length >= 0 && comment.length <= 1000;
 }
 
-export function isGPXFile(file: File): boolean {
-  return file.name.toLowerCase().endsWith('.gpx');
+export function isGPXFile(file: File | null): boolean {
+  let isValid = false;
+  if (file !== null) {
+    isValid = file.name.toLowerCase().endsWith('.gpx');
+  }
+  return isValid;
 }
 
 /**

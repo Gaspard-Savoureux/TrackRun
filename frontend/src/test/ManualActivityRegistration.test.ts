@@ -34,16 +34,26 @@ describe('Test #1 : Champs Name', () => {
       invalidTests.push('Validation Name valide echec');
     }
   });
+
+  it('Name vide', () => {
+    const invalidName = '';
+    const result = isValidNom(invalidName);
+    if (!result) {
+      validTests++;
+    } else {
+      invalidTests.push('Validation Name vide echec');
+    }
+  });
 });
 
 describe('Test #2 : Champs City', () => {
-  it('Limite Minimum', () => {
+  it('Limite vide', () => {
     const longCity = '';
     const result = isValidVille(longCity);
     if (result) {
       validTests++;
     } else {
-      invalidTests.push('Validation City minimum echec');
+      invalidTests.push('Validation City vide echec');
     }
   });
 
@@ -69,6 +79,16 @@ describe('Test #2 : Champs City', () => {
 });
 
 describe('Test #3 : Champs type d\'activité', () => {
+
+  it('Type vide', () => {
+    const invalidType = '';
+    const result = isValidTypeActivite(invalidType);
+    if (!result) {
+      validTests++;
+    } else {
+      invalidTests.push('Validation Type vide echec');
+    }
+  });
 
   it('Type invalide', () => {
     const invalidType = 'Dance';
@@ -275,6 +295,16 @@ describe('Test #7 : Champs Comment', () => {
       validTests++;
     } else {
       invalidTests.push('Validation Comment valide echec');
+    }
+  });
+
+  it('Comment invalide Maximum', () => {
+    const invalidComment = 'a'.repeat(1001);
+    const result = isValidComment(invalidComment);
+    if (!result) {
+      validTests++;
+    } else {
+      invalidTests.push('Validation Comment futur echec');
     }
   });
 });
