@@ -31,4 +31,8 @@ export const updatePlannedActivityById = async (userId: number, pActivityId: num
       eq(planned_activities.user_id, userId),
       eq(planned_activities.id, pActivityId)
     ));
-}
+};
+
+export const insertPlannedActivity = async (plannedActivity: PlannedActivity) => {
+  return await db.insert(planned_activities).values([{...plannedActivity}]);
+};
