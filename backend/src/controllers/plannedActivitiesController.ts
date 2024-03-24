@@ -3,7 +3,7 @@ import { planned_activities, PlannedActivity } from '../models/planned_activitie
 import { User } from '../models/users';
 import { getUserById } from '../services/user.services';
 import { db } from '../db/db';
-import { and, eq, gte } from 'drizzle-orm';
+import { and, eq, gte, lte } from 'drizzle-orm';
 import { deletePlannedActivityById, selectPlannedActivityById, updatePlannedActivityById } from '../services/planned_activity.services';
 
 export const getPlannedActivities = async (req: Request, res: Response, next: NextFunction) => {
@@ -23,6 +23,8 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
       fromDate = new Date(req.query.from.toString());
       if (isNaN(fromDate.getTime()))
         return res.status(400).json({ error: 'Invalid from date format. Please use YYYY-MM-DD.' });
+    }else{
+      return res.status(400).json({ error: 'Query parameter from is required.' });
     }
 
     // check for activity type in query param and validate
@@ -37,10 +39,13 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
     // conditions will be added in the where clause in the sql query
     const conditions = [eq(planned_activities.user_id, <number>user.id)];
 
-    // add filters if present
-    if (fromDate) {
-      conditions.push(gte(planned_activities.date, fromDate));
-    }
+    // only query for a 7-day period [fromDate, fromDate + 7 days]
+    const endDate = new Date(fromDate);
+    endDate.setDate(endDate.getDate() + 7);
+    conditions.push(gte(planned_activities.date, fromDate));
+    conditions.push(lte(planned_activities.date, endDate));
+
+    // add activity type filter if present
     if (activityType) {
       conditions.push(eq(planned_activities.type, activityType));
     }
