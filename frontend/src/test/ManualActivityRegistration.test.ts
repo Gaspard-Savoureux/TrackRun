@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from 'vitest';
+import { describe, it, afterAll } from 'vitest';
 import { isValidNom, isValidVille, isValidTypeActivite, obtenirDateDemain, obtenirPastDate, isValidDate, isValidDuree, isValidDistance, isValidComment } from '../routes/activity/+page.server'; 
 
 let validTests: number = 0;
