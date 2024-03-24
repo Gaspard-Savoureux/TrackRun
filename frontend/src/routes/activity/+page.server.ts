@@ -3,10 +3,8 @@ import {error, fail, redirect} from '@sveltejs/kit';
 import type {PageServerLoad, RequestEvent} from '../$types';
 import { API_URL } from '../../constants';
 
-
-
 // Enumération des codes d'erreur
-enum ErrorCode {
+export enum ErrorCode {
     Missing,
     InvalidNom,
     InvalidVille,
@@ -27,7 +25,7 @@ enum ErrorCode {
  * @param {string} variable - The name of the variable associated with the error.
  * @returns {string} - The error message.
  */
-function getErrorMessage(errorCode: ErrorCode, variable: string): string {
+export function getErrorMessage(errorCode: ErrorCode, variable: string): string {
   switch (errorCode) {
   case ErrorCode.Missing:
     return `Veuillez entrer le champ "${variable}" de l'activité.`;
@@ -38,7 +36,7 @@ function getErrorMessage(errorCode: ErrorCode, variable: string): string {
   case ErrorCode.InvalidTypeActivite:
     return `Le champ "${variable}" de l'activité doit être soit "Course" ou "Vélo".`;
   case ErrorCode.InvalidDate:
-    return `Le champ "${variable}" de l'activité doit être une date valide au format JJ-MM-AAAA.`;
+    return `Le champ "${variable}" de l'activité doit être une date valide au format AAAA-MM-JJ.`;
   case ErrorCode.InvalidDuree:
     return `Le champ "${variable}" de l'activité doit être au format HH:MM, où HH représente les heures et MM les minutes.`;
   case ErrorCode.InvalidDistance:
@@ -61,8 +59,8 @@ function getErrorMessage(errorCode: ErrorCode, variable: string): string {
  * @param {string} nom - The nom to be validated.
  * @return {boolean} - Returns true if the nom is valid, otherwise false.
  */
-function isValidNom(nom: string): boolean {
-  return nom.length <= 256;
+export function isValidNom(nom: string): boolean {
+  return nom.length >= 3 && nom.length <= 256;
 }
 
 /**
@@ -71,7 +69,7 @@ function isValidNom(nom: string): boolean {
  * @param {string} ville - The string to be checked.
  * @return {boolean} - Returns true if the string is a valid ville, otherwise false.
  */
-function isValidVille(ville: string): boolean {
+export function isValidVille(ville: string): boolean {
   return ville.length <= 100;
 }
 
@@ -81,8 +79,28 @@ function isValidVille(ville: string): boolean {
  * @param {string} typeActivite - The type of activity to be checked.
  * @return {boolean} - Returns true if the type of activity is valid, false otherwise.
  */
-function isValidTypeActivite(typeActivite: string): boolean {
-  return typeActivite === 'Running' || typeActivite === 'Biking' || typeActivite === 'Walking' || typeActivite === null;
+export function isValidTypeActivite(typeActivite: string): boolean {
+  return typeActivite === 'Running' || typeActivite === 'Biking' || typeActivite === 'Walking' ;
+}
+
+export function obtenirPastDate(): string {
+  const mostOldPersonne = 150 ; 
+  const today = new Date();
+  today.setFullYear(today.getFullYear() - mostOldPersonne);
+  const dateIlYa150Ans = today.getFullYear() + '-' +
+                         ('0' + (today.getMonth() + 1)).slice(-2) + '-' +
+                         ('0' + today.getDate()).slice(-2);
+  return dateIlYa150Ans;
+}
+
+export function obtenirDateDemain(): string {
+  const today = new Date();
+  const futurDate = new Date(today);
+  futurDate.setDate(today.getDate() + 1);
+  const futurDateString = futurDate.getFullYear() + '-' +
+                           ('0' + (futurDate.getMonth() + 1)).slice(-2) + '-' +
+                           ('0' + futurDate.getDate()).slice(-2);
+  return futurDateString;
 }
 
 /**
@@ -91,9 +109,23 @@ function isValidTypeActivite(typeActivite: string): boolean {
  * @param {string} date - The date to be checked in the format 'YYYY-MM-DD'.
  * @return {boolean} Returns true if the date is in a valid format, otherwise false.
  */
-function isValidDate(date: string): boolean {
+export function isValidDate(date: string): boolean {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  return date !== null && dateRegex.test(date);
+  const pastDate = obtenirPastDate();
+  const futurDate = obtenirDateDemain();
+  let isValid = true; // Initialisation de la variable de validation
+
+  if (date === null) {
+    isValid = false;
+  } else if (!dateRegex.test(date)) {
+    isValid = false;
+  } else if (new Date(date) >= new Date(futurDate)) {
+    isValid = false;
+  } else if (new Date(date) < new Date(pastDate)) {
+    isValid = false;
+  }
+
+  return isValid;
 }
 
 /**
@@ -102,7 +134,7 @@ function isValidDate(date: string): boolean {
  * @param {string} duree - The duration string to be validated.
  * @return {boolean} - Returns true if the duration string is valid, otherwise false.
  */
-function isValidDuree(duree: string): boolean {
+export function isValidDuree(duree: string): boolean {
   const dureeRegex = /^\d{1,2}:\d{2}$/;
   return duree !== null && dureeRegex.test(duree);
 }
@@ -113,10 +145,23 @@ function isValidDuree(duree: string): boolean {
  * @param {string} distance - The distance to be validated.
  * @return {boolean} - Returns true if the distance is valid, otherwise false.
  */
-function isValidDistance(distance: string): boolean {
-  const distanceNumber = parseFloat(distance || '');
-  return !isNaN(distanceNumber) && distanceNumber >= 0;
+export function isValidDistance(distance: string): boolean {
+  let isValid = false;
+
+  if (distance.trim() === '') {
+    isValid = true;
+  } else {
+    const normalizedDistance = distance.replace(',', '.');
+
+    if (/^\d+(\.\d+)?$/.test(normalizedDistance)) {
+      const distanceNumber = parseFloat(normalizedDistance);
+      isValid = !isNaN(distanceNumber) && distanceNumber >= 0;
+    }
+  }
+
+  return isValid;
 }
+
 
 /**
  * Check whether a comment is valid.
@@ -124,11 +169,11 @@ function isValidDistance(distance: string): boolean {
  * @param {string} comment - The comment to be checked.
  * @return {boolean} - True if the comment is valid, false otherwise.
  */
-function isValidComment(comment: string): boolean {
+export function isValidComment(comment: string): boolean {
   return comment.length <= 1000;
 }
 
-function isGPXFile(file: File): boolean {
+export function isGPXFile(file: File): boolean {
   return file.name.toLowerCase().endsWith('.gpx');
 }
 
@@ -138,7 +183,7 @@ function isGPXFile(file: File): boolean {
  * @param {string} duree - The duration string in the format 'hh:mm'.
  * @return {number} - The duration in seconds.
  */
-function convertDureeToSecondes(duree: string): number {
+export function convertDureeToSecondes(duree: string): number {
   const [hours, minutes] = duree.split(':').map(Number);
   return hours * 3600 + minutes * 60;
 }
