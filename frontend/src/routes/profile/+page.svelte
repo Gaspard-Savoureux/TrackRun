@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { API_URL } from '../../constants';
   import UserInfo from '$lib/components/user-info.svelte';
   import type { PageData } from './$types';
 
@@ -13,6 +14,7 @@
 
 <section>
   <h1>Your Profile</h1>
+  <img src="{`${API_URL}/${data.user.img}`}" alt='Profile Pic' />
   <UserInfo {user} />
 </section>
 

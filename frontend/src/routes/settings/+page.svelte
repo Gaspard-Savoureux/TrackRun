@@ -27,6 +27,39 @@
 
     applyAction(result);
   };
+
+  const submitImageUpdate = async (event: SubmitEvent) => {
+    event.preventDefault(); // Prevent the form from submitting traditionally
+    const formElement = event.target as HTMLFormElement;
+    const formData = new FormData();
+    const fileInput = formElement.querySelector('input[type="file"]');
+    
+    if (fileInput.files.length > 0) {
+      formData.append('picture', fileInput.files[0]); // Append the file with the key 'picture'
+    }
+
+    // Assuming your API expects a PUT request for updating the profile picture
+    const response = await fetch(`${API_URL}/user/picture`, {
+      method: 'PUT',
+      body: formData, // FormData containing the file
+      headers: {
+        // Include any necessary headers, such as Authorization
+        'Authorization': `Bearer ${locals.token}` // Replace with your actual token variable
+      },
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      // Handle success
+      console.log('Image updated successfully', result);
+    } else {
+      // Handle error
+      console.log('Failed to update image', result);
+    }
+  };
+  
+
 </script>
 
 <svelte:head>
@@ -36,15 +69,16 @@
 <section>
   <h1>Settings</h1>
   <h2>Update user profile</h2>
-  <section>
-    <img src="{API_URL}/{data.user.img}" alt="Profile Pic" />
+  
+  <img src="{`${API_URL}/${data.user.img}`}" alt='Profile Pic' />
 
-    <form method="PUT" action="?/picture" use:enhance>
-      <input type="file" name="file" accept="image/*" />
-      <button type="submit">Update Profile Picture</button>
-    </form>
-  </section>
-  <form method="POST" action="?/user" on:submit|preventDefault={submitUpdateUser}>
+  <form on:submit|preventDefault={submitImageUpdate} enctype='multipart/form-data'>
+    <input type='file' name='picture' accept='image/*'/> <!-- The name attribute matches the key expected by the API -->
+    <button type="submit">Update Profile Picture</button>
+  </form>
+
+
+  <form method='POST' action='?/user' on:submit|preventDefault={submitUpdateUser}>
     <label>
       Username
       <input type="text" name="username" value={data.user.username} />

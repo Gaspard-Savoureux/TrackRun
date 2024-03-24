@@ -13,6 +13,8 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
   return { user };
 };
 
+
+
 const validateNewUser = (user: User) => {
   const { username, age, height, weight } = user;
 
@@ -43,6 +45,11 @@ const validateNewUser = (user: User) => {
   return '';
 };
 
+
+
+
+
+
 export const actions: object = {
   user: async ({ locals, request }: RequestEvent) => {
     const data = await request.formData();
@@ -63,6 +70,7 @@ export const actions: object = {
       height,
       weight,
       sex: data.get('sex') as string || null,
+      img: data.get('img') as string || null,
       description: data.get('description') as string || null,
     };
 
