@@ -70,3 +70,10 @@ export const deleteTrainerUserRelation = async (trainerId: number, userId: numbe
   return await db.delete(trainerUserAssociation)
     .where(eq(trainerUserAssociation.trainerId, trainerId) && eq(trainerUserAssociation.userId, userId));
 };
+
+export const getTrainerUsers = async (trainerId: number) => {
+  const users = await db.select()
+    .from(trainerUserAssociation)
+    .where(eq(trainerUserAssociation.trainerId, trainerId));
+  return users;
+};

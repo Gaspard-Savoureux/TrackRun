@@ -6,6 +6,7 @@ import { verifyTrainerToken } from '../middlewares/authentication';
 import { addUserToTrainer, removeUserFromTrainer } from '../controllers/TrainerController';
 import { getTrainer } from '../controllers/TrainerController';
 import { getUsers } from '../controllers/UserController';
+import { getTrainerAssignedUsers } from '../controllers/TrainerController';
 
 const router = express.Router();
 
@@ -13,6 +14,9 @@ const router = express.Router();
 router.get('/', verifyTrainerToken, getTrainer);
 
 router.get('/users', verifyTrainerToken, getUsers);
+
+// get all users assigned to a trainer 
+router.get('/users/assigned', verifyTrainerToken, getTrainerAssignedUsers);
 
 /**
  * @swagger

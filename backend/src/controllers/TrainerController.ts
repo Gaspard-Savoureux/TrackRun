@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Trainer} from '../models/trainers';
-import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers, getTrainerUser, createTrainerUserRelation, deleteTrainerUserRelation } from '../services/trainer.services';
-// import { updateUserById, getUserByUsername } from '../services/user.services';
+import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers, getTrainerUser, createTrainerUserRelation, deleteTrainerUserRelation , getTrainerUsers } from '../services/trainer.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { getUserById } from '../services/user.services';
@@ -192,3 +191,11 @@ export const removeUserFromTrainer = async (req: Request, res: Response) => {
 
   res.status(200).json({ message: 'User removed from trainer' });
 };
+
+export const getTrainerAssignedUsers = async (req: Request, res: Response) => {
+  const trainerId = req.trainer?.trainerId as number;
+
+  const users = await getTrainerUsers(trainerId);
+
+  res.status(200).json(users);
+}
