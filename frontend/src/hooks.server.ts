@@ -18,3 +18,20 @@ export const handle: Handle = async ({ event, resolve }) => {
   const response = await resolve(event);
   return response;
 };
+
+export const handleFetch: HandleFetch = async ({ event, fetch, request }) => {
+  if (request.url.startsWith('http://tse.info.uqam.ca/api')) {
+    const requestCookies = event.request.headers.get('cookie');
+    
+    if (requestCookies) {
+      request.headers.set('cookie', requestCookies);
+    }
+
+    request = new Request(
+      request.url.replace('http://tse.info.uqam.ca/api', 'http://backend:5001'),
+      request,
+    );
+  }
+
+  return fetch(request);
+};

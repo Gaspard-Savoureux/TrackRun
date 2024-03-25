@@ -41,6 +41,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>Register</title>
+</svelte:head>
+
 <section>
   <form class="container" method="POST" action="?/register" on:submit={handleSubmit} use:enhance>
     {#if form?.success === false}<p style="color: red;">{form?.message}</p>{/if}
