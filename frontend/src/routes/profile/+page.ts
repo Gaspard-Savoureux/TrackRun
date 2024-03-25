@@ -9,11 +9,7 @@ export const load: PageLoad = async ({ fetch }) => {
 
     return {
       user: await res.json(),
-      error: null, // DEBUG
-      url: API_URL, // DEBUG
     };
-  } catch (error: unknown) {
-    console.log(error);
-    return { error, url: API_URL };
-  }
+    // eslint-disable-next-line no-empty
+  } catch (error: unknown) { }
 };
