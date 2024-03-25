@@ -148,13 +148,15 @@ export const actions: object = {
 
   updatepicture: async ({ locals, request }: RequestEvent) => {
     const data = await request.formData();
+    const form = new FormData();
+    form.append('picture', data.get('picture') || '');
+  
     const res = await fetch(`${API_URL}/user/picture`, {
       method: 'PUT',
       headers: { 
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${locals.token}`,
       },
-      body: JSON.stringify({ img: data.get('picture') as string || null }),
+      body: form
     });
   
     if (res.ok) {
@@ -163,8 +165,9 @@ export const actions: object = {
         message: 'Picture updated successfully',
       };
     }
-    return fail(400, { success: false, message: 'An error occured'});
+    return fail(400, { success: false, message: 'An error occurred'});
   },
+  
 
 
   delete: async ({ cookies, locals, request }: RequestEvent) => {
