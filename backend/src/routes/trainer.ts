@@ -8,6 +8,7 @@ import { getTrainer } from '../controllers/TrainerController';
 
 const router = express.Router();
 
+/**TODO: DOC ET TEST */
 router.get('/', verifyTrainerToken, getTrainer);
 
 /**
