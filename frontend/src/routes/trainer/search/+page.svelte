@@ -39,7 +39,13 @@
 
 
   $: filteredUsers = users.filter((user: User) => {
-    return user.username.toLowerCase().includes(query.toLowerCase());
+    // filterer list by user name, name or email
+    return (
+      user.name?.toLowerCase().includes(query.toLowerCase()) ||
+      user.username?.toLowerCase().includes(query.toLowerCase()) ||
+      user.email?.toLowerCase().includes(query.toLowerCase())
+    );
+
   });
 </script>
 
