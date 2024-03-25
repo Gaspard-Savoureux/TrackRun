@@ -1,5 +1,5 @@
 import { describe, it, afterAll } from 'vitest';
-import { _isValidNom, _isValidVille, _isValidTypeActivite, _obtenirDateDemain, _obtenirPastDate, _isValidDate, _isValidDuree, isValidDistance, _isValidComment } from '../routes/activity/+page.server';
+import { _isValidNom, _isValidVille, _isValidTypeActivite, _obtenirDateDemain, _obtenirPastDate, _isValidDate, _isValidDuree, _isValidDistance, _isValidComment } from '../routes/activity/+page.server';
 
 let validTests: number = 0;
 const invalidTests: string[] = [];
@@ -227,7 +227,7 @@ describe('Test #6 : Champs Distance', () => {
 
   it('Distance vide', () => {
     const validDistance = '';
-    const result = isValidDistance(validDistance);
+    const result = _isValidDistance(validDistance);
     if (result) {
       validTests++;
     } else {
@@ -237,7 +237,7 @@ describe('Test #6 : Champs Distance', () => {
 
   it('Distance Minimum', () => {
     const InvalidDistance = '-00.01';
-    const result = isValidDistance(InvalidDistance);
+    const result = _isValidDistance(InvalidDistance);
     if (!result) {
       validTests++;
     } else {
@@ -247,7 +247,7 @@ describe('Test #6 : Champs Distance', () => {
 
   it('Distance caractere', () => {
     const InvalidDistance = '00d.01a';
-    const result = isValidDistance(InvalidDistance);
+    const result = _isValidDistance(InvalidDistance);
     if (!result) {
       validTests++;
     } else {
@@ -257,7 +257,7 @@ describe('Test #6 : Champs Distance', () => {
 
   it('Distance valide point', () => {
     const validDistance = '123.456';
-    const result = isValidDistance(validDistance);
+    const result = _isValidDistance(validDistance);
     if (!result) {
       validTests++;
     } else {
@@ -267,7 +267,7 @@ describe('Test #6 : Champs Distance', () => {
 
   it('Distance valide virgule', () => {
     const validDistance = '123,456';
-    const result = isValidDistance(validDistance);
+    const result = _isValidDistance(validDistance);
     if (!result) {
       validTests++;
     } else {
