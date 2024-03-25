@@ -13,9 +13,10 @@ const router = express.Router();
 /**TODO: DOC ET TEST */
 router.get('/', verifyTrainerToken, getTrainer);
 
+/**TODO: DOC ET TEST */
 router.get('/users', verifyTrainerToken, getUsers);
 
-// get all users assigned to a trainer 
+/**TODO: DOC ET TEST */
 router.get('/users/assigned', verifyTrainerToken, getTrainerAssignedUsers);
 
 /**
