@@ -34,6 +34,19 @@
 
 </script>
 
+<div>
+  <Textfield
+    class="shaped-outlined"
+    variant="outlined"
+    bind:value={valueA}
+    label="Label"
+  >
+    <HelperText slot="helper">Helper Text</HelperText>
+  </Textfield>
+
+  <pre class="status">Value: {valueA}</pre>
+</div>
+
 <DataTable
   sortable
   bind:sort
