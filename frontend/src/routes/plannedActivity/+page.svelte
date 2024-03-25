@@ -1,7 +1,9 @@
 <script lang="ts">
-  export let data;
   import { enhance } from '$app/forms';
+  import { activityType } from '$lib/plannedActivity/activity.js';
+
   export let form;
+  export let data;
   export let deleteMsg;
 
   $: ({ plannedActivity } = data);
@@ -13,9 +15,8 @@
    * $: time = plannedActivity.date.split(' ')[1];
    */
   $: date = plannedActivity.date.split('T')[0];
-  $: time = plannedActivity.date.split('T')[1].substring(0, 8);
+  $: time = plannedActivity.date.split('T')[1].substring(0,8);
 
-  const activityType = ['Running', 'Biking', 'Walking'];
 </script>
 
 <svelte:head>
