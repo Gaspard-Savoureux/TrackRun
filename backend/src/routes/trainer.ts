@@ -4,8 +4,12 @@ import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
 import { addUserToTrainer, removeUserFromTrainer } from '../controllers/TrainerController';
+import { getTrainer } from '../controllers/TrainerController';
 
 const router = express.Router();
+
+/**TODO: DOC ET TEST */
+router.get('/', verifyTrainerToken, getTrainer);
 
 /**
  * @swagger
