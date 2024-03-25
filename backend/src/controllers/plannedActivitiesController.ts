@@ -2,9 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { planned_activities, PlannedActivity } from '../models/planned_activities';
 import { User } from '../models/users';
 import { getUserById } from '../services/user.services';
-import { db } from '../db/db';
-import { and, eq, gte, lte } from 'drizzle-orm';
-import { deletePlannedActivityById, selectPlannedActivityById, updatePlannedActivityById, insertPlannedActivity } from '../services/planned_activity.services';
+import { eq, gte, lte } from 'drizzle-orm';
+import { deletePlannedActivityById, selectPlannedActivityById, updatePlannedActivityById, insertPlannedActivity, getPlannedActivitiesFromConditions } from '../services/planned_activity.services';
 
 export const getPlannedActivities = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -50,9 +49,7 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
       conditions.push(eq(planned_activities.type, activityType));
     }
 
-    const plannedActivities = await db.select()
-      .from(planned_activities)
-      .where(and(...conditions));
+    const plannedActivities = await getPlannedActivitiesFromConditions(conditions);
 
     return res.status(200).json({ plannedActivities });
 
