@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { Trainer} from '../models/trainers';
-import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers } from '../services/trainer.services';
+import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers, getTrainerUser, createTrainerUserRelation, deleteTrainerUserRelation } from '../services/trainer.services';
 // import { updateUserById, getUserByUsername } from '../services/user.services';
 import bcrypt from 'bcrypt';
-// import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import { getUserById } from '../services/user.services';
 
 export const createTrainer = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -23,7 +24,7 @@ export const createTrainer = async (req: Request, res: Response, next: NextFunct
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    insertTrainer({ username, password: hashedPassword, email, name });
+    await insertTrainer({ username, password: hashedPassword, email, name });
 
     return res.status(201).json({ message: 'Trainer added succesfully' });
   } catch (error) {
@@ -31,31 +32,30 @@ export const createTrainer = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-// TODO À valider plus tard, mauvaise branche
-// export const authenticateTrainer = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticateTrainer = async (req: Request, res: Response, next: NextFunction) => {
 
-//   try {
-//     const { username, password } = req.body;
-//     const trainer: Trainer | undefined = await getTrainerByUsername(username);
+  try {
+    const { username, password } = req.body;
+    const trainer: Trainer | undefined = await getTrainerByUsername(username);
 
-//     if (!trainer) {
-//       return res.status(401).json({ error: 'Invalid credentials' });
-//     }
+    if (!trainer) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-//     const isMatch = await bcrypt.compare(password, trainer.password as string);
-//     if (!isMatch) {
-//       return res.status(401).json({ error: 'Invalid credentials' });
-//     }
+    const isMatch = await bcrypt.compare(password, trainer.password as string);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-//     const payload = { trainerId: trainer.id };
-//     const secret: jwt.Secret = process.env.SECRET as string || 'petit_secret';
-//     const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+    const payload = { trainerId: trainer.id };
+    const secret: jwt.Secret = process.env.SECRET as string || 'petit_secret';
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
 
-//     return res.status(200).json({ token });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    return res.status(200).json({ token });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getTrainer = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -107,8 +107,8 @@ export const updateTrainer = async (req: Request, res: Response, next: NextFunct
     const emailInUse = await getTrainerByEmail(email);
     const usernameInUse = await getTrainerByUsername(username);
 
-    if (emailInUse) return res.status(409).json({ error: 'A trainer already has that name' });
-    if (usernameInUse) return res.status(409).json({error: 'A trainer already has that email'});
+    if (usernameInUse) return res.status(409).json({ error: 'A trainer already has that name' });
+    if (emailInUse) return res.status(409).json({error: 'A trainer already has that email'});
 
     const updateData: Partial<Trainer> = {};
 
@@ -149,62 +149,46 @@ export const deleteTrainer = async (req: Request, res: Response, next: NextFunct
 };
 
 
-// TODO À valider plus tard, mauvaise branche
-// export const addUserToTrainer = async (req: Request, res: Response) => {
-//   const { username } = req.body;
-//   const trainerId = req.trainer?.trainerId as number;
+export const addUserToTrainer = async (req: Request, res: Response) => {
+  const userId = Number(req.params.userId);
+  const trainerId = req.trainer?.trainerId as number;
 
-//   const user = await getUserByUsername(username);
-//   if (!user) {
-//     return res.status(404).json({ error: 'User not found' });
-//   }
+  const user = await getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
 
-//   const trainer = await getTrainerById(trainerId);
-//   if (!trainer) {
-//     return res.status(404).json({ error: 'Trainer not found' });
-//   }
+  const trainer = await getTrainerById(trainerId);
+  if (!trainer) {
+    return res.status(404).json({ error: 'Trainer not found' });
+  }
 
-//   const usersList = trainer.users ? trainer.users.split(',') : [];
-//   const id = user.id as number;
+  const relationExist = await getTrainerUser(trainerId, userId);
+  if (relationExist) return res.status(409).json({ error: 'Relation already exists' });
 
-//   if (usersList.includes(id.toString())) {
-//     return res.status(409).json({ error: 'User already added to trainer' });
-//   }
+  await createTrainerUserRelation(trainerId, userId);
 
-//   usersList.push(id.toString());
-//   await updateTrainerById(trainerId, { users: usersList.join(',') });
+  res.status(200).json({ message: 'User added to trainer' });
+};
 
-//   // Update trainerId field in user's record
-//   await updateUserById(Number(id), { trainerId });
-//   res.status(200).json({ message: 'User added to trainer' });
-// };
+export const removeUserFromTrainer = async (req: Request, res: Response) => {
+  const userId = Number(req.params.userId);
+  const trainerId = req.trainer?.trainerId as number;
 
-// export const removeUserFromTrainer = async (req: Request, res: Response) => {
-//   const { username } = req.body;
-//   const trainerId = req.trainer?.trainerId as number;
+  const user = await getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
 
-//   const user = await getUserByUsername(username);
-//   if (!user) {
-//     return res.status(404).json({ error: 'User not found' });
-//   }
+  const trainer = await getTrainerById(trainerId);
+  if (!trainer) {
+    return res.status(404).json({ error: 'Trainer not found' });
+  }
 
-//   const trainer = await getTrainerById(trainerId);
-//   if (!trainer) {
-//     return res.status(404).json({ error: 'Trainer not found' });
-//   }
+  const relationExist = await getTrainerUser(trainerId, userId);
+  if (!relationExist) return res.status(404).json({ error: 'No association to delete found' });
 
-//   const usersList = trainer.users ? trainer.users.split(',') : [];
-//   const id = user.id as number;
-//   const index = usersList.indexOf(id.toString());
-//   if (index === -1) {
-//     return res.status(409).json({ error: 'User not found in trainer' });
-//   }
+  await deleteTrainerUserRelation(trainerId, userId);
 
-//   usersList.splice(index, 1);
-//   await updateTrainerById(trainerId, { users: usersList.join(',') });
-
-//   // Update trainerId field in user's record
-//   await updateUserById(Number(id), { trainerId: null });
-
-//   res.status(200).json({ message: 'User removed from trainer' });
-// };
+  res.status(200).json({ message: 'User removed from trainer' });
+};

@@ -82,3 +82,5 @@ export const planActRelations = relations(activities, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export type Activity = typeof activities.$inferInsert;

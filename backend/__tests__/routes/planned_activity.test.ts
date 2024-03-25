@@ -40,6 +40,7 @@ afterAll(async () => {
 
 describe('GET PlannedActivities', () => {
   const route: string = '/plannedactivities';
+  const fromDate = '2024-02-12'; // February 12th
   test('Should return 401: Unauthorized', async () => {
     const res = await request(app)
       .get(route);
@@ -49,6 +50,9 @@ describe('GET PlannedActivities', () => {
   test('Should return empty set', async () => {
     const res = await request(app)
       .get(route)
+      .query({
+        from: fromDate,
+      })
       .set('Authorization', 'Bearer ' + auth_token);
     expect(res.body).toMatchObject({ plannedActivities: [] });
   });
@@ -57,7 +61,7 @@ describe('GET PlannedActivities', () => {
 
     const pActivity = {
       type: 'Running',
-      date: '2024-02-26 16:30:00',
+      date: `${fromDate} 16:30:00`,
       duration: 3600,
       name: 'A run in the park',
       comment: 'Remember to focus on your breath the entire time!'
@@ -70,6 +74,9 @@ describe('GET PlannedActivities', () => {
 
     const res = await request(app)
       .get(route)
+      .query({
+        from: fromDate,
+      })
       .set('Authorization', 'Bearer ' + auth_token);
 
     expect(res.body).toEqual({
@@ -188,6 +195,9 @@ describe('POST PlannedActivities', () => {
 
     const res = await request(app)
       .get(route)
+      .query({
+        from: '2024-02-26',
+      })
       .set('Authorization', 'Bearer ' + auth_token);
     expect(res.body).toEqual({
       plannedActivities: [expect.objectContaining({
@@ -261,6 +271,12 @@ describe('Filter PlannedActivities', () => {
     await db.insert(planned_activities).values([
       {
         user_id: userid,
+        type: 'Running',
+        date: new Date(2024, 1, 3), // February 3rd
+        duration: 3600,
+      },
+      {
+        user_id: userid,
         type: 'Walking',
         date: new Date(2024, 1, 10), // February 10th
         duration: 3600,
@@ -281,20 +297,22 @@ describe('Filter PlannedActivities', () => {
   });
 
   test('Filter by date', async () => {
-    const fromDate = '2024-02-12'; // February 12th
+    const fromDate = '2024-02-4'; // February 12th
     const resFromDate = await request(app).get(route).query({
       from: fromDate,
     }).set('Authorization', 'Bearer ' + auth_token);
-    console.log(resFromDate.body.plannedActivities);
-    expect(resFromDate.body.plannedActivities.length).toBe(2);
+    expect(resFromDate.status).toBe(200);
+    expect(resFromDate.body.plannedActivities.length).toBe(1);
     expect(resFromDate.body.plannedActivities[0].type).toBe('Walking');
-    expect(resFromDate.body.plannedActivities[1].type).toBe('Biking');
   });
 
   test('Filter by activity type', async () => {
+    const fromDate = '2024-02-10'; // February 10th
     const resFromDate = await request(app).get(route).query({
       type: 'Walking',
+      from: fromDate,
     }).set('Authorization', 'Bearer ' + auth_token);
+    expect(resFromDate.status).toBe(200);
     expect(resFromDate.body.plannedActivities.length).toBe(2);
     expect(resFromDate.body.plannedActivities[0].type).toBe('Walking');
     expect(resFromDate.body.plannedActivities[1].type).toBe('Walking');
@@ -306,8 +324,16 @@ describe('Filter PlannedActivities', () => {
       type: 'Walking',
       from: fromDate
     }).set('Authorization', 'Bearer ' + auth_token);
+    expect(resFromDate.status).toBe(200);
     expect(resFromDate.body.plannedActivities.length).toBe(1);
     expect(resFromDate.body.plannedActivities[0].type).toBe('Walking');
+  });
+
+  test('Missing from query', async () => {
+    const res = await request(app)
+      .get(route)
+      .set('Authorization', 'Bearer ' + auth_token);
+    expect(res.status).toBe(400);
   });
 
   test('Invalid from query', async () => {
@@ -373,6 +399,9 @@ describe('DELETE PlannedActivities', () => {
 
     res = await request(app)
       .get(routeGET)
+      .query({
+        from: '2024-02-26',
+      })
       .set('Authorization', 'Bearer ' + auth_token);
 
     expect(res.body).toEqual({ plannedActivities: [] });
@@ -406,6 +435,9 @@ describe('DELETE PlannedActivities', () => {
 
     res = await request(app)
       .get(routeGET)
+      .query({
+        from: '2024-04-01',
+      })
       .set('Authorization', 'Bearer ' + auth_token);
 
     expect(res.body).toEqual({
@@ -450,6 +482,9 @@ describe('DELETE PlannedActivities', () => {
 
     res = await request(app)
       .get(routeGET)
+      .query({
+        from: '2024-04-01',
+      })
       .set('Authorization', 'Bearer ' + auth_token);
 
     expect(res.body).toEqual({

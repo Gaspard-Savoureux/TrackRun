@@ -1,5 +1,9 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import { page } from '$app/stores';
+  import FormNotification from '$lib/components/form-notification.svelte';
+
+  $: message = $page.url.searchParams.get('message') ?? '';
 
   export let form;
 </script>
@@ -9,18 +13,28 @@
 </svelte:head>
 
 <section>
+  {#if message && form?.success !== false}
+    <FormNotification>{message}</FormNotification>
+  {/if}
+  {#if form?.success === false}
+    <FormNotification danger>{form?.message}</FormNotification>
+  {/if}
   <div class="container">
     <h1>Log in</h1>
     <form method="POST" use:enhance>
-      <input type="text" placeholder="Enter your username" name="username" value={form?.username ?? ''} />
+      <input
+        type="text"
+        placeholder="Enter your username"
+        name="username"
+        value={form?.username ?? ''}
+      />
       <input type="password" placeholder="Enter your password" name="password" />
-      {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
-      <button class="link" type="submit">Log in</button>
+      <button type="submit">Log in</button>
       <hr />
-      <div class="text-center">
+      <span>
         Don't have an account?
         <a href="/register">Register</a>
-      </div>
+      </span>
     </form>
   </div>
 </section>
@@ -46,33 +60,29 @@
 
   h1 {
     font-size: 2.5rem;
-    margin: 0 0 1.5rem 0;
     text-align: center;
   }
 
   form {
     display: flex;
+    margin: 1.5rem 0 0 0;
     flex-direction: column;
     gap: 0.7rem;
   }
 
   input {
     font-size: 1.15rem;
-    line-height: 1.5;
     box-sizing: border-box;
-    display: inline-flex;
     height: 3.125rem;
-    width: 100%;
-    max-width: 100%;
-    padding: 0.5rem 0.5rem;
+    padding: 0.5rem;
     border-radius: 4px;
     border: 1px solid var(--text-light);
     background-color: inherit;
   }
 
   input:focus-visible {
-    outline: var(--link) solid 1px;
-    border-color: var(--link);
+    outline: var(--blue) solid 1px;
+    border-color: var(--blue);
   }
 
   button {

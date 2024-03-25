@@ -246,7 +246,7 @@ describe('Trainer routes', () => {
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
         const res = await request(app)
-          .put(route + '/1')
+          .patch(route + '/1')
           .send(trainer1)
           .set('Content-Type', 'application/json')
           .set('Authorization', `Basic ${basicAuthCredentials}`);
@@ -259,7 +259,7 @@ describe('Trainer routes', () => {
           .mockImplementationOnce(() => Promise.resolve(trainer1));
         
         const res = await request(app)
-          .put(route + '/1')
+          .patch(route + '/1')
           .send(trainer1)
           .set('Content-Type', 'application/json')
           .set('Authorization', `Basic ${basicAuthCredentials}`);

@@ -1,15 +1,19 @@
 :root {
   --blue: hsl(212, 100%, 42%);
   --blue-darker: hsl(212, 100%, 33%);
-  --danger: hsl(0, 76%, 45%);
+  --danger: rgb(250, 58, 58);
+  --danger-button: hsl(0, 76%, 50%);
   --danger-darker: hsl(0, 76%, 40%);
   --success: rgb(5, 158, 5);
   --bg-1: rgb(241, 241, 241);
   --bg-2: rgb(224, 224, 224);
   --bg-3: rgb(212, 212, 212);
+  --bg-info: rgb(127, 174, 255);
+  --bg-danger: rgb(241, 201, 201);
   --text: rgb(53, 53, 53);
   --text-button: rgb(232, 230, 227);
   --text-light: rgb(112, 112, 112);
+  --text-info: rgb(14, 48, 65);
   --link: hsl(212, 100%, 50%);
   --link-hover: hsl(212, 100%, 35%);
 }

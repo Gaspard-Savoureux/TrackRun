@@ -43,6 +43,13 @@ export const actions: object = {
         maxAge: 60 * 60, // 1h
       });
 
+      cookies.set('in_sess', '1', {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: false,
+      });
+
       const next = url.searchParams.get('next');
       if (next) {
         redirect(302, `/${next.slice(1)}`);
