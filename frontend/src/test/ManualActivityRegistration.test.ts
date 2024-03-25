@@ -1,5 +1,5 @@
 import { describe, it, afterAll } from 'vitest';
-import { isValidNom, isValidVille, isValidTypeActivite, obtenirDateDemain, obtenirPastDate, isValidDate, isValidDuree, isValidDistance, isValidComment } from '../routes/activity/+page.server'; 
+import { _isValidNom, _isValidVille, _isValidTypeActivite, _obtenirDateDemain, _obtenirPastDate, _isValidDate, _isValidDuree, isValidDistance, _isValidComment } from '../routes/activity/+page.server';
 
 let validTests: number = 0;
 const invalidTests: string[] = [];
@@ -7,7 +7,7 @@ const invalidTests: string[] = [];
 describe('Test #1 : Champs Name', () => {
   it('Limite Minimum', () => {
     const longName = 'a'.repeat(2);
-    const result = isValidNom(longName);
+    const result = _isValidNom(longName);
     if (!result) {
       validTests++;
     } else {
@@ -17,7 +17,7 @@ describe('Test #1 : Champs Name', () => {
 
   it('Limite Maximum', () => {
     const longName = 'a'.repeat(257);
-    const result = isValidNom(longName);
+    const result = _isValidNom(longName);
     if (!result) {
       validTests++;
     } else {
@@ -27,7 +27,7 @@ describe('Test #1 : Champs Name', () => {
 
   it('Name valide', () => {
     const validName = 'John Doe';
-    const result = isValidNom(validName);
+    const result = _isValidNom(validName);
     if (result) {
       validTests++;
     } else {
@@ -37,7 +37,7 @@ describe('Test #1 : Champs Name', () => {
 
   it('Name vide', () => {
     const invalidName = '';
-    const result = isValidNom(invalidName);
+    const result = _isValidNom(invalidName);
     if (!result) {
       validTests++;
     } else {
@@ -49,7 +49,7 @@ describe('Test #1 : Champs Name', () => {
 describe('Test #2 : Champs City', () => {
   it('Limite vide', () => {
     const longCity = '';
-    const result = isValidVille(longCity);
+    const result = _isValidVille(longCity);
     if (result) {
       validTests++;
     } else {
@@ -59,7 +59,7 @@ describe('Test #2 : Champs City', () => {
 
   it('Limite Maximum', () => {
     const longCity = 'a'.repeat(101);
-    const result = isValidVille(longCity);
+    const result = _isValidVille(longCity);
     if (!result) {
       validTests++;
     } else {
@@ -69,7 +69,7 @@ describe('Test #2 : Champs City', () => {
 
   it('City valide', () => {
     const validCity = 'New York';
-    const result = isValidVille(validCity);
+    const result = _isValidVille(validCity);
     if (result) {
       validTests++;
     } else {
@@ -82,7 +82,7 @@ describe('Test #3 : Champs type d\'activité', () => {
 
   it('Type vide', () => {
     const invalidType = '';
-    const result = isValidTypeActivite(invalidType);
+    const result = _isValidTypeActivite(invalidType);
     if (!result) {
       validTests++;
     } else {
@@ -92,7 +92,7 @@ describe('Test #3 : Champs type d\'activité', () => {
 
   it('Type invalide', () => {
     const invalidType = 'Dance';
-    const result = isValidTypeActivite(invalidType);
+    const result = _isValidTypeActivite(invalidType);
     if (!result) {
       validTests++;
     } else {
@@ -102,7 +102,7 @@ describe('Test #3 : Champs type d\'activité', () => {
 
   it('Type valide', () => {
     const validType = 'Walking';
-    const result = isValidTypeActivite(validType);
+    const result = _isValidTypeActivite(validType);
     if (result) {
       validTests++;
     } else {
@@ -112,7 +112,7 @@ describe('Test #3 : Champs type d\'activité', () => {
 
   it('Type valide', () => {
     const validType = 'Biking';
-    const result = isValidTypeActivite(validType);
+    const result = _isValidTypeActivite(validType);
     if (result) {
       validTests++;
     } else {
@@ -122,7 +122,7 @@ describe('Test #3 : Champs type d\'activité', () => {
 
   it('Type valide', () => {
     const validType = 'Running';
-    const result = isValidTypeActivite(validType);
+    const result = _isValidTypeActivite(validType);
     if (result) {
       validTests++;
     } else {
@@ -135,7 +135,7 @@ describe('Test #4 : Champs Date', () => {
 
   it('Date vide', () => {
     const InvalidDate = '';
-    const result = isValidDate(InvalidDate);
+    const result = _isValidDate(InvalidDate);
     if (!result) {
       validTests++;
     } else {
@@ -144,8 +144,8 @@ describe('Test #4 : Champs Date', () => {
   });
 
   it('Date invalide Maximum', () => {
-    const InvalidDate = obtenirDateDemain();
-    const result = isValidDate(InvalidDate);
+    const InvalidDate = _obtenirDateDemain();
+    const result = _isValidDate(InvalidDate);
     if (!result) {
       validTests++;
     } else {
@@ -154,14 +154,14 @@ describe('Test #4 : Champs Date', () => {
   });
 
   it('Date Minimum', () => {
-    const limitValidPastDate = obtenirPastDate();
+    const limitValidPastDate = _obtenirPastDate();
     const invalidDateObj = new Date(limitValidPastDate);
     invalidDateObj.setDate(invalidDateObj.getDate() - 1);
     // Reformater la date en chaîne YYYY-MM-DD
     const invalidDate = invalidDateObj.getFullYear() + '-' +
                       ('0' + (invalidDateObj.getMonth() + 1)).slice(-2) + '-' +
                       ('0' + invalidDateObj.getDate()).slice(-2);
-    const result = isValidDate(invalidDate);
+    const result = _isValidDate(invalidDate);
     if (!result) {
       validTests++;
     } else {
@@ -171,7 +171,7 @@ describe('Test #4 : Champs Date', () => {
 
   it('Date valide', () => {
     const validDate = '2024-03-16';
-    const result = isValidDate(validDate);
+    const result = _isValidDate(validDate);
     if (result) {
       validTests++;
     } else {
@@ -184,7 +184,7 @@ describe('Test #5 : Champs Duree', () => {
 
   it('Duree vide', () => {
     const validDuree = '';
-    const result = isValidDuree(validDuree);
+    const result = _isValidDuree(validDuree);
     if (!result) {
       validTests++;
     } else {
@@ -194,7 +194,7 @@ describe('Test #5 : Champs Duree', () => {
 
   it('Duree Minimum', () => {
     const InvalidDuree = '-000:00:01';
-    const result = isValidDuree(InvalidDuree);
+    const result = _isValidDuree(InvalidDuree);
     if (!result) {
       validTests++;
     } else {
@@ -204,7 +204,7 @@ describe('Test #5 : Champs Duree', () => {
 
   it('Duree valide', () => {
     const validDuree = '000:00:00';
-    const result = isValidDuree(validDuree);
+    const result = _isValidDuree(validDuree);
     if (!result) {
       validTests++;
     } else {
@@ -214,7 +214,7 @@ describe('Test #5 : Champs Duree', () => {
 
   it('Duree Maximum', () => {
     const invalidDuree = '100:00:01';
-    const result = isValidDuree(invalidDuree);
+    const result = _isValidDuree(invalidDuree);
     if (!result) {
       validTests++;
     } else {
@@ -280,7 +280,7 @@ describe('Test #7 : Champs Comment', () => {
 
   it('Comment vide', () => {
     const validComment = '';
-    const result = isValidComment(validComment);
+    const result = _isValidComment(validComment);
     if (result) {
       validTests++;
     } else {
@@ -290,7 +290,7 @@ describe('Test #7 : Champs Comment', () => {
 
   it('Comment valide', () => {
     const validComment = 'blabla';
-    const result = isValidComment(validComment);
+    const result = _isValidComment(validComment);
     if (result) {
       validTests++;
     } else {
@@ -300,7 +300,7 @@ describe('Test #7 : Champs Comment', () => {
 
   it('Comment invalide Maximum', () => {
     const invalidComment = 'a'.repeat(1001);
-    const result = isValidComment(invalidComment);
+    const result = _isValidComment(invalidComment);
     if (!result) {
       validTests++;
     } else {

@@ -1,5 +1,5 @@
 import { describe, it, afterAll } from 'vitest';
-import { isGPXFile } from '../routes/activity/+page.server'; 
+import { _isGPXFile } from '../routes/activity/+page.server';
 
 let validTests: number = 0;
 const invalidTests: string[] = [];
@@ -7,7 +7,7 @@ const invalidTests: string[] = [];
 describe('Test #1 : Champs FileGpx', () => {
   it('Not a FileGpx .txt', () => {
     const invalidFileGpx = new File([''], 'example.txt', { type: 'text/plain' });
-    const result = isGPXFile(invalidFileGpx);
+    const result = _isGPXFile(invalidFileGpx);
     if (!result) {
       validTests++;
     } else {
@@ -17,7 +17,7 @@ describe('Test #1 : Champs FileGpx', () => {
 
   it('Not a FileGpx xml', () => {
     const invalidFileGpx = new File([''], 'example.xml', { type: 'application/xml' });
-    const result = isGPXFile(invalidFileGpx);
+    const result = _isGPXFile(invalidFileGpx);
     if (!result) {
       validTests++;
     } else {
@@ -27,7 +27,7 @@ describe('Test #1 : Champs FileGpx', () => {
 
   it('FileGpx valide lowerCase', () => {
     const validFileGpx = new File([''], 'example.gpx', { type: 'application/gpx+xml' });
-    const result = isGPXFile(validFileGpx);
+    const result = _isGPXFile(validFileGpx);
     if (result) {
       validTests++;
     } else {
@@ -37,7 +37,7 @@ describe('Test #1 : Champs FileGpx', () => {
 
   it('FileGpx valide uperCase', () => {
     const validFileGpx = new File([''], 'EXAMPLE.GPX', { type: 'application/gpx+xml' });
-    const result = isGPXFile(validFileGpx);
+    const result = _isGPXFile(validFileGpx);
     if (result) {
       validTests++;
     } else {
@@ -46,7 +46,7 @@ describe('Test #1 : Champs FileGpx', () => {
   });
 
   it('FileGpx null', () => {
-    const result = isGPXFile(null as unknown as File);
+    const result = _isGPXFile(null as unknown as File);
     if (!result) {
       validTests++;
     } else {
