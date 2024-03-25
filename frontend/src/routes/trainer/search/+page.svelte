@@ -1,16 +1,10 @@
 <script lang="ts">
-  import DataTable, {
-    Head,
-    Body,
-    Row,
-    Cell,
-    Label,
-    SortValue,
-  } from '@smui/data-table';
+  import DataTable, { Head, Body, Row, Cell, Label, SortValue} from '@smui/data-table';
   import IconButton from '@smui/icon-button';
   import Textfield from '@smui/textfield';
   import HelperText from '@smui/textfield/helper-text';
   import Button from '@smui/button';
+  import Paper, { Title, Content } from '@smui/paper';
   import type { PageData } from './$types';
   import type { User } from '$lib/types/user';
   import { API_URL } from '../../../constants';
@@ -21,9 +15,10 @@
 
   let query = '';
   let assignedUsers: User[] = [];
+
+  // For sorting the list 
   let sort: keyof User = 'username';
   let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
-
   // Sort the users list
   function handleSort() {
     users.sort((a: User, b: User) => {
@@ -38,6 +33,8 @@
     users = users;
   }
 
+
+  // Filter the users list
   $: filteredUsers = users.filter((user: User) => {
     // filterer list by user name, name or email
     return (
@@ -54,7 +51,7 @@
       credentials: 'include',
     });
     if (response.status === 409) {
-      alert('User already assigned to trainer');
+      alert('User already assigned to another trainer');
     }
     if (!response.ok) {
       alert('Error adding user to trainer');
@@ -72,7 +69,7 @@
       credentials: 'include',
     });
     if (response.status === 404) {
-      alert('User not assigned to trainer');
+      alert('User not assigned to you, trainer');
     }
     if (!response.ok) {
       alert('Error removing user from trainer');
@@ -96,23 +93,28 @@
     }
 
   onMount(fetchAssignedUsers);
-
-
 </script>
 
-<div>
+<div class="paper-container">
 
-  <Textfield
-    class="shaped-outlined"
-    variant="outlined"
-    bind:value={query}
-    label="Label"
-  >
-    <HelperText slot="helper">Helper Text</HelperText>
-  </Textfield>
-
-  <pre class="status">Value: {query}</pre>
+  <Paper>
+    <Title>Search for users</Title>
+    <Content>
+      <Textfield
+      class="shaped-outlined"
+      variant="outlined"
+      helperLine$style="width: 100%;"
+      style="width: 100%;"
+      bind:value={query}
+      label="Label"
+    >
+      <HelperText slot="helper">Helper Text</HelperText>
+    </Textfield>
+    </Content>
+  </Paper>
+  <pre class="status">Searching for: {query}</pre>
 </div>
+ 
 
 <DataTable
   sortable
@@ -125,7 +127,6 @@
     <Row>
       <Cell columnId="name">
         <Label>Name</Label>
-        <!-- For non-numeric columns, icon comes second. -->
         <IconButton class="material-icons">arrow_upward</IconButton>
       </Cell>
       <Cell columnId="username">
@@ -148,7 +149,7 @@
         <Cell>{item.username}</Cell>
         <Cell>{item.email}</Cell>
         <Cell>
-      {#if assignedUsers.some((trainerUser) => trainerUser.userId === item.id)}
+      {#if assignedUsers.some((trainerUser) => trainerUser.id === item.id)}
         <Button on:click={() => removeUserFromTrainer(item.id)}>Remove User</Button>
       {:else}
         <Button on:click={() => addUserToTrainer(item.id)}>Add User</Button>
@@ -159,3 +160,6 @@
   </Body>
 </DataTable>
 
+<style>
+
+</style>
