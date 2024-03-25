@@ -1,5 +1,7 @@
 import type { PlannedActivity } from '$lib/types/plannedActivity';
 
+export const activityType = ['Running', 'Biking', 'Walking'];
+
 export function getFormatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('fr-CA', {
@@ -8,6 +10,13 @@ export function getFormatDate(dateString: string): string {
     month: 'long',
     day: 'numeric',
   });
+}
+
+export function getFormatTime(dateString: string): string {
+  const date = new Date(dateString);
+  const hours = date.getHours();
+  const min = String(date.getMinutes()).padStart(2,'0');
+  return `${hours}h${min}`;
 }
 
 export function getFormatDuration(duration: number): string {
