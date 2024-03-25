@@ -1,5 +1,6 @@
 import { describe, it, afterAll } from 'vitest';
-import { getErrorMessage, ErrorCode } from '../routes/activity/+page.server';
+import { getErrorMessage } from '../routes/activity/+page.server';
+import {ErrorCode} from '$lib/errorCode';
 
 let validTests: number = 0;
 const invalidTests: string[] = [];

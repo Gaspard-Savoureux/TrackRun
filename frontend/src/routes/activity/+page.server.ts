@@ -2,20 +2,8 @@
 import {error, fail, redirect} from '@sveltejs/kit';
 import type {PageServerLoad, RequestEvent} from '../$types';
 import { API_URL } from '../../constants';
+import {ErrorCode} from '$lib/errorCode';
 
-// Enumération des codes d'erreur
-export enum ErrorCode {
-    Missing,
-    InvalidNom,
-    InvalidVille,
-    InvalidTypeActivite,
-    InvalidDate,
-    InvalidDuree,
-    InvalidDistance,
-    InvalidComment,
-    InvalidGPX,
-    InvalidId
-}
 
 // Fonction pour récupérer les messages d'erreur en fonction du code d'erreur
 /**
