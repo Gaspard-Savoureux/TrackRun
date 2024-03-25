@@ -1,6 +1,6 @@
 import { db } from '../db/db';
 import { User, users } from '../models/users';
-import { eq } from 'drizzle-orm';
+import { eq, ilike } from 'drizzle-orm';
 
 
 export const getUserByUsername = async ( username: string) : Promise<User | undefined> => {
@@ -54,3 +54,4 @@ export const getUserImage = async (userId: number) => {
 export const updateUserImage = async (userId: number, imgName: string) => {
   return await db.update(users).set({ img: imgName }).where(eq(users.id, userId));
 };
+

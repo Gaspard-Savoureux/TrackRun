@@ -222,5 +222,6 @@ describe('Tests route DELETE /trainer/user/{userId}', () => {
     expect(res.status).toBe(404);
     expect(res.text).toBe('{"error":"User not found"}');
   });
+
 });
 
