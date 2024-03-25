@@ -2,6 +2,9 @@ import { db } from '../db/db';
 import { User, users } from '../models/users';
 import { eq } from 'drizzle-orm';
 
+export const getAllUsers = async () : Promise<User[]> => {
+  return await db.select().from(users);
+};
 
 export const getUserByUsername = async ( username: string) : Promise<User | undefined> => {
   const [ user ] = await db.select()

@@ -5,11 +5,14 @@ import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
 import { addUserToTrainer, removeUserFromTrainer } from '../controllers/TrainerController';
 import { getTrainer } from '../controllers/TrainerController';
+import { getUsers } from '../controllers/UserController';
 
 const router = express.Router();
 
 /**TODO: DOC ET TEST */
 router.get('/', verifyTrainerToken, getTrainer);
+
+router.get('/users', verifyTrainerToken, getUsers);
 
 /**
  * @swagger
