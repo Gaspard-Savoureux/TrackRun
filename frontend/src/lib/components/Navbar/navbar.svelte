@@ -2,7 +2,6 @@
   import TrainerNavbar from './TrainerNavbar.svelte';
   import UserNavbar from './UserNavbar.svelte';
   import { isTrainer } from '$lib/stores/trainer';
-
 </script>
 
 {#if $isTrainer}
