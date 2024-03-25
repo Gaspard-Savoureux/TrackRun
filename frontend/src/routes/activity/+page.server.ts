@@ -13,7 +13,7 @@ import {ErrorCode} from '$lib/errorCode';
  * @param {string} variable - The name of the variable associated with the error.
  * @returns {string} - The error message.
  */
-export function getErrorMessage(errorCode: ErrorCode, variable: string): string {
+export function _getErrorMessage(errorCode: ErrorCode, variable: string): string {
   switch (errorCode) {
   case ErrorCode.Missing:
     return `Veuillez entrer le champ "${variable}" de l'activité.`;
@@ -47,7 +47,7 @@ export function getErrorMessage(errorCode: ErrorCode, variable: string): string 
  * @param {string} nom - The nom to be validated.
  * @return {boolean} - Returns true if the nom is valid, otherwise false.
  */
-export function isValidNom(nom: string): boolean {
+export function _isValidNom(nom: string): boolean {
   return nom.length >= 3 && nom.length <= 256;
 }
 
@@ -57,7 +57,7 @@ export function isValidNom(nom: string): boolean {
  * @param {string} ville - The string to be checked.
  * @return {boolean} - Returns true if the string is a valid ville, otherwise false.
  */
-export function isValidVille(ville: string): boolean {
+export function _isValidVille(ville: string): boolean {
   return ville.length <= 100;
 }
 
@@ -67,11 +67,11 @@ export function isValidVille(ville: string): boolean {
  * @param {string} typeActivite - The type of activity to be checked.
  * @return {boolean} - Returns true if the type of activity is valid, false otherwise.
  */
-export function isValidTypeActivite(typeActivite: string): boolean {
+export function _isValidTypeActivite(typeActivite: string): boolean {
   return typeActivite === 'Running' || typeActivite === 'Biking' || typeActivite === 'Walking' ;
 }
 
-export function obtenirPastDate(): string {
+export function _obtenirPastDate(): string {
   const mostOldPersonne = 150 ; 
   const today = new Date();
   today.setFullYear(today.getFullYear() - mostOldPersonne);
@@ -81,7 +81,7 @@ export function obtenirPastDate(): string {
   return dateIlYa150Ans;
 }
 
-export function obtenirDateDemain(): string {
+export function _obtenirDateDemain(): string {
   const today = new Date();
   const futurDate = new Date(today);
   futurDate.setDate(today.getDate() + 1);
@@ -97,10 +97,10 @@ export function obtenirDateDemain(): string {
  * @param {string} date - The date to be checked in the format 'YYYY-MM-DD'.
  * @return {boolean} Returns true if the date is in a valid format, otherwise false.
  */
-export function isValidDate(date: string): boolean {
+export function _isValidDate(date: string): boolean {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  const pastDate = obtenirPastDate();
-  const futurDate = obtenirDateDemain();
+  const pastDate = _obtenirPastDate();
+  const futurDate = _obtenirDateDemain();
   let isValid = true; // Initialisation de la variable de validation
 
   if (date === null) {
@@ -122,7 +122,7 @@ export function isValidDate(date: string): boolean {
  * @param {string} duree - The duration string to be validated.
  * @return {boolean} - Returns true if the duration string is valid, otherwise false.
  */
-export function isValidDuree(duree: string): boolean {
+export function _isValidDuree(duree: string): boolean {
   const dureeRegex = /^\d{1,2}:\d{2}$/;
   return duree !== null && dureeRegex.test(duree);
 }
@@ -157,11 +157,11 @@ export function isValidDistance(distance: string): boolean {
  * @param {string} comment - The comment to be checked.
  * @return {boolean} - True if the comment is valid, false otherwise.
  */
-export function isValidComment(comment: string): boolean {
+export function _isValidComment(comment: string): boolean {
   return comment.length >= 0 && comment.length <= 1000;
 }
 
-export function isGPXFile(file: File | null): boolean {
+export function _isGPXFile(file: File | null): boolean {
   let isValid = false;
   if (file !== null) {
     isValid = file.name.toLowerCase().endsWith('.gpx');
@@ -175,7 +175,7 @@ export function isGPXFile(file: File | null): boolean {
  * @param {string} duree - The duration string in the format 'hh:mm'.
  * @return {number} - The duration in seconds.
  */
-export function convertDureeToSecondes(duree: string): number {
+export function _convertDureeToSecondes(duree: string): number {
   const [hours, minutes] = duree.split(':').map(Number);
   return hours * 3600 + minutes * 60;
 }
@@ -206,50 +206,50 @@ export const actions: object = {
     const segments = '{}';
 
     // Validation des champs
-    if (!isValidNom(<string>name)) {
+    if (!_isValidNom(<string>name)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+        message: _getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
       });
     }
-    if (!isValidVille(<string>city)) {
+    if (!_isValidVille(<string>city)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidVille, 'ville'),
+        message: _getErrorMessage(ErrorCode.InvalidVille, 'ville'),
       });
     }
-    if (!isValidTypeActivite(<string>type)) {
+    if (!_isValidTypeActivite(<string>type)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+        message: _getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
       });
     }
-    if (!isValidDate(<string>date)) {
+    if (!_isValidDate(<string>date)) {
       redirect(302, '/');
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDate, 'Date'),
+        message: _getErrorMessage(ErrorCode.InvalidDate, 'Date'),
       });
     }
-    if (!isValidDuree(<string>duree)) {
+    if (!_isValidDuree(<string>duree)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
+        message: _getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
       });
     }
     if (!isValidDistance(<string>distance)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
+        message: _getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
       });
     }
-    if (!isValidComment(<string>comment)) {
+    if (!_isValidComment(<string>comment)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
+        message: _getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
       });
     }
-    const durationTotal = convertDureeToSecondes(<string>duree);
+    const durationTotal = _convertDureeToSecondes(<string>duree);
     const distanceTotal = Number(distance);
 
     const token = cookies.get('token');
@@ -295,31 +295,31 @@ export const actions: object = {
     if (!name || !type || !comment || !fichierGPX) {
       return fail(400, { 
         success: false, 
-        message: getErrorMessage(ErrorCode.Missing, 'vide'), 
+        message: _getErrorMessage(ErrorCode.Missing, 'vide'),
       });
     }
-    if (!isValidNom(<string>name)) {
+    if (!_isValidNom(<string>name)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+        message: _getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
       });
     }
-    if (!isValidTypeActivite(<string>type)) {
+    if (!_isValidTypeActivite(<string>type)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+        message: _getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
       });
     }
-    if (!isValidComment(<string>comment)) {
+    if (!_isValidComment(<string>comment)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidComment, 'comment'),
+        message: _getErrorMessage(ErrorCode.InvalidComment, 'comment'),
       });
     }
-    if (!isGPXFile(fichierGPX)) {
+    if (!_isGPXFile(fichierGPX)) {
       return fail(400, { 
         success: false, 
-        message: getErrorMessage(ErrorCode.InvalidGPX, 'FormatGPX'), 
+        message: _getErrorMessage(ErrorCode.InvalidGPX, 'FormatGPX'),
       });
     }
 
@@ -378,54 +378,54 @@ export const actions: object = {
     if (!activityId || !name || !city || !type || !date || !duree || !distance || !comment) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidId, 'vide'),
+        message: _getErrorMessage(ErrorCode.InvalidId, 'vide'),
       });
     }
-    if (!isValidNom(<string>name)) {
+    if (!_isValidNom(<string>name)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+        message: _getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
       });
     }
-    if (!isValidVille(<string>city)) {
+    if (!_isValidVille(<string>city)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidVille, 'ville'),
+        message: _getErrorMessage(ErrorCode.InvalidVille, 'ville'),
       });
     }
-    if (!isValidTypeActivite(<string>type)) {
+    if (!_isValidTypeActivite(<string>type)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+        message: _getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
       });
     }
-    if (!isValidDate(<string>date)) {
+    if (!_isValidDate(<string>date)) {
       redirect(302, '/');
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDate, 'Date'),
+        message: _getErrorMessage(ErrorCode.InvalidDate, 'Date'),
       });
     }
-    if (!isValidDuree(<string>duree)) {
+    if (!_isValidDuree(<string>duree)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
+        message: _getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
       });
     }
     if (!isValidDistance(<string>distance)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
+        message: _getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
       });
     }
-    if (!isValidComment(<string>comment)) {
+    if (!_isValidComment(<string>comment)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
+        message: _getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
       });
     }
 
-    const durationTotal = convertDureeToSecondes(<string>duree);
+    const durationTotal = _convertDureeToSecondes(<string>duree);
     const distanceTotal = Number(distance);
 
     const token = cookies.get('token');
@@ -465,7 +465,7 @@ export const actions: object = {
     if (!activityId) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidNom, 'id'),
+        message: _getErrorMessage(ErrorCode.InvalidNom, 'id'),
       });
     }
 
