@@ -6,6 +6,7 @@ declare global {
 		interface Locals {
 			token: string | undefined;
 			basicAuth: string | undefined;
+			userRole: string | undefined;
 		}
 		// interface PageData {}
 		// interface PageState {}
