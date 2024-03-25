@@ -195,7 +195,15 @@ export const removeUserFromTrainer = async (req: Request, res: Response) => {
 export const getTrainerAssignedUsers = async (req: Request, res: Response) => {
   const trainerId = req.trainer?.trainerId as number;
 
-  const users = await getTrainerUsers(trainerId);
+  const usersIds = await getTrainerUsers(trainerId);
+  const users: unknown[] = [];
+  // get the id of each user, and the get the full user object
+  // then return the full user object
+
+  for (let i = 0; i < usersIds.length; i++) {
+    const user = await getUserById(usersIds[i].userId);
+    users[i] = user;
+  }
 
   res.status(200).json(users);
-}
+};

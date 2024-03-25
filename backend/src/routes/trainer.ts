@@ -19,6 +19,9 @@ router.get('/users', verifyTrainerToken, getUsers);
 /**TODO: DOC ET TEST */
 router.get('/users/assigned', verifyTrainerToken, getTrainerAssignedUsers);
 
+// TODO to not diplay option add user if user already assigned to another trainer
+// router.get('/users/assigned/other', verifyTrainerToken, getAllAssignedUsers);
+
 /**
  * @swagger
  * /trainer/user/{userId}:
