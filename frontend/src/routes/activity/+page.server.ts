@@ -2,22 +2,8 @@
 import {error, fail, redirect} from '@sveltejs/kit';
 import type {PageServerLoad, RequestEvent} from '../$types';
 import { API_URL } from '../../constants';
+import {ErrorCode} from '$lib/errorCode';
 
-
-
-// Enumération des codes d'erreur
-enum ErrorCode {
-    Missing,
-    InvalidNom,
-    InvalidVille,
-    InvalidTypeActivite,
-    InvalidDate,
-    InvalidDuree,
-    InvalidDistance,
-    InvalidComment,
-    InvalidGPX,
-    InvalidId
-}
 
 // Fonction pour récupérer les messages d'erreur en fonction du code d'erreur
 /**
@@ -27,7 +13,7 @@ enum ErrorCode {
  * @param {string} variable - The name of the variable associated with the error.
  * @returns {string} - The error message.
  */
-function getErrorMessage(errorCode: ErrorCode, variable: string): string {
+export function _getErrorMessage(errorCode: ErrorCode, variable: string): string {
   switch (errorCode) {
   case ErrorCode.Missing:
     return `Veuillez entrer le champ "${variable}" de l'activité.`;
@@ -38,7 +24,7 @@ function getErrorMessage(errorCode: ErrorCode, variable: string): string {
   case ErrorCode.InvalidTypeActivite:
     return `Le champ "${variable}" de l'activité doit être soit "Course" ou "Vélo".`;
   case ErrorCode.InvalidDate:
-    return `Le champ "${variable}" de l'activité doit être une date valide au format JJ-MM-AAAA.`;
+    return `Le champ "${variable}" de l'activité doit être une date valide au format AAAA-MM-JJ.`;
   case ErrorCode.InvalidDuree:
     return `Le champ "${variable}" de l'activité doit être au format HH:MM, où HH représente les heures et MM les minutes.`;
   case ErrorCode.InvalidDistance:
@@ -61,8 +47,8 @@ function getErrorMessage(errorCode: ErrorCode, variable: string): string {
  * @param {string} nom - The nom to be validated.
  * @return {boolean} - Returns true if the nom is valid, otherwise false.
  */
-function isValidNom(nom: string): boolean {
-  return nom.length <= 256;
+export function _isValidNom(nom: string): boolean {
+  return nom.length >= 3 && nom.length <= 256;
 }
 
 /**
@@ -71,7 +57,7 @@ function isValidNom(nom: string): boolean {
  * @param {string} ville - The string to be checked.
  * @return {boolean} - Returns true if the string is a valid ville, otherwise false.
  */
-function isValidVille(ville: string): boolean {
+export function _isValidVille(ville: string): boolean {
   return ville.length <= 100;
 }
 
@@ -81,8 +67,28 @@ function isValidVille(ville: string): boolean {
  * @param {string} typeActivite - The type of activity to be checked.
  * @return {boolean} - Returns true if the type of activity is valid, false otherwise.
  */
-function isValidTypeActivite(typeActivite: string): boolean {
-  return typeActivite === 'Running' || typeActivite === 'Biking' || typeActivite === 'Walking' || typeActivite === null;
+export function _isValidTypeActivite(typeActivite: string): boolean {
+  return typeActivite === 'Running' || typeActivite === 'Biking' || typeActivite === 'Walking' ;
+}
+
+export function _obtenirPastDate(): string {
+  const mostOldPersonne = 150 ; 
+  const today = new Date();
+  today.setFullYear(today.getFullYear() - mostOldPersonne);
+  const dateIlYa150Ans = today.getFullYear() + '-' +
+                         ('0' + (today.getMonth() + 1)).slice(-2) + '-' +
+                         ('0' + today.getDate()).slice(-2);
+  return dateIlYa150Ans;
+}
+
+export function _obtenirDateDemain(): string {
+  const today = new Date();
+  const futurDate = new Date(today);
+  futurDate.setDate(today.getDate() + 1);
+  const futurDateString = futurDate.getFullYear() + '-' +
+                           ('0' + (futurDate.getMonth() + 1)).slice(-2) + '-' +
+                           ('0' + futurDate.getDate()).slice(-2);
+  return futurDateString;
 }
 
 /**
@@ -91,9 +97,23 @@ function isValidTypeActivite(typeActivite: string): boolean {
  * @param {string} date - The date to be checked in the format 'YYYY-MM-DD'.
  * @return {boolean} Returns true if the date is in a valid format, otherwise false.
  */
-function isValidDate(date: string): boolean {
+export function _isValidDate(date: string): boolean {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  return date !== null && dateRegex.test(date);
+  const pastDate = _obtenirPastDate();
+  const futurDate = _obtenirDateDemain();
+  let isValid = true; // Initialisation de la variable de validation
+
+  if (date === null) {
+    isValid = false;
+  } else if (!dateRegex.test(date)) {
+    isValid = false;
+  } else if (new Date(date) >= new Date(futurDate)) {
+    isValid = false;
+  } else if (new Date(date) < new Date(pastDate)) {
+    isValid = false;
+  }
+
+  return isValid;
 }
 
 /**
@@ -102,7 +122,7 @@ function isValidDate(date: string): boolean {
  * @param {string} duree - The duration string to be validated.
  * @return {boolean} - Returns true if the duration string is valid, otherwise false.
  */
-function isValidDuree(duree: string): boolean {
+export function _isValidDuree(duree: string): boolean {
   const dureeRegex = /^\d{1,2}:\d{2}$/;
   return duree !== null && dureeRegex.test(duree);
 }
@@ -113,10 +133,23 @@ function isValidDuree(duree: string): boolean {
  * @param {string} distance - The distance to be validated.
  * @return {boolean} - Returns true if the distance is valid, otherwise false.
  */
-function isValidDistance(distance: string): boolean {
-  const distanceNumber = parseFloat(distance || '');
-  return !isNaN(distanceNumber) && distanceNumber >= 0;
+export function _isValidDistance(distance: string): boolean {
+  let isValid = false;
+
+  if (distance.trim() === '') {
+    isValid = true;
+  } else {
+    const normalizedDistance = distance.replace(',', '.');
+
+    if (/^\d+(\.\d+)?$/.test(normalizedDistance)) {
+      const distanceNumber = parseFloat(normalizedDistance);
+      isValid = !isNaN(distanceNumber) && distanceNumber >= 0;
+    }
+  }
+
+  return isValid;
 }
+
 
 /**
  * Check whether a comment is valid.
@@ -124,12 +157,16 @@ function isValidDistance(distance: string): boolean {
  * @param {string} comment - The comment to be checked.
  * @return {boolean} - True if the comment is valid, false otherwise.
  */
-function isValidComment(comment: string): boolean {
-  return comment.length <= 1000;
+export function _isValidComment(comment: string): boolean {
+  return comment.length >= 0 && comment.length <= 1000;
 }
 
-function isGPXFile(file: File): boolean {
-  return file.name.toLowerCase().endsWith('.gpx');
+export function _isGPXFile(file: File | null): boolean {
+  let isValid = false;
+  if (file !== null) {
+    isValid = file.name.toLowerCase().endsWith('.gpx');
+  }
+  return isValid;
 }
 
 /**
@@ -138,7 +175,7 @@ function isGPXFile(file: File): boolean {
  * @param {string} duree - The duration string in the format 'hh:mm'.
  * @return {number} - The duration in seconds.
  */
-function convertDureeToSecondes(duree: string): number {
+export function _convertDureeToSecondes(duree: string): number {
   const [hours, minutes] = duree.split(':').map(Number);
   return hours * 3600 + minutes * 60;
 }
@@ -169,50 +206,50 @@ export const actions: object = {
     const segments = '{}';
 
     // Validation des champs
-    if (!isValidNom(<string>name)) {
+    if (!_isValidNom(<string>name)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+        message: _getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
       });
     }
-    if (!isValidVille(<string>city)) {
+    if (!_isValidVille(<string>city)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidVille, 'ville'),
+        message: _getErrorMessage(ErrorCode.InvalidVille, 'ville'),
       });
     }
-    if (!isValidTypeActivite(<string>type)) {
+    if (!_isValidTypeActivite(<string>type)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+        message: _getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
       });
     }
-    if (!isValidDate(<string>date)) {
+    if (!_isValidDate(<string>date)) {
       redirect(302, '/');
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDate, 'Date'),
+        message: _getErrorMessage(ErrorCode.InvalidDate, 'Date'),
       });
     }
-    if (!isValidDuree(<string>duree)) {
+    if (!_isValidDuree(<string>duree)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
+        message: _getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
       });
     }
-    if (!isValidDistance(<string>distance)) {
+    if (!_isValidDistance(<string>distance)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
+        message: _getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
       });
     }
-    if (!isValidComment(<string>comment)) {
+    if (!_isValidComment(<string>comment)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
+        message: _getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
       });
     }
-    const durationTotal = convertDureeToSecondes(<string>duree);
+    const durationTotal = _convertDureeToSecondes(<string>duree);
     const distanceTotal = Number(distance);
 
     const token = cookies.get('token');
@@ -258,31 +295,31 @@ export const actions: object = {
     if (!name || !type || !comment || !fichierGPX) {
       return fail(400, { 
         success: false, 
-        message: getErrorMessage(ErrorCode.Missing, 'vide'), 
+        message: _getErrorMessage(ErrorCode.Missing, 'vide'),
       });
     }
-    if (!isValidNom(<string>name)) {
+    if (!_isValidNom(<string>name)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+        message: _getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
       });
     }
-    if (!isValidTypeActivite(<string>type)) {
+    if (!_isValidTypeActivite(<string>type)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+        message: _getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
       });
     }
-    if (!isValidComment(<string>comment)) {
+    if (!_isValidComment(<string>comment)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidComment, 'comment'),
+        message: _getErrorMessage(ErrorCode.InvalidComment, 'comment'),
       });
     }
-    if (!isGPXFile(fichierGPX)) {
+    if (!_isGPXFile(fichierGPX)) {
       return fail(400, { 
         success: false, 
-        message: getErrorMessage(ErrorCode.InvalidGPX, 'FormatGPX'), 
+        message: _getErrorMessage(ErrorCode.InvalidGPX, 'FormatGPX'),
       });
     }
 
@@ -341,54 +378,54 @@ export const actions: object = {
     if (!activityId || !name || !city || !type || !date || !duree || !distance || !comment) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidId, 'vide'),
+        message: _getErrorMessage(ErrorCode.InvalidId, 'vide'),
       });
     }
-    if (!isValidNom(<string>name)) {
+    if (!_isValidNom(<string>name)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
+        message: _getErrorMessage(ErrorCode.InvalidNom, 'Nom'),
       });
     }
-    if (!isValidVille(<string>city)) {
+    if (!_isValidVille(<string>city)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidVille, 'ville'),
+        message: _getErrorMessage(ErrorCode.InvalidVille, 'ville'),
       });
     }
-    if (!isValidTypeActivite(<string>type)) {
+    if (!_isValidTypeActivite(<string>type)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
+        message: _getErrorMessage(ErrorCode.InvalidTypeActivite, 'Type d\'activité'),
       });
     }
-    if (!isValidDate(<string>date)) {
+    if (!_isValidDate(<string>date)) {
       redirect(302, '/');
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDate, 'Date'),
+        message: _getErrorMessage(ErrorCode.InvalidDate, 'Date'),
       });
     }
-    if (!isValidDuree(<string>duree)) {
+    if (!_isValidDuree(<string>duree)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
+        message: _getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
       });
     }
-    if (!isValidDistance(<string>distance)) {
+    if (!_isValidDistance(<string>distance)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
+        message: _getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
       });
     }
-    if (!isValidComment(<string>comment)) {
+    if (!_isValidComment(<string>comment)) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
+        message: _getErrorMessage(ErrorCode.InvalidComment, 'Commentaires'),
       });
     }
 
-    const durationTotal = convertDureeToSecondes(<string>duree);
+    const durationTotal = _convertDureeToSecondes(<string>duree);
     const distanceTotal = Number(distance);
 
     const token = cookies.get('token');
@@ -428,7 +465,7 @@ export const actions: object = {
     if (!activityId) {
       return fail(400, {
         success: false,
-        message: getErrorMessage(ErrorCode.InvalidNom, 'id'),
+        message: _getErrorMessage(ErrorCode.InvalidNom, 'id'),
       });
     }
 
