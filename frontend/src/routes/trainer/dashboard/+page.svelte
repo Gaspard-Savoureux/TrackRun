@@ -1,11 +1,8 @@
 <script lang="ts">
   import DataTable, { Head, Body, Row, Cell, Label, SortValue} from '@smui/data-table';
-  import IconButton from '@smui/icon-button';
-  import Textfield from '@smui/textfield';
-  import HelperText from '@smui/textfield/helper-text';
+  import IconButton from '@smui/icon-button';;
   import Button from '@smui/button';
-  import Paper, { Title, Content } from '@smui/paper';
-  import type { PageData } from './$types';
+  import Paper, { Title } from '@smui/paper';
   import type { User } from '$lib/types/user';
   import { API_URL } from '../../../constants';
   import { onMount } from 'svelte';
@@ -30,24 +27,6 @@
       return Number(aVal) - Number(bVal);
     });
     assignedUsers = assignedUsers;
-  }
-
-  async function addUserToTrainer(id: number) {
-    const response = await fetch(`${API_URL}/trainer/user/${id}`, {
-      method: 'POST',
-      credentials: 'include',
-    });
-    if (response.status === 409) {
-      alert('User already assigned to trainer');
-    }
-    if (!response.ok) {
-      alert('Error adding user to trainer');
-    }
-    if (response.ok) {
-      alert('User added to trainer');
-    }
-    // Refresh assigned users after adding
-    fetchAssignedUsers();
   }
 
   async function removeUserFromTrainer(id: number) {
