@@ -1,16 +1,11 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import TrainerNavbar from './TrainerNavbar.svelte';
   import UserNavbar from './UserNavbar.svelte';
+  import { isTrainer } from '$lib/stores/trainer';
 
-  let isTrainer = false;
-
-  onMount(() => {
-    isTrainer = localStorage.getItem('isTrainer') === 'true';
-  });
 </script>
 
-{#if isTrainer}
+{#if $isTrainer}
   <TrainerNavbar />
 {:else}
   <UserNavbar />

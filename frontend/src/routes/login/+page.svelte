@@ -2,12 +2,12 @@
   import { enhance } from '$app/forms';
   import { page } from '$app/stores';
   import FormNotification from '$lib/components/form-notification.svelte';
-
+  import { isTrainer } from '$lib/stores/trainer';
+  
   $: message = $page.url.searchParams.get('message') ?? '';
 
   export let form;
 
-  let isTrainer = false;
 </script>
 
 <svelte:head>
@@ -32,7 +32,7 @@
       />
       <input type="password" placeholder="Enter your password" name="password" />
       <label>
-        <input type="checkbox" name="isTrainer" bind:checked={isTrainer}/>
+        <input type="checkbox" name="isTrainer" bind:checked={$isTrainer}/>
         Log in as a trainer
       </label>
       <button type="submit">Log in</button>

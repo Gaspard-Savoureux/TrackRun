@@ -4,9 +4,6 @@ import cookie from 'cookie';
 export const handle: Handle = async ({ event, resolve }) => {
   const token = event.cookies.get('token');
   const basicAuth = event.cookies.get('basicAuth');
-  const userRole = event.cookies.get('userRole');
-
-  event.locals.userRole = userRole;
 
   const unguardedRoutes = ['/login', '/register', '/admin'];
 

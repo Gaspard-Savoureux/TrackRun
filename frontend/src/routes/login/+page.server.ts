@@ -51,6 +51,13 @@ export const actions: object = {
         secure: false,
       });
 
+      cookies.set('is_trainer', isTrainer ? '1' : '0', {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: false,
+      });
+
       const next = url.searchParams.get('next');
       if (next) {
         redirect(302, `/${next.slice(1)}`);

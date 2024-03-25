@@ -4,11 +4,13 @@
   import { theme } from '$lib/stores/theme';
   import Navbar from '$lib/components/Navbar/navbar.svelte';
   import { page } from '$app/stores';
+  import { isTrainer } from '$lib/stores/trainer';
 
   export let data: LayoutServerData;
 
   theme.set(data.theme);
   const noNavPage = ['/login', '/register', '/admin', '/admin/dashboard'];
+  isTrainer.set(data.isTrainer);
 </script>
 
 <svelte:head>
