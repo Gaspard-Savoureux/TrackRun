@@ -1,6 +1,6 @@
 <script lang="ts">
   import Modal from '$lib/components/informative-modal.svelte';
-  import { UserIcon, SettingsIcon } from 'svelte-feather-icons';
+  import { SearchIcon, SettingsIcon } from 'svelte-feather-icons';
   import NavbarPages from './navbar-pages.svelte';
 </script>
 
@@ -9,10 +9,10 @@
   <hr />
 </div>
 
-<Modal info="Profile" href="/trainer/profile">
+<Modal info="Search" href="/trainer/search">
   <div class="nav-item">
-    <UserIcon />
-    <p>Profile</p>
+    <SearchIcon />
+    <p>Search</p>
   </div>
 </Modal>
 
