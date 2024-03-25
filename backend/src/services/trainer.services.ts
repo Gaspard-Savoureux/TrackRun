@@ -1,6 +1,7 @@
 import { trainerUserAssociation } from '../models/trainerUsersRelation';
 import { db } from '../db/db';
 import { Trainer, trainers } from '../models/trainers';
+import { User, users } from '../models/users';
 import { eq } from 'drizzle-orm';
 
 export const getTrainerByUsername = async (username: string) : Promise<Trainer | undefined> => {
