@@ -142,56 +142,33 @@ router.get('/getActivity',
  *      - in: query
  *        name: search
  *        description: The search information required
- *        schema:
- *          type: string
  *      - in: query
  *        name: specificDate
  *        description: A specific date
- *        schema:
- *          type: string
- *          format: date
  *      - in: query
  *        name: startDate
  *        description: Start date of the date range
- *        schema:
- *          type: string
- *          format: date
  *      - in: query
  *        name: endDate
  *        description: End date of the date range
- *        schema:
- *          type: string
- *          format: date
  *      - in: query
  *        name: specificDistance
  *        description: A specific distance
- *        schema:
- *          type: number
  *      - in: query
  *        name: startDistance
  *        description: Start distance of the distance range
- *        schema:
- *          type: number
  *      - in: query
  *        name: endDistance
  *        description: End distance of the distance range
- *        schema:
- *          type: number
  *      - in: query
  *        name: specificDuration
  *        description: A specific duration
- *        schema:
- *          type: number
  *      - in: query
  *        name: startDuration
  *        description: start duration of the distance range
- *        schema:
- *          type: number
  *      - in: query
  *        name: endDuration
  *        description: End duration of the distance range
- *        schema:
- *          type: number
  *    responses:
  *      200:
  *        description: Success

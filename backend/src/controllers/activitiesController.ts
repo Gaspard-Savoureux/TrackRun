@@ -64,7 +64,7 @@ export const createActivityManual = async (req: Request, res: Response, next: Ne
       return res.status(400).json({ message: 'DistanceTotal must be a non-negative and non-null number' });
     }
 
-    // Validation de `comment` 
+    // Validation de `comment`
     if (comment == null) {
       comment = '';
     } else if (validateComment(comment)) {
@@ -243,12 +243,12 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
     const informationStartDate = req.query.startDate as string;
     const informationEndDate = req.query.endDate as string;
     const informationSpecificDate = req.query.specificDate as string;
-    const informationSpecificDistance = req.query.specificDistance !== undefined ? Number(req.query.specificDistance) : undefined;
-    const informationStartDistance = req.query.startDistance !== undefined ? Number(req.query.startDistance) : undefined;
-    const informationEndDistance = req.query.endDistance !== undefined ? Number(req.query.endDistance) : undefined;
-    const informationSpecificDuration = req.query.specificDuration !== undefined ? Number(req.query.specificDuration) : undefined;
-    const informationStartDuration = req.query.startDuration !== undefined ? Number(req.query.startDuration) : undefined;
-    const informationEndDuration = req.query.endDuration !== undefined ? Number(req.query.endDuration) : undefined;
+    const informationSpecificDistance = Number(req.query.specificDistance);
+    const informationStartDistance = Number(req.query.startDistance);
+    const informationEndDistance = Number(req.query.endDistance);
+    const informationSpecificDuration = Number(req.query.specificDuration);
+    const informationStartDuration = Number(req.query.startDuration);
+    const informationEndDuration = Number(req.query.endDuration);
 
     let checkAllFilledBox = true;
 
@@ -256,33 +256,17 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
     const manageActivities : { findCommonActivities : any[] } = {
       findCommonActivities: []
     }
-    const searchedString: { activities: any[] } = {
-      activities: []
-    };
-    const searchedSpecificDate: { activities: any[] } = {
-      activities: []
-    };
-    const searchedDateIntevarl: { activities: any[] } = {
-      activities: []
-    };
-    const searchedSpecificDistance: { activities: any[] } = {
-      activities: []
-    };
-    const searchedDistanceInterval: { activities: any[] } = {
-      activities: []
-    };
-    const searchedSpecificDuration: { activities: any[] } = {
-      activities: []
-    };
-    const searchedDurationInterval: { activities: any[] } = {
-      activities: []
-    };
-    const searchedActivities: { activities: any[] } = {
-      activities: []
-    };
-    if (!user) {
-      return res.status(404).json({ error: 'No corresponding user' });
-    }
+    const searchedString: { activities: any[] } = {activities: []};
+    const searchedSpecificDate: { activities: any[] } = {activities: []};
+    const searchedDateIntevarl: { activities: any[] } = {activities: []};
+    const searchedSpecificDistance: { activities: any[] } = {activities: []};
+    const searchedDistanceInterval: { activities: any[] } = {activities: []};
+    const searchedSpecificDuration: { activities: any[] } = {activities: []};
+    const searchedDurationInterval: { activities: any[] } = {activities: []};
+    const searchedActivities: { activities: any[] } = {activities: []};
+    if (!user) {return res.status(404).json({ error: 'No corresponding user' });}
+
+
     if (userActivities) {
         for (const activity of userActivities) {
 
@@ -295,6 +279,7 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
             }
           }
           if(informationSpecificDate) {
+            if (validateDate(informationSpecificDate)) return res.status(400).json({ message: 'The date must be past'});
             if (new Date(activity.date).getTime() == new Date(informationSpecificDate).getTime()) {
               searchedSpecificDate.activities.push(activity);
             }
@@ -303,6 +288,8 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
             }
           }
           else if(informationStartDate && informationEndDate){
+            if (validateDate(informationStartDate)) return res.status(400).json({ message: 'The date must be past'});
+            if (validateDate(informationEndDate)) return res.status(400).json({ message: 'The date must be past'});
             if (researchInterval(new Date(informationStartDate), new Date(informationEndDate), new Date(activity.date), activity)) {
               searchedDateIntevarl.activities.push(activity);
             }
@@ -310,7 +297,12 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
               manageActivities.findCommonActivities.push(searchedDateIntevarl);
             }
           }
-          if(informationSpecificDistance) {
+          else if ((informationStartDate && !(informationEndDate)) || !(informationStartDate) && informationEndDate) {
+            return res.status(400).json({ message: 'You must enter both date intervals' });
+          }
+          if(req.query.specificDistance) {
+            if (isNaN(Number(req.query.specificDistance))
+                    || validateDistance(informationSpecificDistance)) return res.status(400).json({ message: 'DistanceTotal must be a non-negative and non-null number' });
             if (activity.distanceTotal == informationSpecificDistance) {
               searchedSpecificDistance.activities.push(activity);
             }
@@ -318,7 +310,9 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
               manageActivities.findCommonActivities.push(searchedSpecificDistance);
             }
           }
-          else if (informationStartDistance && informationEndDistance) {
+          else if (req.query.startDistance && req.query.endDistance) {
+            if (isNaN(Number(req.query.startDistance)) || isNaN(Number(req.query.endDistance))
+                    ||validateDistance(informationStartDistance) || validateDistance(informationEndDistance)) return res.status(400).json({ message: 'DistanceTotal must be a non-negative and non-null number' });
             if (researchInterval(informationStartDistance, informationEndDistance, activity.distanceTotal , activity)) {
               searchedDistanceInterval.activities.push(activity);
             }
@@ -326,8 +320,15 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
               manageActivities.findCommonActivities.push(searchedDistanceInterval);
             }
           }
+          else if ((informationStartDistance && !(informationEndDistance)) || !(informationStartDistance) && informationEndDistance) {
+            return res.status(400).json({ message: 'You must enter both distanceTotal intervals' });
+          }
 
-          if(informationSpecificDuration) {
+          if(req.query.specificDuration) {
+
+            if (isNaN(Number(req.query.specificDuration))
+                    || validateDuration(informationSpecificDuration)) return res.status(400).json({ message: 'DurationTotal must be a non-negative and non-null number' });
+
             if (activity.durationTotal == informationSpecificDuration) {
               searchedSpecificDuration.activities.push(activity);
             }
@@ -335,7 +336,9 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
               manageActivities.findCommonActivities.push(searchedSpecificDuration);
             }
           }
-          else if (informationStartDuration && informationEndDuration) {
+          else if (req.query.startDuration && req.query.endDuration) {
+            if (isNaN(Number(req.query.startDuration))
+                    || isNaN(Number(req.query.endDuration)) || validateDuration(informationStartDuration) || validateDuration(informationEndDuration)) return res.status(400).json({ message: 'DurationTotal must be a non-negative and non-null number' });
             if (researchInterval(informationStartDuration, informationEndDuration, activity.durationTotal , activity)) {
               searchedDurationInterval.activities.push(activity);
             }
@@ -343,12 +346,14 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
               manageActivities.findCommonActivities.push(searchedDurationInterval);
             }
           }
+          else if ((informationStartDuration && !(informationEndDuration)) || !(informationStartDuration) && informationEndDuration) {
+            return res.status(400).json({ message: 'You must enter both durationTotal intervals' });
+          }
 
           checkAllFilledBox = false;
         }
 
         if (manageActivities.findCommonActivities.length == 1) {
-          console.log(manageActivities.findCommonActivities[0].activities);
           for (const activity1 of manageActivities.findCommonActivities[0].activities) {
               searchedActivities.activities.push(activity1);
           }
