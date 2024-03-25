@@ -6,5 +6,6 @@ export type User = {
   height?: number | null;
   weight?: number | null;
   sex?: string | null;
+  img?: string | null;
   description?: string | null;
 }
