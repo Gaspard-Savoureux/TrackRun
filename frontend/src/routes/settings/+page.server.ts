@@ -10,6 +10,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
   });
 
   const user: User = await res.json();
+  user.img = user.img ? `${API_URL}/uploads/${user.img}` : null;
   return { user };
 };
 
@@ -70,7 +71,7 @@ export const actions: object = {
       height,
       weight,
       sex: data.get('sex') as string || null,
-      img: data.get('img') as string || null,
+      img: API_URL + '/' + data.get('img') as string || null,
       description: data.get('description') as string || null,
     };
 
@@ -127,24 +128,36 @@ export const actions: object = {
 
     return fail(400, { passwordSuccess: false, passwordMessage: 'An error occured'});
   },
-  deletepicture: async ({ locals, request }: RequestEvent) => {
+  
+  deletepicture: async ({ locals, request }) => {
     const res = await fetch(`${API_URL}/user/picture`, {
       method: 'DELETE',
       headers: { 
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${locals.token}`,
+        'Accept': 'application/json', 
+        'Authorization': `Bearer ${locals.token}`, 
       },
-      
     });
-
+  
     if (res.ok) {
       return {
-        success: true,
-        message: 'Picture deleted successfully',
+        body: {
+          success: true,
+          message: 'Picture deleted successfully',
+        },
+        status: 200, // Explicitly setting the status to 200 OK
+      };
+    } else {
+      // Assuming 'fail' was a placeholder, this is how you can return an error response
+      return {
+        body: {
+          success: false,
+          message: 'An error occurred',
+        },
+        status: 400, // Returning a 400 status code for client-side errors
       };
     }
-    return fail(400, { success: false, message: 'An error occured'});
   },
+  
 
   updatepicture: async ({ locals, request }: RequestEvent) => {
     const data = await request.formData();

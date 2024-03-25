@@ -7,6 +7,7 @@
 
   export let data: PageServerData;
   export let form: ActionData;
+  console.log(data.user.img)
 
   let deleteConfirmation: string = '';
 
@@ -36,7 +37,7 @@
   <h1>Settings</h1>
   <h2>Update user profile</h2>
   
-  <img src="{`${data.user.img}`}" alt='Profile Pic' />
+  <img src="{`${data.user.img}`}" height="40" width="40" alt='Profile Pic' />
 
   <form method='POST' action='?/updatepicture' enctype='multipart/form-data' use:enhance>
     <label>
