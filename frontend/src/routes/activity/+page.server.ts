@@ -133,7 +133,7 @@ export function _isValidDuree(duree: string): boolean {
  * @param {string} distance - The distance to be validated.
  * @return {boolean} - Returns true if the distance is valid, otherwise false.
  */
-export function isValidDistance(distance: string): boolean {
+export function _isValidDistance(distance: string): boolean {
   let isValid = false;
 
   if (distance.trim() === '') {
@@ -237,7 +237,7 @@ export const actions: object = {
         message: _getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
       });
     }
-    if (!isValidDistance(<string>distance)) {
+    if (!_isValidDistance(<string>distance)) {
       return fail(400, {
         success: false,
         message: _getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
@@ -412,7 +412,7 @@ export const actions: object = {
         message: _getErrorMessage(ErrorCode.InvalidDuree, 'Durée'),
       });
     }
-    if (!isValidDistance(<string>distance)) {
+    if (!_isValidDistance(<string>distance)) {
       return fail(400, {
         success: false,
         message: _getErrorMessage(ErrorCode.InvalidDistance, 'Distance'),
