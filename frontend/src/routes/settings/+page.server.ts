@@ -127,6 +127,46 @@ export const actions: object = {
 
     return fail(400, { passwordSuccess: false, passwordMessage: 'An error occured'});
   },
+  deletepicture: async ({ locals, request }: RequestEvent) => {
+    const res = await fetch(`${API_URL}/user/picture`, {
+      method: 'DELETE',
+      headers: { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${locals.token}`,
+      },
+      
+    });
+
+    if (res.ok) {
+      return {
+        success: true,
+        message: 'Picture deleted successfully',
+      };
+    }
+    return fail(400, { success: false, message: 'An error occured'});
+  },
+
+  updatepicture: async ({ locals, request }: RequestEvent) => {
+    const res = await fetch(`${API_URL}/user/picture`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${locals.token}`,
+      },
+      body: JSON.stringify({ img: data.get('picture') as string || null }),
+      
+    });
+
+    if (res.ok) {
+      return {
+        success: true,
+        message: 'Picture deleted successfully',
+      };
+    }
+    return fail(400, { success: false, message: 'An error occured'});
+    const data = await request.formData();},
+
+
   delete: async ({ cookies, locals, request }: RequestEvent) => {
     const data = await request.formData();
     const confirmation = data.get('confirmation') as string;
