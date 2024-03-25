@@ -9,7 +9,7 @@
   <hr />
 </div>
 
-<Modal info="Search" href="/trainer/dashboard">
+<Modal info="Dashboard" href="/trainer/dashboard">
   <div class="nav-item">
     <HeartIcon />
     <p>Dashboard</p>
