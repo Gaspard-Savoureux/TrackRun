@@ -5,6 +5,8 @@
   export let data: PageData;
 
   $: ({ user } = data);
+
+  $: console.log(data);
 </script>
 
 <svelte:head>
