@@ -201,6 +201,19 @@ export const getActivity = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+function researchString(informationString: string, activity : any): boolean {
+  return ((activity.name.toLowerCase().includes(informationString.toLowerCase()) ||
+    activity.type.toLowerCase().includes(informationString.toLowerCase()) ||
+    (activity.comment && activity.comment.toLowerCase().includes(informationString.toLowerCase())) ||
+    (activity.city && activity.city.toLowerCase().includes(informationString.toLowerCase()))));
+}
+
+function researchInterval(informationStart: any, informationEnd: any, Compare: any, activity : any): boolean {
+  return Compare >= informationStart &&
+    Compare <= informationEnd;
+}
+
+
 // TODO do a research for the distance range, duration range, and date range
 /**
  * Retrieves activities based on the specified search criteria.
@@ -214,8 +227,44 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
   try {
     const userId = req.user?.userId as number;
     const user: User | undefined = await getUserById(userId);
-    const searchedInformation = req.query.search as string;
+    const informationString = req.query.search as string;
+    const informationStartDate = req.query.startDate as string;
+    const informationEndDate = req.query.endDate as string;
+    const informationSpecificDate = req.query.specificDate as string;
+    const informationSpecificDistance = req.query.specificDistance !== undefined ? Number(req.query.specificDistance) : undefined;
+    const informationStartDistance = req.query.startDistance !== undefined ? Number(req.query.startDistance) : undefined;
+    const informationEndDistance = req.query.endDistance !== undefined ? Number(req.query.endDistance) : undefined;
+    const informationSpecificDuration = req.query.specificDuration !== undefined ? Number(req.query.specificDuration) : undefined;
+    const informationStartDuration = req.query.startDuration !== undefined ? Number(req.query.startDuration) : undefined;
+    const informationEndDuration = req.query.endDuration !== undefined ? Number(req.query.endDuration) : undefined;
+
+    let checkAllFilledBox = true;
+
     const userActivities = await getUserActivities(userId);
+    const manageActivities : { findCommonActivities : any[] } = {
+      findCommonActivities: []
+    }
+    const searchedString: { activities: any[] } = {
+      activities: []
+    };
+    const searchedSpecificDate: { activities: any[] } = {
+      activities: []
+    };
+    const searchedDateIntevarl: { activities: any[] } = {
+      activities: []
+    };
+    const searchedSpecificDistance: { activities: any[] } = {
+      activities: []
+    };
+    const searchedDistanceInterval: { activities: any[] } = {
+      activities: []
+    };
+    const searchedSpecificDuration: { activities: any[] } = {
+      activities: []
+    };
+    const searchedDurationInterval: { activities: any[] } = {
+      activities: []
+    };
     const searchedActivities: { activities: any[] } = {
       activities: []
     };
@@ -223,16 +272,110 @@ export const getSpecifiedActivities = async (req: Request, res: Response, next: 
       return res.status(404).json({ error: 'No corresponding user' });
     }
     if (userActivities) {
-      for (const activity of userActivities) {
-        if (activity.name.includes(searchedInformation) || activity.type.includes(searchedInformation)
-          || activity.comment && activity.comment.includes(searchedInformation)
-          || activity.city && activity.city.includes(searchedInformation)) {
-          searchedActivities.activities.push(activity);
+        for (const activity of userActivities) {
 
+          if(informationString) {
+            if (researchString(informationString, activity)) {
+              searchedString.activities.push(activity);
+            }
+            if (checkAllFilledBox) {
+              manageActivities.findCommonActivities.push(searchedString);
+            }
+          }
+          if(informationSpecificDate) {
+            if (new Date(activity.date).getTime() == new Date(informationSpecificDate).getTime()) {
+              searchedSpecificDate.activities.push(activity);
+            }
+            if (checkAllFilledBox) {
+              manageActivities.findCommonActivities.push(searchedSpecificDate);
+            }
+          }
+          else if(informationStartDate && informationEndDate){
+            if (researchInterval(new Date(informationStartDate), new Date(informationEndDate), new Date(activity.date), activity)) {
+              searchedDateIntevarl.activities.push(activity);
+            }
+            if (checkAllFilledBox) {
+              manageActivities.findCommonActivities.push(searchedDateIntevarl);
+            }
+          }
+          if(informationSpecificDistance) {
+            if (activity.distanceTotal == informationSpecificDistance) {
+              searchedSpecificDistance.activities.push(activity);
+            }
+            if (checkAllFilledBox) {
+              manageActivities.findCommonActivities.push(searchedSpecificDistance);
+            }
+          }
+          else if (informationStartDistance && informationEndDistance) {
+            if (researchInterval(informationStartDistance, informationEndDistance, activity.distanceTotal , activity)) {
+              searchedDistanceInterval.activities.push(activity);
+            }
+            if (checkAllFilledBox) {
+              manageActivities.findCommonActivities.push(searchedDistanceInterval);
+            }
+          }
+
+          if(informationSpecificDuration) {
+            if (activity.durationTotal == informationSpecificDuration) {
+              searchedSpecificDuration.activities.push(activity);
+            }
+            if (checkAllFilledBox) {
+              manageActivities.findCommonActivities.push(searchedSpecificDuration);
+            }
+          }
+          else if (informationStartDuration && informationEndDuration) {
+            if (researchInterval(informationStartDuration, informationEndDuration, activity.durationTotal , activity)) {
+              searchedDurationInterval.activities.push(activity);
+            }
+            if (checkAllFilledBox) {
+              manageActivities.findCommonActivities.push(searchedDurationInterval);
+            }
+          }
+
+          checkAllFilledBox = false;
         }
-      }
-    }
 
+        if (manageActivities.findCommonActivities.length == 1) {
+          console.log(manageActivities.findCommonActivities[0].activities);
+          for (const activity1 of manageActivities.findCommonActivities[0].activities) {
+              searchedActivities.activities.push(activity1);
+          }
+        }
+        else if (manageActivities.findCommonActivities.length == 2) {
+          for (const activity1 of manageActivities.findCommonActivities[0].activities) {
+            for (const activity2 of manageActivities.findCommonActivities[1].activities) {
+                if (activity1.id == activity2.id) {
+                  searchedActivities.activities.push(activity1);
+                }
+            }
+          }
+        }
+        else if (manageActivities.findCommonActivities.length == 3) {
+          for (const activity1 of manageActivities.findCommonActivities[0].activities) {
+            for (const activity2 of manageActivities.findCommonActivities[1].activities) {
+              for (const activity3 of manageActivities.findCommonActivities[2].activities) {
+                if (activity1.id == activity2.id && activity1.id == activity3.id) {
+                  searchedActivities.activities.push(activity1);
+                }
+              }
+            }
+          }
+        }
+        else if (manageActivities.findCommonActivities.length == 4) {
+          for (const activity1 of manageActivities.findCommonActivities[0].activities) {
+            for (const activity2 of manageActivities.findCommonActivities[1].activities) {
+              for (const activity3 of manageActivities.findCommonActivities[2].activities) {
+                for (const activity4 of manageActivities.findCommonActivities[3].activities) {
+                  if (activity1.id == activity2.id && activity1.id == activity3.id && activity1.id == activity4.id) {
+                    searchedActivities.activities.push(activity1);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+    }
     return res.status(200).json(searchedActivities);
   } catch (error) {
     console.log(error);
