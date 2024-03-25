@@ -9,7 +9,7 @@ export const load: PageLoad = async ({ fetch }) => {
 
     return {
       res,
-      // user: await res.json(),
+      user: await res.json(),
     };
   } catch (error: unknown) {
     return {
