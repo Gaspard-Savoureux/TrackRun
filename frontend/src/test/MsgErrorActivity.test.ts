@@ -1,5 +1,5 @@
 import { describe, it, afterAll } from 'vitest';
-import { getErrorMessage } from '../routes/activity/+page.server';
+import { _getErrorMessage } from '../routes/activity/+page.server';
 import {ErrorCode} from '$lib/errorCode';
 
 let validTests: number = 0;
@@ -9,7 +9,7 @@ describe('Test #1 : Msg Error Manuel and Gpx', () => {
 
   it('Msg Error champ vide', () => {
     const variable = 'vide';
-    const message = getErrorMessage(ErrorCode.Missing, variable);
+    const message = _getErrorMessage(ErrorCode.Missing, variable);
     if (message === 'Veuillez entrer le champ "' + variable + '" de l\'activité.') {
       validTests++;
     } else {
@@ -19,7 +19,7 @@ describe('Test #1 : Msg Error Manuel and Gpx', () => {
 
   it('Msg Error champ Name', () => {
     const variable = 'Name';
-    const message = getErrorMessage(ErrorCode.InvalidNom, variable);
+    const message = _getErrorMessage(ErrorCode.InvalidNom, variable);
     if (message === 'Le champ "' + variable + '" de l\'activité doit être une chaîne de caractères d\'une longueur maximale de 256 caractères.') {
       validTests++;
     } else {
@@ -29,7 +29,7 @@ describe('Test #1 : Msg Error Manuel and Gpx', () => {
 
   it('Msg Error champ City', () => {
     const variable = 'City';
-    const message = getErrorMessage(ErrorCode.InvalidVille, variable);
+    const message = _getErrorMessage(ErrorCode.InvalidVille, variable);
     if (message === 'Le champ "' + variable + '" de l\'activité doit être une chaîne de caractères d\'une longueur maximale de 100 caractères.') {
       validTests++;
     } else {
@@ -39,7 +39,7 @@ describe('Test #1 : Msg Error Manuel and Gpx', () => {
 
   it('Msg Error champ Type activity', () => {
     const variable = 'Type activity';
-    const message = getErrorMessage(ErrorCode.InvalidTypeActivite, variable);
+    const message = _getErrorMessage(ErrorCode.InvalidTypeActivite, variable);
     if (message === 'Le champ "' + variable + '" de l\'activité doit être soit "Course" ou "Vélo".') {
       validTests++;
     } else {
@@ -49,7 +49,7 @@ describe('Test #1 : Msg Error Manuel and Gpx', () => {
 
   it('Msg Error champ Date', () => {
     const variable = 'Date';
-    const message = getErrorMessage(ErrorCode.InvalidDate, variable);
+    const message = _getErrorMessage(ErrorCode.InvalidDate, variable);
     if (message === 'Le champ "' + variable + '" de l\'activité doit être une date valide au format AAAA-MM-JJ.') {
       validTests++;
     } else {
@@ -59,7 +59,7 @@ describe('Test #1 : Msg Error Manuel and Gpx', () => {
 
   it('Msg Error champ Durée', () => {
     const variable = 'Durée';
-    const message = getErrorMessage(ErrorCode.InvalidDuree, variable);
+    const message = _getErrorMessage(ErrorCode.InvalidDuree, variable);
     if (message === 'Le champ "' + variable + '" de l\'activité doit être au format HH:MM, où HH représente les heures et MM les minutes.') {
       validTests++;
     } else {
@@ -69,7 +69,7 @@ describe('Test #1 : Msg Error Manuel and Gpx', () => {
 
   it('Msg Error champ Distance', () => {
     const variable = 'Distance';
-    const message = getErrorMessage(ErrorCode.InvalidDistance, variable);
+    const message = _getErrorMessage(ErrorCode.InvalidDistance, variable);
     if (message === 'Le champ "' + variable + '" de l\'activité doit être un nombre positif.') {
       validTests++;
     } else {
@@ -79,7 +79,7 @@ describe('Test #1 : Msg Error Manuel and Gpx', () => {
 
   it('Msg Error champ Comment', () => {
     const variable = 'Comment';
-    const message = getErrorMessage(ErrorCode.InvalidComment, variable);
+    const message = _getErrorMessage(ErrorCode.InvalidComment, variable);
     if (message === 'Le champ "' + variable + '" de l\'activité doit être une chaîne de caractères d\'une longueur maximale de 1000 caractères.') {
       validTests++;
     } else {
@@ -89,7 +89,7 @@ describe('Test #1 : Msg Error Manuel and Gpx', () => {
 
   it('Msg Error champ FileGPX', () => {
     const variable = 'FileGPX';
-    const message = getErrorMessage(ErrorCode.InvalidGPX, variable);
+    const message = _getErrorMessage(ErrorCode.InvalidGPX, variable);
     if (message === 'Le champ "' + variable + '" de l\'activité doit être au format GPX.') {
       validTests++;
     } else {
