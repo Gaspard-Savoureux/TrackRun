@@ -3,20 +3,13 @@ import { API_URL } from '../../constants';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
 import type { PlannedActivity } from '$lib/types/plannedActivity';
-
-
-function getTodayDate() {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Zero-pad month for YYYY-MM format
-  const day = String(date.getDate()).padStart(2, '0'); // Zero-pad day for YYYY-DD format
-  return `${year}-${month}-${day}`;
-}
+import { getLastMonday, getISOFromDate } from '$lib/plannedActivity/activity';
 
 function getUrl(from: string, type: string) {
   const url = new URL(`${API_URL}/plannedactivities?`);
+  // Week starts on monday by default
   if (!from) {
-    from = getTodayDate();
+    from = getISOFromDate(getLastMonday(new Date()));
   }
   url.searchParams.set('from', from);
 
