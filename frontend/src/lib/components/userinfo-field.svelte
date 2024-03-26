@@ -20,8 +20,6 @@
 
   span {
     align-self: center;
-    white-space: pre-wrap;
-    word-break: break-all;
   }
 
   .notset {
