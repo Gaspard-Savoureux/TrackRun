@@ -37,9 +37,13 @@
   ];
   // $: filteredUsers= data.users;
   let filter = '';
-  $: filteredUsers = users.filter(
-    (user) => user.username?.indexOf(filter) !== -1 || user.name?.indexOf(filter) !== -1,
-  );
+  $: formattedFilter = filter.toLocaleLowerCase();
+  $: filteredUsers = users.filter((user) => {
+    return (
+      user.username?.toLowerCase().includes(formattedFilter) ||
+      user.name?.toLowerCase().includes(formattedFilter)
+    );
+  });
 
   let currentUser: User | null;
 
