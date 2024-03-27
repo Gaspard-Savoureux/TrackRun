@@ -4,11 +4,66 @@
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import type { ActionResult } from '@sveltejs/kit';
   import type { ActionData, PageServerData } from './$types';
+  import { UserIcon } from 'svelte-feather-icons';
+  import { API_URL } from '../../constants';
 
   export let data: PageServerData;
   export let form: ActionData;
-  console.log(data.user.img)
 
+  /**Picture**/
+  let picture: File | null;
+  const handleFileChange = (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      picture = input.files[0];
+    }
+  };
+
+  let pictureResponseStatus = true;
+  let pictureResponseMsg = '';
+
+  const updatePicture = async () => {
+    if (!picture) {
+      pictureResponseStatus = false;
+      pictureResponseMsg = 'No image uploaded';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('picture', picture);
+
+    const res = await fetch(`${API_URL}/user/picture`, {
+      method: 'PUT',
+      credentials: 'include',
+      body: formData,
+    });
+
+    if (res.ok) {
+      pictureResponseStatus = true;
+      pictureResponseMsg = 'Picture updated successfully';
+      invalidateAll();
+    }
+  };
+
+  const deletePicture = async () => {
+    if (!data.user.img) {
+      pictureResponseStatus = false;
+      pictureResponseMsg = 'No image to delete';
+      return;
+    }
+    const res = await fetch(`${API_URL}/user/picture`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    if (res.ok) {
+      pictureResponseStatus = true;
+      pictureResponseMsg = 'Picture deleted successfully';
+      invalidateAll();
+    }
+  };
+
+  /**Update form**/
   let deleteConfirmation: string = '';
 
   const submitUpdateUser = async (event: { currentTarget: EventTarget & HTMLFormElement }) => {
@@ -36,109 +91,112 @@
 <section>
   <h1>Settings</h1>
   <h2>Update user profile</h2>
-  
-  <img src="{`${data.user.img}`}" height="40" width="40" alt='Profile Pic' />
 
-  <form method='POST' action='?/updatepicture' enctype='multipart/form-data' use:enhance>
+  <div class="picture">
+    {#if data.user?.img}
+      <img src={data.user?.img} alt={data.user?.username + 'image'} height="100px" width="100px" />
+    {:else}
+      <span class="user-icon"><UserIcon size="100" /> </span>
+    {/if}
     <label>
       Profile Picture
-      <input type='file' name='picture' accept='image/*' />
+      <input type="file" name="picture" accept="image/*" on:change={handleFileChange} />
     </label>
-    <button type='submit' > Update Picture '</button>
-
-  <form method='POST' action='?/deletepicture' use:enhance>
-    <button type='submit' > Delete Picture '</button>
-  </form>
- 
-
-  <form method='POST' action='?/user' on:submit|preventDefault={submitUpdateUser}>
-    <label>
-      Username
-      <input type="text" name="username" value={data.user.username} />
-    </label>
-    <label>
-      Email
-      <input type="email" name="email" value={data.user.email} />
-    </label>
-    <label>
-      Name
-      <input type="text" name="name" value={data.user.name} />
-    </label>
-    <label>
-      Age
-      <input type="number" name="age" value={data.user.age} />
-    </label>
-    <label>
-      <p>Height <span class="units">cm</span></p>
-      <input type="number" step="any" name="height" value={data.user.height} />
-    </label>
-    <label>
-      <p>Weight <span class="units">kg</span></p>
-      <input type="number" step="any" name="weight" value={data.user.weight} />
-    </label>
-    <label>
-      Sex
-      <select name="sex" bind:value={data.user.sex}>
-        <option value="Homme">Homme</option>
-        <option value="Femme">Femme</option>
-        <option value="Autre">Autre</option>
-      </select>
-    </label>
-    <label>
-      Description
-      <textarea name="description" placeholder="No description" bind:value={data.user.description}
-      ></textarea>
-    </label>
-    {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
-    {#if form?.success === true}<p class="success">{form?.message}</p>{/if}
-    <div>
-      <button type="submit">Update</button>
-    </div>
-  </form>
+    <button on:click={() => updatePicture()}> Update Picture</button>
+    <button on:click={() => deletePicture()}> Delete Picture</button>
+    <p class:pictureResponseStatus>{pictureResponseMsg}</p>
+  </div>
   <hr />
-  <h2>Update password</h2>
-  <form method="POST" action="?/password" use:enhance>
-    <label>
-      Password
-      <input type="password" placeholder="Enter new password" name="password" />
-    </label>
-    <label>
-      Confirm Password
-      <input type="password" placeholder="Confirm new password" name="confirm-password" />
-    </label>
-    {#if form?.passwordSuccess === false}<p class="danger">{form?.passwordMessage}</p>{/if}
-    {#if form?.passwordSuccess === true}<p class="success">{form?.passwordMessage}</p>{/if}
-    <div>
-      <button type="submit">Update</button>
-    </div>
-  </form>
-  <hr />
-  <h2>Theme</h2>
-  <ThemeSwitcher />
-  <hr />
-  <h2>Logout</h2>
-  <a class="button danger" href="/logout">logout</a>
-  <hr />
-  <h2>Delete account</h2>
-  <form method="POST" action="?/delete" use:enhance>
-    <label>
-      Type "Yes, I agree" to delete your account
-      <input
-        type="text"
-        placeholder="Yes, I agree"
-        name="confirmation"
-        bind:value={deleteConfirmation}
-      />
-    </label>
-    <p class="danger">This action cannot be undone</p>
-    <div>
-      <button
-        class="button danger {deleteConfirmation.toLowerCase() === 'yes, i agree'
-          ? ''
-          : 'disabled'}"
-        type="submit">delete account</button
-      >
-    </div>
+  <form method="POST" action="?/updatepicture" enctype="multipart/form-data" use:enhance>
+    <form method="POST" action="?/user" on:submit|preventDefault={submitUpdateUser}>
+      <label>
+        Username
+        <input type="text" name="username" value={data.user.username} />
+      </label>
+      <label>
+        Email
+        <input type="email" name="email" value={data.user.email} />
+      </label>
+      <label>
+        Name
+        <input type="text" name="name" value={data.user.name} />
+      </label>
+      <label>
+        Age
+        <input type="number" name="age" value={data.user.age} />
+      </label>
+      <label>
+        <p>Height <span class="units">cm</span></p>
+        <input type="number" step="any" name="height" value={data.user.height} />
+      </label>
+      <label>
+        <p>Weight <span class="units">kg</span></p>
+        <input type="number" step="any" name="weight" value={data.user.weight} />
+      </label>
+      <label>
+        Sex
+        <select name="sex" bind:value={data.user.sex}>
+          <option value="Homme">Homme</option>
+          <option value="Femme">Femme</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </label>
+      <label>
+        Description
+        <textarea name="description" placeholder="No description" bind:value={data.user.description}
+        ></textarea>
+      </label>
+      {#if form?.success === false}<p class="danger">{form?.message}</p>{/if}
+      {#if form?.success === true}<p class="success">{form?.message}</p>{/if}
+      <div>
+        <button type="submit">Update</button>
+      </div>
+    </form>
+    <hr />
+    <h2>Update password</h2>
+    <form method="POST" action="?/password" use:enhance>
+      <label>
+        Password
+        <input type="password" placeholder="Enter new password" name="password" />
+      </label>
+      <label>
+        Confirm Password
+        <input type="password" placeholder="Confirm new password" name="confirm-password" />
+      </label>
+      {#if form?.passwordSuccess === false}<p class="danger">{form?.passwordMessage}</p>{/if}
+      {#if form?.passwordSuccess === true}<p class="success">{form?.passwordMessage}</p>{/if}
+      <div>
+        <button type="submit">Update</button>
+      </div>
+    </form>
+    <hr />
+    <h2>Theme</h2>
+    <ThemeSwitcher />
+    <hr />
+    <h2>Logout</h2>
+    <a class="button danger" href="/logout">logout</a>
+    <hr />
+    <h2>Delete account</h2>
+    <form method="POST" action="?/delete" use:enhance>
+      <label>
+        Type "Yes, I agree" to delete your account
+        <input
+          type="text"
+          placeholder="Yes, I agree"
+          name="confirmation"
+          bind:value={deleteConfirmation}
+        />
+      </label>
+      <p class="danger">This action cannot be undone</p>
+      <div>
+        <button
+          class="button danger {deleteConfirmation.toLowerCase() === 'yes, i agree'
+            ? ''
+            : 'disabled'}"
+          type="submit">delete account</button
+        >
+      </div>
+    </form>
   </form>
 </section>
 
@@ -164,6 +222,24 @@
   h2 {
     margin: 0 0 1.5rem 0;
   }
+
+  /**Profil pic**/
+  img {
+    /* border-radius: 50%; */
+    margin: 0 auto;
+  }
+
+  .picture > button {
+    margin: 1rem 1rem 0 0;
+  }
+  .picture > p {
+    margin-top: 1rem;
+    color: var(--danger);
+  }
+  .picture > .pictureResponseStatus {
+    color: var(--success);
+  }
+  /****/
 
   label {
     display: flex;

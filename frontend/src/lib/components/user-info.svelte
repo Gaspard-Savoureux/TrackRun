@@ -1,6 +1,7 @@
 <script lang="ts">
   import Item from '$lib/components/userinfo-field.svelte';
   import type { User } from '$lib/types/user';
+  import { UserIcon } from 'svelte-feather-icons';
 
   export let user: User;
 </script>
@@ -16,11 +17,16 @@
     <Item name="Sex" value={user?.sex} />
     <Item name="Weight" value={user?.weight && user?.weight + ' kg'} />
   </div>
-
   <Item name="Description" value={user?.description} />
+  {#if user.img}
+    <img src={`${user.img}`} height="100" width="100" alt="Profile Pic" />
+  {:else}
+    <span class="user-icon"><UserIcon size="100" /> </span>
+  {/if}
 </div>
 
 <div class="column mobile">
+  <img src={`${user.img}`} height="100" width="100" alt="Profile Pic" />
   <Item name="Username" value={user?.username} />
   <Item name="Email" value={user?.email} />
   <Item name="Age" value={user?.age} />
@@ -60,5 +66,10 @@
     .desktop {
       display: none;
     }
+  }
+
+  img,
+  .user-icon {
+    margin: 1rem auto;
   }
 </style>

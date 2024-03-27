@@ -129,57 +129,57 @@ export const actions: object = {
     return fail(400, { passwordSuccess: false, passwordMessage: 'An error occured'});
   },
   
-  deletepicture: async ({ locals, request }) => {
-    const res = await fetch(`${API_URL}/user/picture`, {
-      method: 'DELETE',
-      headers: { 
-        'Accept': 'application/json', 
-        'Authorization': `Bearer ${locals.token}`, 
-      },
-    });
+  // deletepicture: async ({ locals, request }) => {
+  //   const res = await fetch(`${API_URL}/user/picture`, {
+  //     method: 'DELETE',
+  //     headers: { 
+  //       Accept: 'application/json', 
+  //       Authorization: `Bearer ${locals.token}`, 
+  //     },
+  //   });
   
-    if (res.ok) {
-      return {
-        body: {
-          success: true,
-          message: 'Picture deleted successfully',
-        },
-        status: 200, // Explicitly setting the status to 200 OK
-      };
-    } else {
-      // Assuming 'fail' was a placeholder, this is how you can return an error response
-      return {
-        body: {
-          success: false,
-          message: 'An error occurred',
-        },
-        status: 400, // Returning a 400 status code for client-side errors
-      };
-    }
-  },
+  //   if (res.ok) {
+  //     return {
+  //       body: {
+  //         success: true,
+  //         message: 'Picture deleted successfully',
+  //       },
+  //       status: 200, // Explicitly setting the status to 200 OK
+  //     };
+  //   } else {
+  //     // Assuming 'fail' was a placeholder, this is how you can return an error response
+  //     return {
+  //       body: {
+  //         success: false,
+  //         message: 'An error occurred',
+  //       },
+  //       status: 400, // Returning a 400 status code for client-side errors
+  //     };
+  //   }
+  // },
   
 
-  updatepicture: async ({ locals, request }: RequestEvent) => {
-    const data = await request.formData();
-    const form = new FormData();
-    form.append('picture', data.get('picture') || '');
+  // updatepicture: async ({ locals, request }: RequestEvent) => {
+  //   const data = await request.formData();
+  //   const form = new FormData();
+  //   form.append('picture', data.get('picture') || '');
   
-    const res = await fetch(`${API_URL}/user/picture`, {
-      method: 'PUT',
-      headers: { 
-        Authorization: `Bearer ${locals.token}`,
-      },
-      body: form
-    });
+  //   const res = await fetch(`${API_URL}/user/picture`, {
+  //     method: 'PUT',
+  //     headers: { 
+  //       Authorization: `Bearer ${locals.token}`,
+  //     },
+  //     body: form,
+  //   });
   
-    if (res.ok) {
-      return {
-        success: true,
-        message: 'Picture updated successfully',
-      };
-    }
-    return fail(400, { success: false, message: 'An error occurred'});
-  },
+  //   if (res.ok) {
+  //     return {
+  //       success: true,
+  //       message: 'Picture updated successfully',
+  //     };
+  //   }
+  //   return fail(400, { success: false, message: 'An error occurred'});
+  // },
   
 
 

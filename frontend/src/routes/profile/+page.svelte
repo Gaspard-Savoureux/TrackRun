@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { API_URL } from '../../constants';
   import UserInfo from '$lib/components/user-info.svelte';
   import type { PageData } from './$types';
-  
 
   export let data: PageData;
 
@@ -15,7 +13,6 @@
 
 <section>
   <h1>Your Profile</h1>
-  <img src="{`${data.user.img}`}" height="40" width="40" alt='Profile Pic' />
   <UserInfo {user} />
 </section>
 
