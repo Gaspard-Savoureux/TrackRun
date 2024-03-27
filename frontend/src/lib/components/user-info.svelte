@@ -26,7 +26,11 @@
 </div>
 
 <div class="column mobile">
-  <img src={`${user.img}`} height="100" width="100" alt="Profile Pic" />
+  {#if user.img}
+    <img src={`${user.img}`} height="100" width="100" alt="Profile Pic" />
+  {:else}
+    <span class="user-icon"><UserIcon size="100" /> </span>
+  {/if}
   <Item name="Username" value={user?.username} />
   <Item name="Email" value={user?.email} />
   <Item name="Age" value={user?.age} />
