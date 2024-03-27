@@ -75,5 +75,6 @@
   img,
   .user-icon {
     margin: 1rem auto;
+    border-radius: 4px;
   }
 </style>

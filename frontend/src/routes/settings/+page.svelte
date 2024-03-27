@@ -225,7 +225,7 @@
 
   /**Profil pic**/
   img {
-    /* border-radius: 50%; */
+    border-radius: 4px;
     margin: 0 auto;
   }
 
