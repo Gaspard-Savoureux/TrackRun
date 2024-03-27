@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { getFormatDate, getFormatDuration, getFormatTime } from '$lib/plannedActivity/activity';
+	import { getFormatDate, getFormatDuration, getFormatTime, getLastMonday, getISOFromDate, getDateFromISO } from '$lib/plannedActivity/activity';
 	import { activityType } from '$lib/plannedActivity/activity.js';
-	import { goto } from '$app/navigation';
+  import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
   import type { PlannedActivity } from '$lib/types/plannedActivity.js';
 
@@ -13,12 +13,11 @@
   }[]
 
 	// Set today's date
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Normalize today's date
+  const lastMonday = getLastMonday(new Date());
+  lastMonday.setHours(0, 0, 0, 0); // Normalize today's date
 
 	// Filters
   let date: Date;
-  let type: string;
   let dateParam: string | null;
   let daysWithActivities: Calendar;
 
@@ -26,30 +25,24 @@
   $: ({ plannedActivities } = data);
   $: {
 	  dateParam = $page.url.searchParams.get('from');
-	  date = dateParam ? new Date(dateParam) : today;
-	  type = $page.url.searchParams.get('type') || 'All';
+	  date = dateParam ? getDateFromISO(dateParam) : lastMonday;
 	  daysWithActivities = getDaysWithActivities();
   }
 	
   const handleFilter = () => {
-	  goto(`?from=${getDateString()}&type=${type}`);
+    // Binding value on select doesn't work on all browser. Use this instead
+    const type =  (<HTMLInputElement>document.getElementById('type')).value;
+	  goto(`?from=${getISOFromDate(date)}&type=${type}`);
   };
 
   const handleActivityClick = (id: number | null) => {
     goto(`./plannedActivity?id=${id}`);
   };
   
-  function addDaysToDate(date: Date | string, days: number): Date {
+  function addDaysToDate(date: Date, days: number): Date {
     const result = new Date(date);
     result.setDate(result.getDate() + days);
     return result;
-  }
-
-  function getDateString() {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    return `${year}-${month}-${day}`;
   }
 
   function nextDay() {
@@ -57,7 +50,7 @@
   }
 
   function nextWeek() {
-    date = addDaysToDate(date, 7);
+    date = getLastMonday(addDaysToDate(date, 7));
   }
 
   function prevDay() {
@@ -65,7 +58,7 @@
   }
 
   function prevWeek() {
-    date = addDaysToDate(date, -7);
+    date = getLastMonday(addDaysToDate(date, -7));
   }
 
   // Preparing activities for the next 7 days
@@ -88,7 +81,7 @@
 		<div class="filters">
 			<div class="filter" on:change={handleFilter}>
 				<label for="type">Type</label>
-				<select bind:value={type} id="type" name="type">
+				<select id="type" name="type">
 					<option value="All">All</option>
 				{#each activityType as type}
 					<option value={type}>{type}</option>
