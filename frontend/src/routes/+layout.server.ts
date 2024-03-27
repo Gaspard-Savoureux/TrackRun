@@ -14,5 +14,6 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 
   return {
     theme,
+    isTrainer: cookies.get('is_trainer') === '1',
   };
 };

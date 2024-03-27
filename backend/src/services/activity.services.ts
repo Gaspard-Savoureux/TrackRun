@@ -41,3 +41,16 @@ export const deleteActivityById = async (activityId: number, userId: number) => 
       )
     );
 };
+
+/*
+export const getWeeklyActivities = async (date: Date, userId: number) => {
+
+  return await db.delete(activities)
+    .where(
+      and(
+        eq(activities.user_id, userId),
+        eq(activities.)
+      )
+    );
+}
+*/

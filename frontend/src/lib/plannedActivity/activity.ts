@@ -1,5 +1,24 @@
 import type { PlannedActivity } from '$lib/types/plannedActivity';
 
+export const activityType = ['Running', 'Biking', 'Walking'];
+
+export function getLastMonday(date: Date): Date {
+  date.setDate(date.getDate() - (date.getDay() + 6) % 7);
+  return date;
+}
+
+export function getDateFromISO(dateStr: string): Date {
+  const fields = dateStr.split('-').map((i) => Number(i));
+  return new Date(fields[0], fields[1] - 1, fields[2]);
+}
+
+export function getISOFromDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Zero-pad month for YYYY-MM format
+  const day = String(date.getDate()).padStart(2, '0'); // Zero-pad day for YYYY-DD format
+  return `${year}-${month}-${day}`;
+}
+
 export function getFormatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('fr-CA', {
@@ -8,6 +27,13 @@ export function getFormatDate(dateString: string): string {
     month: 'long',
     day: 'numeric',
   });
+}
+
+export function getFormatTime(dateString: string): string {
+  const date = new Date(dateString);
+  const hours = date.getHours();
+  const min = String(date.getMinutes()).padStart(2,'0');
+  return `${hours}h${min}`;
 }
 
 export function getFormatDuration(duration: number): string {

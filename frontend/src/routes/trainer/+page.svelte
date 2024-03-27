@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
-  import { API_URL } from '../constants';
+  import { API_URL } from '../../constants';
 
   let backendData: string;
   onMount(async () => {
@@ -15,10 +15,6 @@
 
   export let data: PageData;
 </script>
-
-<svelte:head>
-  <title>Home</title>
-</svelte:head>
 
 <h1>It works!</h1>
 <div>from client: {backendData ?? 'loading'}</div>

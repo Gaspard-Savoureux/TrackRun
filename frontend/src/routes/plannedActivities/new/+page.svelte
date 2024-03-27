@@ -1,5 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import { activityType } from '$lib/plannedActivity/activity.js';
+  
   export let form;
 </script>
 
@@ -57,16 +59,16 @@
     {#if form?.submitted}
       <div class=submit-box>
         <h3>Activity planned!</h3>
-        <a class="btn" href="/plannedActivity?id={form?.id}">See planned activity</a>
+        <a class="btn" href="/plannedActivities">See planned activities</a>
       </div> 
     {:else}
       <form method="POST" use:enhance>
       <label for="type">Type<span class="danger">*</span></label>
       <select id="type" name="type">
-      <option value="Running">Running</option>
-      <option value="Biking">Biking</option>
-      <option value="Walking">Walking</option>
-      </select>
+        {#each activityType as type}
+          <option value={type}>{type}</option>
+        {/each}
+        </select>
 
       <label for="date">Date<span class="danger">*</span></label>
       <input id="date" type="date" name="date"/>

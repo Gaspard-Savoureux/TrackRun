@@ -1,22 +1,70 @@
 <script lang="ts">
-  import { getFormatDate, getFormatDuration } from '$lib/plannedActivity/activity';
+	import { getFormatDate, getFormatDuration, getFormatTime, getLastMonday, getISOFromDate, getDateFromISO } from '$lib/plannedActivity/activity';
+	import { activityType } from '$lib/plannedActivity/activity.js';
+  import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+  import type { PlannedActivity } from '$lib/types/plannedActivity.js';
+
   export let data;
+
+  type Calendar = {
+	  day: Date, 
+	  activities: PlannedActivity[]
+  }[]
+
+	// Set today's date
+  const lastMonday = getLastMonday(new Date());
+  lastMonday.setHours(0, 0, 0, 0); // Normalize today's date
+
+	// Filters
+  let date: Date;
+  let dateParam: string | null;
+  let daysWithActivities: Calendar;
+
+  // Reactive variables
   $: ({ plannedActivities } = data);
+  $: {
+	  dateParam = $page.url.searchParams.get('from');
+	  date = dateParam ? getDateFromISO(dateParam) : lastMonday;
+	  daysWithActivities = getDaysWithActivities();
+  }
+	
+  const handleFilter = () => {
+    // Binding value on select doesn't work on all browser. Use this instead
+    const type =  (<HTMLInputElement>document.getElementById('type')).value;
+	  goto(`?from=${getISOFromDate(date)}&type=${type}`);
+  };
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Normalize today's date
-
-  // Function to add days
-  const addDays = (date: Date, days: number) => {
+  const handleActivityClick = (id: number | null) => {
+    goto(`./plannedActivity?id=${id}`);
+  };
+  
+  function addDaysToDate(date: Date, days: number): Date {
     const result = new Date(date);
     result.setDate(result.getDate() + days);
     return result;
-  };
+  }
+
+  function nextDay() {
+    date = addDaysToDate(date, 1);
+  }
+
+  function nextWeek() {
+    date = getLastMonday(addDaysToDate(date, 7));
+  }
+
+  function prevDay() {
+    date = addDaysToDate(date, -1);
+  }
+
+  function prevWeek() {
+    date = getLastMonday(addDaysToDate(date, -7));
+  }
 
   // Preparing activities for the next 7 days
-  function getDaysWithActivities() {
+  function getDaysWithActivities(): Calendar {
     return Array.from({ length: 7 }).map((_, index) => {
-      const day = addDays(today, index);
+      const day = addDaysToDate(date, index);
       const activitiesForDay = plannedActivities.filter((activity) => {
         const activityDate = new Date(activity.date);
         activityDate.setHours(0, 0, 0, 0);
@@ -25,48 +73,67 @@
       return { day, activities: activitiesForDay };
     });
   }
-
-  function handleActivityClick(activity_id: number | null) {
-    window.location.href = `./plannedActivity?id=${activity_id}`;
-  }
 </script>
 
 <body class="planned-activities">
-  {#await plannedActivities}
-    <h1>Loading...</h1>
-    <!-- Make a pretty loader -->
-  {:then}
-    <article class="planning-container">
-      <h1>Planning this week</h1>
-      {#each getDaysWithActivities() as { day, activities }}
-        {#if activities.length > 0}
-          {#each activities as activity}
-            <div class="activity-card">
-              <button class="view-btn" on:click={() => handleActivityClick(activity.id)}
-                >Voir</button
-              >
-              <div class="activity-date">{getFormatDate(activity.date)}</div>
-
-              <div class="activity-title">{activity.name || activity.type}</div>
-
-              <div class="activity-duration">{getFormatDuration(activity.duration)}</div>
-              {#if activity.comment}
-                <div class="activity-comment">{activity.comment}</div>
-              {/if}
-            </div>
-          {/each}
-        {:else}
-          <div class="no-activity-card">
-            <div class="activity-date">{getFormatDate(day.toISOString())}</div>
-            <div class="no-activity-title">No activity planned today.</div>
-          </div>
-        {/if}
-      {/each}
-      <a href="/plannedActivities/new" class="new-activity-button">Plan New Activity</a>
-    </article>
-  {:catch error}
-    <p>{error.message}</p>
-  {/await}
+	<article class="planning-container">
+		<h1>Planning this week</h1>
+		<div class="filters">
+			<div class="filter" on:change={handleFilter}>
+				<label for="type">Type</label>
+				<select id="type" name="type">
+					<option value="All">All</option>
+				{#each activityType as type}
+					<option value={type}>{type}</option>
+				{/each}
+				</select>
+			</div>
+			<div class="filter">
+				<button on:click={prevWeek} on:click={handleFilter} class="no-btn">
+					<i class="arrow left"></i><i class="arrow left"></i>
+				</button>
+				<button on:click={prevDay} on:click={handleFilter} class="no-btn">
+					<i class="arrow left"></i>
+				</button>
+				<button on:click={nextDay} on:click={handleFilter} class="no-btn">
+					<i class="arrow right"></i>
+				</button>
+				<button on:click={nextWeek} on:click={handleFilter} class="no-btn">
+					<i class="arrow right"></i><i class="arrow right"></i>
+				</button>
+			</div>
+		</div>
+		{#await plannedActivities}
+		  <!-- Make a pretty loader -->
+			<h2>Loading...</h2>
+		{:then}
+			{#each daysWithActivities as { day, activities }}
+				{#if activities.length > 0}
+					{#each activities as activity}
+						<div class="activity-card">
+							<button class="view-btn" on:click={() => handleActivityClick(activity.id)}>
+								Details
+							</button>
+							<div class="activity-date">{getFormatDate(activity.date)} - {getFormatTime(activity.date)}</div>
+							<div class="activity-title">{activity.name || activity.type}</div>
+							<div class="activity-duration">{getFormatDuration(activity.duration)}</div>
+							{#if activity.comment}
+								<div class="activity-comment">{activity.comment}</div>
+							{/if}
+						</div>
+					{/each}
+				{:else}
+					<div class="no-activity-card">
+						<div class="activity-date">{getFormatDate(day.toISOString())}</div>
+						<div class="no-activity-title">No activity planned today.</div>
+					</div>
+				{/if}
+			{/each}
+			<a href="/plannedActivities/new" class="new-activity-button">Plan New Activity</a>
+		{:catch error}
+			<p>{error.message}</p>
+		{/await}
+	</article>
 </body>
 
 <style>
@@ -198,17 +265,6 @@
     padding: var(--planning-container-padding);
   }
 
-  .view-btn {
-    float: right;
-    padding: 5px 8px;
-    margin-bottom: 5px;
-    background-color: #555;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
   .activity-card {
     height: var(--activity-card-height);
     margin-bottom: var(--activity-card-margin-bottom);
@@ -274,6 +330,58 @@
   .new-activity-button:hover {
     background-color: #0056b3;
   }
+
+	.arrow {
+		border: solid var(--link);
+		border-width: 0 3px 3px 0;
+		display: inline-block;
+		padding: 8px;
+	}
+
+	.right {
+		transform: rotate(-45deg);
+		-webkit-transform: rotate(-45deg);
+	}
+
+	.left {
+		transform: rotate(135deg);
+		-webkit-transform: rotate(135deg);
+	}
+
+	.no-btn {
+		background-color: rgba(255,255,255,0);
+		border: 0px;
+		margin: 5px;
+		cursor: pointer;
+	}
+
+	.no-btn:hover > .arrow {
+    border: solid var(--link-hover);
+	  border-width: 0 3px 3px 0;
+	}
+
+	.view-btn {
+    float: right;
+    padding: 5px 8px;
+    margin-bottom: 5px;
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+	.filters {
+		display: flex;
+    justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		padding: 5px;
+	}
+
+	.filter {
+		display:block;
+	}
 
   article {
     font-family: 'Montserrat', sans-serif;
