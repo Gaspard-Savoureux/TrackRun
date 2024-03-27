@@ -17,22 +17,25 @@
   lastMonday.setHours(0, 0, 0, 0); // Normalize today's date
 
 	// Filters
-  let date: Date;
   let dateParam: string | null;
+  let typeParam: string | null;
+  let dateFilter: Date;
+
   let daysWithActivities: Calendar;
 
   // Reactive variables
   $: ({ plannedActivities } = data);
   $: {
+    typeParam = $page.url.searchParams.get('type');
 	  dateParam = $page.url.searchParams.get('from');
-	  date = dateParam ? getDateFromISO(dateParam) : lastMonday;
+	  dateFilter = dateParam ? getDateFromISO(dateParam) : lastMonday;
 	  daysWithActivities = getDaysWithActivities();
   }
 	
   const handleFilter = () => {
     // Binding value on select doesn't work on all browser. Use this instead
-    const type =  (<HTMLInputElement>document.getElementById('type')).value;
-	  goto(`?from=${getISOFromDate(date)}&type=${type}`);
+    const typeFilter =  (<HTMLInputElement>document.getElementById('type')).value;
+	  goto(`?from=${getISOFromDate(dateFilter)}&type=${typeFilter}`);
   };
 
   const handleActivityClick = (id: number | null) => {
@@ -46,25 +49,25 @@
   }
 
   function nextDay() {
-    date = addDaysToDate(date, 1);
+    dateFilter = addDaysToDate(dateFilter, 1);
   }
 
   function nextWeek() {
-    date = getLastMonday(addDaysToDate(date, 7));
+    dateFilter = getLastMonday(addDaysToDate(dateFilter, 7));
   }
 
   function prevDay() {
-    date = addDaysToDate(date, -1);
+    dateFilter = addDaysToDate(dateFilter, -1);
   }
 
   function prevWeek() {
-    date = getLastMonday(addDaysToDate(date, -7));
+    dateFilter = getLastMonday(addDaysToDate(dateFilter, -7));
   }
 
   // Preparing activities for the next 7 days
   function getDaysWithActivities(): Calendar {
     return Array.from({ length: 7 }).map((_, index) => {
-      const day = addDaysToDate(date, index);
+      const day = addDaysToDate(dateFilter, index);
       const activitiesForDay = plannedActivities.filter((activity) => {
         const activityDate = new Date(activity.date);
         activityDate.setHours(0, 0, 0, 0);
@@ -79,13 +82,13 @@
 	<article class="planning-container">
 		<h1>Planning this week</h1>
 		<div class="filters">
-			<div class="filter" on:change={handleFilter}>
+			<div class="filter">
 				<label for="type">Type</label>
-				<select id="type" name="type">
+				<select on:change={handleFilter} id="type" name="type">
 					<option value="All">All</option>
-				{#each activityType as type}
-					<option value={type}>{type}</option>
-				{/each}
+				  {#each activityType as type}
+					  <option value={type} selected={type === typeParam}>{type}</option>
+				  {/each} 
 				</select>
 			</div>
 			<div class="filter">
@@ -107,6 +110,9 @@
 		  <!-- Make a pretty loader -->
 			<h2>Loading...</h2>
 		{:then}
+      {#if data.error}
+          <p class="danger">{data.error}</p>
+      {/if}
 			{#each daysWithActivities as { day, activities }}
 				{#if activities.length > 0}
 					{#each activities as activity}
