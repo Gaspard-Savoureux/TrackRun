@@ -1,10 +1,4 @@
 <script lang="ts">
-  import DataTable, { Head, Body, Row, Cell, Label, SortValue} from '@smui/data-table';
-  import IconButton from '@smui/icon-button';
-  import Textfield from '@smui/textfield';
-  import HelperText from '@smui/textfield/helper-text';
-  import Button from '@smui/button';
-  import Paper, { Title, Content } from '@smui/paper';
   import type { PageData } from './$types';
   import type { User } from '$lib/types/user';
   import { API_URL } from '../../../constants';
@@ -15,24 +9,7 @@
 
   let query = '';
   let assignedUsers: User[] = [];
-
-  // For sorting the list 
-  let sort: keyof User = 'username';
-  let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
-  // Sort the users list
-  function handleSort() {
-    users.sort((a: User, b: User) => {
-      const [aVal, bVal] = [a[sort], b[sort]][
-        sortDirection === 'ascending' ? 'slice' : 'reverse'
-      ]();
-      if (typeof aVal === 'string' && typeof bVal === 'string') {
-        return aVal.localeCompare(bVal);
-      }
-      return Number(aVal) - Number(bVal);
-    });
-    users = users;
-  }
-
+  onMount(fetchAssignedUsers);
 
   // Filter the users list
   $: filteredUsers = users.filter((user: User) => {
@@ -92,74 +69,95 @@
       }
     }
 
-  onMount(fetchAssignedUsers);
 </script>
 
 <div class="paper-container">
-
-  <Paper>
-    <Title>Search for users</Title>
-    <Content>
-      <Textfield
-      class="shaped-outlined"
-      variant="outlined"
-      helperLine$style="width: 100%;"
-      style="width: 100%;"
-      bind:value={query}
-      label="Label"
-    >
-      <HelperText slot="helper">Helper Text</HelperText>
-    </Textfield>
-    </Content>
-  </Paper>
+  <div class="paper">
+    <div class="paper-title">Search for users</div>
+    <div class="paper-content">
+      <input 
+        type="text" 
+        class="textfield" 
+        bind:value={query} 
+        placeholder="Label"
+      />
+      <p class="helper-text">Helper Text</p>
+    </div>
+  </div>
   <pre class="status">Searching for: {query}</pre>
 </div>
- 
 
-<DataTable
-  sortable
-  bind:sort
-  bind:sortDirection
-  on:SMUIDataTable:sorted={handleSort}
-  table$aria-label="User list"
-  style="width: 100%;">
-  <Head>
-    <Row>
-      <Cell columnId="name">
-        <Label>Name</Label>
-        <IconButton class="material-icons">arrow_upward</IconButton>
-      </Cell>
-      <Cell columnId="username">
-        <Label>Username</Label>
-        <IconButton class="material-icons">arrow_upward</IconButton>
-      </Cell>
-      <Cell columnId="email">
-        <Label>Email</Label>
-        <IconButton class="material-icons">arrow_upward</IconButton>
-      </Cell>
-      <Cell columnId="add">
-        <Label></Label>
-      </Cell>
-    </Row>
-  </Head>
-  <Body>
+<table aria-label="User list" style="width: 100%;">
+  <thead>
+    <tr>
+      <th>Name <i class="material-icons">arrow_upward</i></th>
+      <th>Username <i class="material-icons">arrow_upward</i></th>
+      <th>Email <i class="material-icons">arrow_upward</i></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
     {#each filteredUsers as item (item.id)}
-      <Row>
-        <Cell>{item.name}</Cell>
-        <Cell>{item.username}</Cell>
-        <Cell>{item.email}</Cell>
-        <Cell>
-      {#if assignedUsers.some((trainerUser) => trainerUser.id === item.id)}
-        <Button on:click={() => removeUserFromTrainer(item.id)}>Remove User</Button>
-      {:else}
-        <Button on:click={() => addUserToTrainer(item.id)}>Add User</Button>
-      {/if}        
-    </Cell>
-      </Row>
+      <tr>
+        <td>{item.name}</td>
+        <td>{item.username}</td>
+        <td>{item.email}</td>
+        <td>
+          {#if assignedUsers.some(trainerUser => trainerUser.id === item.id)}
+            <button on:click={() => removeUserFromTrainer(item.id)}>Remove User</button>
+          {:else}
+            <button on:click={() => addUserToTrainer(item.id)}>Add User</button>
+          {/if}
+        </td>
+      </tr>
     {/each}
-  </Body>
-</DataTable>
+  </tbody>
+</table>
 
 <style>
+  .paper-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
+  .paper {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: 300px; /* Adjust width as needed */
+  }
+
+  .paper-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 20px;
+    text-align: center;
+  }
+
+  .paper-content {
+    padding: 20px;
+  }
+
+  .textfield {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+
+  .helper-text {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+  }
+
+  .status {
+    font-size: 0.8rem;
+    color: #666;
+    text-align: center;
+  }
 </style>
