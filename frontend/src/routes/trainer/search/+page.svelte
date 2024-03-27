@@ -87,13 +87,13 @@
   <pre class="status">Searching for: {query}</pre>
 </div>
 
-<table aria-label="User list" style="width: 100%;">
+<table aria-label="User list">
   <thead>
     <tr>
       <th>Name <i class="material-icons">arrow_upward</i></th>
       <th>Username <i class="material-icons">arrow_upward</i></th>
       <th>Email <i class="material-icons">arrow_upward</i></th>
-      <th></th>
+      <th>Action</th>
     </tr>
   </thead>
   <tbody>
@@ -104,9 +104,9 @@
         <td>{item.email}</td>
         <td>
           {#if assignedUsers.some(trainerUser => trainerUser.id === item.id)}
-            <button on:click={() => removeUserFromTrainer(item.id)}>Remove User</button>
+            <button class="remove-button" on:click={() => removeUserFromTrainer(item.id)}>Remove User</button>
           {:else}
-            <button on:click={() => addUserToTrainer(item.id)}>Add User</button>
+            <button class="add-button" on:click={() => addUserToTrainer(item.id)}>Add User</button>
           {/if}
         </td>
       </tr>
@@ -115,6 +115,7 @@
 </table>
 
 <style>
+  /* for search */
   .paper-container {
     display: flex;
     flex-direction: column;
@@ -126,7 +127,8 @@
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
-    width: 300px; /* Adjust width as needed */
+    width: 90%
+
   }
 
   .paper-title {
@@ -159,5 +161,56 @@
     font-size: 0.8rem;
     color: #666;
     text-align: center;
+  }
+
+  /* for table */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    cursor: pointer;
+  }
+
+  th i {
+    vertical-align: middle;
+    font-size: 16px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  button {
+    padding: 8px 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  .add-button {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .add-button:hover {
+    background-color: #0056b3;
+  }
+
+  .remove-button {
+    background-color: #ff4d4d; /* Red color */
+    color: #fff;
+  }
+
+  .remove-button:hover {
+    background-color: #ff3333; /* Darker red on hover */
   }
 </style>
