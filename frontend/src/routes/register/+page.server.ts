@@ -1,6 +1,7 @@
 import { redirect, fail } from '@sveltejs/kit';
 import type { RequestEvent } from '../$types';
 import { API_URL } from '../../constants';
+import { birthdayValidation, emailValidation } from '$lib/utils/userValidation';
 
 export const actions: object = {
   register: async ({ cookies, fetch, request }: RequestEvent) => {
@@ -12,13 +13,26 @@ export const actions: object = {
     const firstname = data.get('firstname');
     const birthdate = data.get('birthdate');
 
-    
     if (!username || !email || !password || !lastname || !firstname || !birthdate) {
       return fail(400, {
         success: false,
         message: 'All fields are required',
       });
     }
+
+    // TODO implémenter validation mot de passe (pas encore présente car risque d'agaçer pendant les démos)
+    
+    const validateEmail = emailValidation(email as string);
+    if (validateEmail) return fail(400, {
+      success: false,
+      message: validateEmail,
+    });
+
+    const validateBirthdate = birthdayValidation(birthdate as string);
+    if (validateBirthdate) return fail(400, {
+      success: false,
+      message: validateBirthdate,
+    });
 
     const name = `${firstname} ${lastname}`;
    

@@ -52,10 +52,12 @@ const router = express.Router();
  */
 router.post('/',
   [
-    body('username').isString(),
-    body('password').isString().isLength({min: 1, max: 72}),
+    body('username').isString().isLength({min: 1, max: 256}).withMessage('username must be a not empty string'),
+    // Password pas trop long pour l'instant pour simplifier démo
+    body('password').isString().isLength({min: 1, max: 72}).withMessage('password must be a min of 8 chars and max 72 chars'),
+    // body('password').isString().isLength({min: 8, max: 72}).withMessage('password must be a min of 8 chars and max 72 chars'),
     body('email').isString().isEmail(),
-    body('name').isString()
+    body('name').isLength({min: 1}).isString()
   ],
   expressValidator,
   createUser
