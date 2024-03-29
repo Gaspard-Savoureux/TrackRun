@@ -1,15 +1,14 @@
 <script lang="ts">
   import Modal from '$lib/components/informative-modal.svelte';
-  import { ActivityIcon, HeartIcon } from 'svelte-feather-icons';
+  import { ActivityIcon, UserIcon } from 'svelte-feather-icons';
   import { isTrainer } from '$lib/stores/trainer';
 </script>
 
 {#if $isTrainer}
-  <Modal href="trainer/dashboard">
+  <Modal href="/trainer/client">
     <div class="nav-item">
-      <HeartIcon />
-      <p>Dashboard
-      </p>
+      <UserIcon />
+      <p>Clients</p>
     </div>
   </Modal>
 {:else}
@@ -20,7 +19,6 @@
     </div>
   </Modal>
 {/if}
-
 
 <style>
   .nav-item {
