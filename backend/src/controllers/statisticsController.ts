@@ -23,7 +23,17 @@ export const getMonthlyActivities = async (req: Request, res: Response, next: Ne
         return res.status(400).json({ error: 'Query parameter from is required.' });
       }
 
-      const result = await getActivitiesByMonth(fromDate, userId);     
+      // check if activity type is present in query param and validate
+      let activityType: 'Running' | 'Walking' | 'Biking' | null = null;
+      if (req.query.type) {
+        const possibleTypes = ['Running', 'Walking', 'Biking'];
+        if (!possibleTypes.includes(req.query.type as string))
+          return res.status(400).json({ error: 'Invalid activity type. Please use a type that is either Running, Walking or Biking' });
+        activityType = req.query.type as 'Running' | 'Walking' | 'Biking';
+      }
+
+      const result = await getActivitiesByMonth(fromDate, userId, activityType);
+      // const result = await getActivitiesByMonth(fromDate, userId);     
 
       return res.status(200).json({ activities: result });
 

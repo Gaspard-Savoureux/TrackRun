@@ -21,9 +21,14 @@ const router = express.Router();
  *        schema:
  *          type: string
  *        description: Filter results that are the same month as date
+ *      - in: query
+ *        name: type
+ *        schema:
+ *          type: string
+ *        description: Filter results by the given activity type (Walking, Running, Biking)
  *    responses:
  *      200:
- *        description: List of planned activities for specified month
+ *        description: List of activities for specified month
  *        content:
  *          application/json:
  *            schema:
