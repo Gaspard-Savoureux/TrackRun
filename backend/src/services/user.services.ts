@@ -1,7 +1,19 @@
 import { db } from '../db/db';
 import { User, users } from '../models/users';
-import { eq, ilike } from 'drizzle-orm';
+import { eq, asc, like } from 'drizzle-orm';
 
+
+export const getAllUsers = async (searchString: string) => {
+  if (!searchString) {
+    return await db.select()
+      .from(users)
+      .orderBy(asc(users.username));
+  }
+
+  return await db.select()
+    .from(users)
+    .where(like(users.username,`%${searchString}%`) || like(users.name,`%${searchString}%`));
+};
 
 export const getUserByUsername = async ( username: string) : Promise<User | undefined> => {
   const [ user ] = await db.select()

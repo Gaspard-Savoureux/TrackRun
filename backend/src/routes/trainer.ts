@@ -3,7 +3,7 @@ import { getUser } from '../controllers/UserController';
 import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
-import { addUserToTrainer, removeUserFromTrainer, getUsersOfTrainer, searchUsersOfTrainer, searchUsers  } from '../controllers/TrainerController';
+import { addUserToTrainer, removeUserFromTrainer, getUsersOfTrainer, searchUsers  } from '../controllers/TrainerController';
 import { getTrainer } from '../controllers/TrainerController';
 
 const router = express.Router();
@@ -151,27 +151,6 @@ router.delete('/user/:userId',
  *   get:
  *     tags:
  *       - trainer
- *     summary: Trainer get user data of his users
- *     security:
- *       - BearerAuth: []
- *     description: Route to get the data of a user associated to a trainer
- *     responses:
- *      200:
- *        description: User successfully acquired
- *      404:
- *        description: No corresponding trainer found
- */ 
-router.get('/users', 
-  verifyTrainerToken,
-  getUsersOfTrainer
-);
-
-/**
- * @swagger
- * /trainer/UserTrainerSearch:
- *   get:
- *     tags:
- *       - trainer
  *     summary: Trainer get the user data of his users depending on a string
  *     security:
  *       - BearerAuth: []
@@ -189,18 +168,18 @@ router.get('/users',
  *      404:
  *        description: No corresponding trainer found
  */ 
-router.get('/UserTrainerSearch', 
+router.get('/users', 
   verifyTrainerToken,
-  searchUsersOfTrainer
+  getUsersOfTrainer
 );
 
 /**
  * @swagger
- * /trainer/UserSearch:
+ * /trainer/search/users:
  *   get:
  *     tags:
  *       - trainer
- *     summary: Trainer get the user data depending on a string
+ *     summary: Trainer find users corresponding to searchString
  *     security:
  *       - BearerAuth: []
  *     description: Route to get the data of a user containing a certain string 
@@ -217,7 +196,7 @@ router.get('/UserTrainerSearch',
  *      404:
  *        description: No corresponding trainer found
  */ 
-router.get('/UserSearch', 
+router.get('/search/users', 
   verifyTrainerToken,
   searchUsers
 );

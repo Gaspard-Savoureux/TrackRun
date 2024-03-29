@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { Trainer} from '../models/trainers';
-import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers, getTrainerUser, createTrainerUserRelation, deleteTrainerUserRelation, getUsersAssociatedTrainer, getUsersAssociatedTrainerSearch, searchUser } from '../services/trainer.services';
+import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers, getTrainerUser, createTrainerUserRelation, deleteTrainerUserRelation, getUsersAssociatedTrainer } from '../services/trainer.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { getUserById } from '../services/user.services';
+import { getAllUsers, getUserById } from '../services/user.services';
 
 export const createTrainer = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -196,73 +196,33 @@ export const removeUserFromTrainer = async (req: Request, res: Response) => {
 export const getUsersOfTrainer = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const trainerId = req.trainer?.trainerId as number;
+    const searchString = req.query.searchString as string;
 
-    if (!trainerId) {
-      return res.status(405).json({error: "Trainer not found"});
-    }
+    if (!trainerId) return res.status(405).json({error: 'Trainer not found'});
 
-    const users = await getUsersAssociatedTrainer(trainerId);
-    return res.status(200).json({message: "User successfully fetched", users});
+    const users = await getUsersAssociatedTrainer(trainerId, searchString);
+
+    return res.status(200).json({message: 'User successfully fetched', users});
   } catch (error) {
     next(error);
   }
-}
+};
 
 
-
-export const searchUsersOfTrainer = async (req: Request, res: Response, next: NextFunction) => {
-  try{
+export const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
     const trainerId = req.trainer?.trainerId as number;
     const searchString = req.query.searchString as string;
 
-    if (!trainerId){
-      return res.status(405).json({error: "trainer not found" });
-    }
+    if (!trainerId) return res.status(405).json({error: 'trainer not found' });
 
-    if(!searchString){
-      return res.status(405).json({error: "searchString not found" });
-    }
+    const users = await getAllUsers(searchString);
 
- 
-    const users = await getUsersAssociatedTrainerSearch(trainerId, searchString);
+    if (!users) return res.status(405).json({error: 'error while fetching' });
 
-    if(!users){
-      return res.status(405).json({error: "error while fetching" });
-    }
+    return res.status(200).json({message: 'User successfully fetched', users});
 
-
-    return res.status(200).json({message: "User successfully fetched", users});
-
-
-  }catch(error){
+  } catch (error) {
     next(error);
   }
-}
-
-
-export const searchUsers = async (req: Request, res: Response, next: NextFunction) =>{
-  try{
-    const trainerId = req.trainer?.trainerId as number;
-    const searchString = req.query.searchString as string;
-
-    if (!trainerId){
-      return res.status(405).json({error: "trainer not found" });
-    }
-
-    if(!searchString){
-      return res.status(405).json({error: "searchString not found" });
-    }
-
-    const users = await searchUser(searchString);
-
-    if(!users){
-      return res.status(405).json({error: "error while fetching" });
-    }
-
-
-    return res.status(200).json({message: "User successfully fetched", users});
-
-  }catch(error){
-    next(error);
-  }
-}
+};
