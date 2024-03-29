@@ -1,11 +1,11 @@
 <script lang="ts">
   import Modal from '$lib/components/informative-modal.svelte';
   import { UserIcon, SettingsIcon } from 'svelte-feather-icons';
-  import TrainerPages from './trainer-pages.svelte';
+  import NavbarPages from './navbar-pages.svelte';
 </script>
 
 <div class="display-navbar">
-  <TrainerPages />
+  <NavbarPages />
   <hr />
 </div>
 
@@ -16,6 +16,7 @@
   </div>
 </Modal>
 
+<!-- <Modal info="Settings" href="/settings"> -->
 <Modal info="Settings" href="/trainer/settings">
   <div class="nav-item">
     <SettingsIcon />

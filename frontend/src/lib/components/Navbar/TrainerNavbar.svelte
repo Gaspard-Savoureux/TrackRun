@@ -3,12 +3,12 @@
   import NavbarItems from './trainer-navbar-items.svelte';
   import { HomeIcon } from 'svelte-feather-icons';
   import Navburger from './navburger.svelte';
-  import TrainerPages from './trainer-pages.svelte';
+  import NavbarPages from './navbar-pages.svelte';
 </script>
 
 <div class="navbar">
   <div class="" style="display: flex;">
-    <Modal info="Home" href="/trainer">
+    <Modal info="Home" href="/trainer/">
       <div class="nav-item">
         <HomeIcon />
       </div>
@@ -16,7 +16,7 @@
   </div>
 
   <div class="pages-icon">
-    <TrainerPages />
+    <NavbarPages />
   </div>
 
   <div class="pages-icon">
