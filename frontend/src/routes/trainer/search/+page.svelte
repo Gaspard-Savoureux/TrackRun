@@ -3,6 +3,7 @@
   import type { User } from '$lib/types/user';
   import { API_URL } from '../../../constants';
   import { onMount } from 'svelte';
+  import { ArrowUpIcon } from 'svelte-feather-icons';
 
   export let data: PageData;
   $: ({ users } = data);
@@ -19,7 +20,6 @@
       user.username?.toLowerCase().includes(query.toLowerCase()) ||
       user.email?.toLowerCase().includes(query.toLowerCase())
     );
-
   });
 
   async function addUserToTrainer(id: number) {
@@ -30,13 +30,6 @@
     if (response.status === 409) {
       alert('User already assigned to another trainer');
     }
-    if (!response.ok) {
-      alert('Error adding user to trainer');
-    }
-    if (response.ok) {
-      alert('User added to trainer');
-    }
-    // Refresh assigned users after adding
     fetchAssignedUsers();
   }
 
@@ -48,74 +41,91 @@
     if (response.status === 404) {
       alert('User not assigned to you, trainer');
     }
-    if (!response.ok) {
-      alert('Error removing user from trainer');
-    }
-    if (response.ok) {
-      alert('User removed from trainer');
-    }
-    // Refresh assigned users after removing
     fetchAssignedUsers();
   }
 
-    async function fetchAssignedUsers() {
-      const res = await fetch(`${API_URL}/trainer/users/assigned`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+  async function fetchAssignedUsers() {
+    // TODO changer routes
+    const res = await fetch(`${API_URL}/trainer/users/assigned`, {
+      method: 'GET',
+      credentials: 'include',
+    });
 
-      if (res.ok) {
-        assignedUsers = await res.json();
-      }
+    if (res.ok) {
+      assignedUsers = await res.json();
     }
-
+  }
 </script>
 
-<div class="paper-container">
-  <div class="paper">
-    <div class="paper-title">Search for users</div>
-    <div class="paper-content">
-      <input 
-        type="text" 
-        class="textfield" 
-        bind:value={query} 
-        placeholder="Label"
-      />
-      <p class="helper-text">Helper Text</p>
+<section>
+  <div class="paper-container">
+    <div class="paper">
+      <div class="paper-title">Search for users</div>
+      <div class="paper-content">
+        <input type="text" class="textfield" bind:value={query} placeholder="Name / Username" />
+        <p class="helper-text">
+          You can enter either a username or a name to match corresponding users in the following
+          list
+        </p>
+      </div>
     </div>
+    <pre class="status">Searching for: {query}</pre>
   </div>
-  <pre class="status">Searching for: {query}</pre>
-</div>
 
-<table aria-label="User list">
-  <thead>
-    <tr>
-      <th>Name <i class="material-icons">arrow_upward</i></th>
-      <th>Username <i class="material-icons">arrow_upward</i></th>
-      <th>Email <i class="material-icons">arrow_upward</i></th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    {#each filteredUsers as item (item.id)}
+  <table aria-label="User list">
+    <thead>
       <tr>
-        <td>{item.name}</td>
-        <td>{item.username}</td>
-        <td>{item.email}</td>
-        <td>
-          {#if assignedUsers.some(trainerUser => trainerUser.id === item.id)}
-            <button class="remove-button" on:click={() => removeUserFromTrainer(item.id)}>Remove User</button>
-          {:else}
-            <button class="add-button" on:click={() => addUserToTrainer(item.id)}>Add User</button>
-          {/if}
-        </td>
+        <th>
+          <div>
+            <p>Name</p>
+            <ArrowUpIcon />
+          </div>
+        </th>
+        <th
+          ><div>
+            <p>Username</p>
+            <ArrowUpIcon />
+          </div>
+        </th>
+        <th>
+          <div>
+            <p>Email</p>
+            <ArrowUpIcon />
+          </div>
+        </th>
+        <th>Action</th>
       </tr>
-    {/each}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {#each filteredUsers as item (item.id)}
+        <tr>
+          <td>{item.name}</td>
+          <td>{item.username}</td>
+          <td>{item.email}</td>
+          <td>
+            {#if assignedUsers.some((trainerUser) => trainerUser.id === item.id)}
+              <button class="remove-button" on:click={() => removeUserFromTrainer(item.id)}
+                >Remove User</button
+              >
+            {:else}
+              <button class="add-button" on:click={() => addUserToTrainer(item.id)}>Add User</button
+              >
+            {/if}
+          </td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+</section>
 
 <style>
   /* for search */
+  section {
+    padding: 1.5rem;
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+
   .paper-container {
     display: flex;
     flex-direction: column;
@@ -123,12 +133,11 @@
   }
 
   .paper {
-    border: 1px solid #ccc;
     border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-2);
+    box-shadow: 0 2px 4px var(--text-light);
     margin-bottom: 20px;
-    width: 90%
-
+    width: 90%;
   }
 
   .paper-title {
@@ -145,7 +154,7 @@
   .textfield {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 4px;
     box-sizing: border-box;
     margin-bottom: 10px;
@@ -153,13 +162,13 @@
 
   .helper-text {
     font-size: 0.8rem;
-    color: #666;
+    color: var(--text-info);
     margin-top: 5px;
   }
 
   .status {
     font-size: 0.8rem;
-    color: #666;
+    color: var(--text-info);
     text-align: center;
   }
 
@@ -167,25 +176,34 @@
   table {
     border-collapse: collapse;
     width: 100%;
+    /* border-radius: 4px; */
   }
 
-  th, td {
-    border: 1px solid #ddd;
+  th,
+  td {
+    border: 1px solid var(--bg-3);
     padding: 8px;
     text-align: left;
+    align-content: center;
   }
 
   th {
     cursor: pointer;
   }
 
-  th i {
-    vertical-align: middle;
-    font-size: 16px;
+  th > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* align-content: center; */
+  }
+
+  th > div:hover {
+    color: var(--blue);
   }
 
   tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: var(--bg-2);
   }
 
   button {
@@ -197,20 +215,23 @@
   }
 
   .add-button {
-    background-color: #007bff;
+    background-color: var(--blue);
+    min-width: 8rem;
+    width: 100%;
     color: #fff;
   }
 
   .add-button:hover {
-    background-color: #0056b3;
+    background-color: var(--success);
   }
 
   .remove-button {
-    background-color: #ff4d4d; /* Red color */
+    background-color: var(--danger-button);
+    width: 100%;
     color: #fff;
   }
 
   .remove-button:hover {
-    background-color: #ff3333; /* Darker red on hover */
+    background-color: var(--danger-darker);
   }
 </style>
