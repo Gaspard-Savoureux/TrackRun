@@ -96,6 +96,7 @@ describe('GET Statistics', () => {
       .get(route)
       .query({
         date: date,
+        type: 'Running'
       })
       .set('Authorization', 'Bearer ' + auth_token);
 
@@ -103,10 +104,29 @@ describe('GET Statistics', () => {
       activities: expect.arrayContaining([
         expect.objectContaining({
           durationTotal: 30,
-          distanceTotal: 7.5
+          distanceTotal: 7.5,
+          type: 'Running'
         })
       ])
     });
   });
-  
+  test('Should return nothing', async () => {
+
+    await request(app)
+      .post(activityRoutePOST)
+      .send(activity)
+      .set('Authorization', 'Bearer ' + auth_token);
+
+    const res = await request(app)
+      .get(route)
+      .query({
+        date: date,
+        type: 'Biking'
+      })
+      .set('Authorization', 'Bearer ' + auth_token);
+
+
+    expect(res.body).toMatchObject({ activities: [] });
+  });
+
 });
