@@ -24,6 +24,9 @@ services:
       - "host.docker.internal:host-gateway"
     ports:
       - "5001:5001"
+    volumes:
+      - uploadsFiles:/app/uploads
     restart: unless-stopped
 
-
+volumes:
+  uploadsFiles:
