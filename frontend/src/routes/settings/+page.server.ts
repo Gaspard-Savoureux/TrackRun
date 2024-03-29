@@ -10,6 +10,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
   });
 
   const user: User = await res.json();
+  user.img = user.img ? `${API_URL}/uploads/${user.img}` : null;
   return { user };
 };
 
@@ -63,6 +64,7 @@ export const actions: object = {
       height,
       weight,
       sex: data.get('sex') as string || null,
+      img: API_URL + '/' + data.get('img') as string || null,
       description: data.get('description') as string || null,
     };
 
@@ -119,6 +121,7 @@ export const actions: object = {
 
     return fail(400, { passwordSuccess: false, passwordMessage: 'An error occured'});
   },
+  
   delete: async ({ cookies, locals, request }: RequestEvent) => {
     const data = await request.formData();
     const confirmation = data.get('confirmation') as string;
