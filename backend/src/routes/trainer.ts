@@ -3,7 +3,7 @@ import { getUser } from '../controllers/UserController';
 import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
-import { addUserToTrainer, removeUserFromTrainer } from '../controllers/TrainerController';
+import { addUserToTrainer, removeUserFromTrainer, getUsersOfTrainer, searchUsersOfTrainer, searchUsers  } from '../controllers/TrainerController';
 import { getTrainer } from '../controllers/TrainerController';
 
 const router = express.Router();
@@ -144,5 +144,92 @@ router.delete('/user/:userId',
   [param('userId').notEmpty().isNumeric().withMessage('userId must be given and numeric')],
   removeUserFromTrainer
 );
+
+
+
+
+
+
+
+
+
+/**
+ * @swagger
+ * /trainer/users:
+ *   get:
+ *     tags:
+ *       - trainer
+ *     summary: Trainer get user data of his users
+ *     security:
+ *       - BearerAuth: []
+ *     description: Route to get the data of a user associated to a trainer
+ *     responses:
+ *      200:
+ *        description: User successfully acquired
+ *      404:
+ *        description: No corresponding trainer found
+ */ 
+router.get('/trainer/users', 
+  verifyTrainerToken,
+  getUsersOfTrainer
+);
+
+/**
+ * @swagger
+ * /trainer/UserTrainerSearch:
+ *   get:
+ *     tags:
+ *       - trainer
+ *     summary: Trainer get the user data of his users depending on a string
+ *     security:
+ *       - BearerAuth: []
+ *     description: Route to get the data of a user containing a certain string associated to a trainer
+ *     parameters:
+ *       - in: query
+ *         name: searchString
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: String to search for in user data
+ *     responses:
+ *      200:
+ *        description: User successfully acquired
+ *      404:
+ *        description: No corresponding trainer found
+ */ 
+router.get('/trainer/UserTrainerSearch', 
+  verifyTrainerToken,
+  searchUsersOfTrainer
+);
+
+/**
+ * @swagger
+ * /trainer/UserSearch:
+ *   get:
+ *     tags:
+ *       - trainer
+ *     summary: Trainer get the user data depending on a string
+ *     security:
+ *       - BearerAuth: []
+ *     description: Route to get the data of a user containing a certain string 
+ *     parameters:
+ *       - in: query
+ *         name: searchString
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: String to search for in user data
+ *     responses:
+ *      200:
+ *        description: User successfully acquired
+ *      404:
+ *        description: No corresponding trainer found
+ */ 
+router.get('/trainer/UserSearch', 
+  verifyTrainerToken,
+  searchUsers
+);
+
+
 
 export default router;
