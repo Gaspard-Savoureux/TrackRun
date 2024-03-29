@@ -145,14 +145,6 @@ router.delete('/user/:userId',
   removeUserFromTrainer
 );
 
-
-
-
-
-
-
-
-
 /**
  * @swagger
  * /trainer/users:
@@ -169,7 +161,7 @@ router.delete('/user/:userId',
  *      404:
  *        description: No corresponding trainer found
  */ 
-router.get('/trainer/users', 
+router.get('/users', 
   verifyTrainerToken,
   getUsersOfTrainer
 );
@@ -197,7 +189,7 @@ router.get('/trainer/users',
  *      404:
  *        description: No corresponding trainer found
  */ 
-router.get('/trainer/UserTrainerSearch', 
+router.get('/UserTrainerSearch', 
   verifyTrainerToken,
   searchUsersOfTrainer
 );
@@ -225,7 +217,7 @@ router.get('/trainer/UserTrainerSearch',
  *      404:
  *        description: No corresponding trainer found
  */ 
-router.get('/trainer/UserSearch', 
+router.get('/UserSearch', 
   verifyTrainerToken,
   searchUsers
 );
