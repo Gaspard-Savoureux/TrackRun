@@ -46,10 +46,19 @@
   });
 
   let currentUser: User | null;
+  let displayInfo = false;
 
   /** Users list related**/
   const setCurrentUser = (user: User) => {
-    currentUser = currentUser === user ? null : user;
+    const closing = currentUser === user && displayInfo;
+    if (closing) {
+      setTimeout(() => {
+        currentUser = currentUser === user ? null : user;
+      }, 500);
+    } else {
+      currentUser = currentUser === user ? null : user;
+    }
+    displayInfo = !closing;
   };
 </script>
 
@@ -74,11 +83,12 @@
         <p class="name">Name</p>
         <p class="remove">Remove</p>
       </div>
+      <hr />
       <div class="list-content">
         {#each filteredUsers as user}
           <button class="list-item" on:click={() => setCurrentUser(user)}>
             <p class="username">{user.username}</p>
-            <p class="name">{user.name}</p>
+            <p class="name">{user.name ? user.name : 'Not specified'}</p>
             <div class="remove">
               <button class="delete-btn">
                 <UserMinusIcon size="20" />
@@ -93,36 +103,34 @@
       <div class="top-section">
         <h3>Clients Info:</h3>
       </div>
-      {#if currentUser}
-        <div class="user-info">
-          <UserinfoField name="Username" value={currentUser?.username} />
-          {#if currentUser?.img}
-            <img
-              src={currentUser?.img}
-              alt={currentUser?.username + 'image'}
-              height="100px"
-              width="100px"
-            />
-          {:else}
-            <span class="user-icon"><UserIcon size="100" /> </span>
-          {/if}
+      <div class="user-info" class:displayInfo>
+        <UserinfoField name="Username" value={currentUser?.username} />
+        {#if currentUser?.img}
+          <img
+            src={currentUser?.img}
+            alt={currentUser?.username + 'image'}
+            height="100px"
+            width="100px"
+          />
+        {:else}
+          <span class="user-icon"><UserIcon size="100" /> </span>
+        {/if}
 
-          <UserinfoField name="Name" value={currentUser?.name} />
-          <UserinfoField name="Email" value={currentUser?.email} />
-          <UserinfoField name="Height" value={currentUser?.height} />
-          <UserinfoField name="Sex" value={currentUser?.sex} />
+        <UserinfoField name="Name" value={currentUser?.name} />
+        <UserinfoField name="Email" value={currentUser?.email} />
+        <UserinfoField name="Height" value={currentUser?.height && currentUser?.height + ' cm'} />
+        <UserinfoField name="Sex" value={currentUser?.sex} />
 
-          <UserinfoField name="Age" value={currentUser?.age} />
-          <UserinfoField name="Weight" value={currentUser?.weight} />
+        <UserinfoField name="Age" value={currentUser?.age} />
+        <UserinfoField name="Weight" value={currentUser?.weight && currentUser?.weight + ' kg'} />
 
-          <span style="grid-column: 1 / -1;">
-            <UserinfoField name="Description" value={currentUser?.description} />
-          </span>
+        <span style="grid-column: 1 / -1;">
+          <UserinfoField name="Description" value={currentUser?.description} />
+        </span>
 
-          <button>Client activities</button>
-          <button>Add Activity</button>
-        </div>
-      {/if}
+        <button>Client activities</button>
+        <button>Add Activity</button>
+      </div>
     </div>
   </div>
 </section>
@@ -131,7 +139,6 @@
   section {
     padding: 1.5rem;
     max-width: 80rem;
-    /* max-height: 40rem; */
     margin: 0 auto;
   }
 
@@ -174,17 +181,12 @@
   .name,
   .remove {
     flex: 0 0 33%;
-    overflow-x: hidden;
+    text-align: center;
   }
 
   @media (max-width: 800px) {
     .name {
       display: none;
-    }
-
-    .username,
-    .remove {
-      flex: 0 0 50%;
     }
   }
 
@@ -196,23 +198,36 @@
     height: 40rem;
   }
 
+  @media (max-width: 576px) {
+    .list-content {
+      height: 16rem;
+    }
+  }
+
   .list-item {
     border: 2px solid var(--bg-3);
     border-radius: 4px;
     border-color: --var(--text);
     color: var(--text);
-    padding: 0.5rem;
     display: flex;
     flex: row;
     justify-content: space-between;
     align-items: center;
     text-align: left;
+    height: 3.2rem;
+    transition: height 0.2s ease-in-out;
   }
 
   .list-item:hover {
     background-color: inherit;
     border-color: var(--success);
     color: var(--text);
+    height: 4rem;
+  }
+
+  .list-item > p,
+  img {
+    padding: 0.5rem 0;
   }
 
   .delete-btn {
@@ -221,11 +236,12 @@
     background-color: var(--danger-button);
     border-radius: 4px;
     border: none;
-    margin-left: 40%;
+    transition: padding 0.2s ease-in-out;
   }
 
   .delete-btn:hover {
     background-color: var(--danger-darker);
+    padding: 1rem;
   }
 
   .remove {
@@ -246,6 +262,13 @@
     background-color: var(--bg-2);
     align-items: center;
     justify-content: space-between;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s ease-in-out;
+  }
+
+  .user-info.displayInfo {
+    max-height: 80rem;
   }
 
   .user-info > img,
@@ -262,7 +285,7 @@
 
   @media (max-width: 576px) {
     .user-info {
-      all: unset;
+      align-items: unset;
       grid-template-columns: auto;
       display: flex;
       flex-direction: column;
@@ -282,10 +305,12 @@
     justify-self: center;
     padding: 1rem;
     margin: 1rem;
+    transition: padding 0.2s ease-in-out;
   }
 
   .user-info > button:hover {
     background-color: var(--success);
+    padding: 1.4rem;
   }
 
   /* LAYOUT */
@@ -320,10 +345,6 @@
       flex-direction: column;
     }
 
-    .main {
-      min-width: 0;
-    }
-
     :global(html, body) {
       overflow: scroll;
     }
@@ -352,5 +373,8 @@
   input:focus-visible {
     outline: var(--link) solid 1px;
     border-color: var(--link);
+  }
+  hr {
+    margin: 0.1rem;
   }
 </style>
