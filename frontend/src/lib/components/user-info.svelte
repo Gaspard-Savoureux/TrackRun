@@ -27,7 +27,7 @@
 
 <div class="column mobile">
   {#if user.img}
-    <img src={`${user.img}`} height="100" width="100" alt="Profile Pic" />
+    <img src={`${user.img}`} alt="Profile Pic" />
   {:else}
     <span class="user-icon"><UserIcon size="100" /> </span>
   {/if}
@@ -76,5 +76,8 @@
   .user-icon {
     margin: 1rem auto;
     border-radius: 4px;
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
   }
 </style>

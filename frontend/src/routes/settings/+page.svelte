@@ -91,10 +91,9 @@
 <section>
   <h1>Settings</h1>
   <h2>Update user profile</h2>
-
   <div class="picture">
     {#if data.user?.img}
-      <img src={data.user?.img} alt={data.user?.username + 'image'} height="100px" width="100px" />
+      <img src={data.user?.img} alt={data.user?.username + 'image'} />
     {:else}
       <span class="user-icon"><UserIcon size="100" /> </span>
     {/if}
@@ -227,6 +226,9 @@
   img {
     border-radius: 4px;
     margin: 0 auto;
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
   }
 
   .picture > button {
