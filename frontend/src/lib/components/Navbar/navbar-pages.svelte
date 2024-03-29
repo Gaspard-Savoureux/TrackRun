@@ -1,12 +1,26 @@
 <script lang="ts">
   import Modal from '$lib/components/informative-modal.svelte';
-  import { ActivityIcon } from 'svelte-feather-icons';
+  import { ActivityIcon, ListIcon, BarChartIcon } from 'svelte-feather-icons';
 </script>
 
 <Modal href="/activity">
   <div class="nav-item">
     <ActivityIcon />
     <p>Activities</p>
+  </div>
+</Modal>
+
+<Modal href="/plannedActivities">
+  <div class="nav-item">
+    <ListIcon />
+    <p>Planned Activities</p>
+  </div>
+</Modal>
+
+<Modal href="/statistics">
+  <div class="nav-item">
+    <BarChartIcon />
+    <p>Statistics</p>
   </div>
 </Modal>
 
