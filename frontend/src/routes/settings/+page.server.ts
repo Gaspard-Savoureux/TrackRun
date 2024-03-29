@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
   });
 
   const user: User = await res.json();
-  user.img = user.img ? `${API_URL}/uploads/${user.img}` : null;
+  user.img = user.img ? `/uploads/${user.img}` : null;
   return { user };
 };
 
@@ -64,7 +64,6 @@ export const actions: object = {
       height,
       weight,
       sex: data.get('sex') as string || null,
-      img: API_URL + '/' + data.get('img') as string || null,
       description: data.get('description') as string || null,
     };
 

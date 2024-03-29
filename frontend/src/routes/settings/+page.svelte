@@ -93,7 +93,7 @@
   <h2>Update user profile</h2>
   <div class="picture">
     {#if data.user?.img}
-      <img src={data.user?.img} alt={data.user?.username + 'image'} />
+      <img src={API_URL + data.user?.img} alt={data.user?.username + 'image'} />
     {:else}
       <span class="user-icon"><UserIcon size="100" /> </span>
     {/if}
