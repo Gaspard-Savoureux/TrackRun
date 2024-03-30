@@ -270,7 +270,7 @@ describe('Tests route GET /trainer/users', () => {
     const { token } = getToken.body;
     const validToken = `Bearer ${token}`;
 
-    const searchString = "";
+    const searchString = '';
 
     const res = await request(app)
       .get(`${route}?searchString=${searchString}`)
@@ -284,7 +284,7 @@ describe('Tests route GET /trainer/users', () => {
 
 
   test('Should return 405 | No corresponding trainer found', async () => {
-    const invalidToken = `Bearer invalid_token`;
+    const invalidToken = 'Bearer invalid_token';
 
     const res = await request(app)
       .get(route)
@@ -401,7 +401,7 @@ describe('Tests route GET /trainer/search/users', () => {
   });
 
   test('Should return 405 | No corresponding trainer found', async () => {
-    const invalidToken = `Bearer invalid_token`;
+    const invalidToken = 'Bearer invalid_token';
 
     const res = await request(app)
       .get(route)
