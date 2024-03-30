@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models/users';
-import { getAllUsers, deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById, getUserImage, updateUserImage } from '../services/user.services';
+import { deleteUserById, getUserById, getUserByUsername, getUserByEmail, insertUser, updateUserById, getUserImage, updateUserImage } from '../services/user.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import path from 'path';
@@ -91,23 +91,6 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
     next(error);
   }
 };
-
-export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const users: User[] | undefined = await getAllUsers();
-
-    if (!users) {
-      return res.status(404).json({ error: 'No corresponding trainer' });
-    }
-
-    return res.status(200).json(users);
-
-  } catch (error) {
-    next(error);
-  }
-};
-
-
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
