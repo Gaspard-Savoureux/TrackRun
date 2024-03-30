@@ -1,44 +1,16 @@
 <script lang="ts">
+  import { invalidateAll } from '$app/navigation';
   import UserinfoField from '$lib/components/userinfo-field.svelte';
   import type { User } from '$lib/types/user';
   import { UserIcon, UserMinusIcon } from 'svelte-feather-icons';
+  import { API_URL } from '../../../constants';
 
-  // export let form: formDataTrainer;
+  export let data;
+  $: ({ users } = data);
 
-  // export let data;
-  // $: ({ users } = data);
-
-  const users: User[] = [
-    {
-      username: 'Archibald',
-      email: 'juanpadrejean-papa@outlook.com',
-      name: 'Juanpadre jean-papa',
-      age: 22,
-      height: 160.03,
-      weight: 60.12,
-      sex: 'female',
-      // img: '85-1hRzlpVLXy6awZ3TyxxU.png',
-      img: 'https://www.vhv.rs/dpng/d/551-5511364_circle-profile-man-hd-png-download.png',
-      description:
-        'Juanpadre jean-papa, the 4th of the name, likes bananas, asijdhaishdbvashdb hkjasb daksjbnd kjasb dkjasb kjbd dkjbaskj dbaksj dbkajsbd kajsbd kjasbd kajsb daksjbd kajsb dkjsabd kjasb dkjasb d',
-    },
-    {
-      username: 'Michael',
-      email: 'juanpadrejuanpadre@gmail.com',
-      name: 'Juanpadre Juanpadre',
-      age: 54,
-      height: 184.38,
-      weight: 88.13,
-      sex: 'male',
-      // img: '29-JLh7Er60V8cAthHfe831.png',
-      description: 'Juanpadre Juanpadre, the 10th of the name, likes bananas',
-    },
-    // ... (8 more users)
-  ];
-  // $: filteredUsers= data.users;
   let filter = '';
   $: formattedFilter = filter.toLocaleLowerCase();
-  $: filteredUsers = users.filter((user) => {
+  $: filteredUsers = users.filter((user: User) => {
     return (
       user.username?.toLowerCase().includes(formattedFilter) ||
       user.name?.toLowerCase().includes(formattedFilter)
@@ -59,6 +31,14 @@
       currentUser = currentUser === user ? null : user;
     }
     displayInfo = !closing;
+  };
+
+  const removeUser = async (user: User) => {
+    await fetch(`${API_URL}/trainer/user/${user.id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    invalidateAll();
   };
 </script>
 
@@ -90,7 +70,7 @@
             <p class="username">{user.username}</p>
             <p class="name">{user.name ? user.name : 'Not specified'}</p>
             <div class="remove">
-              <button class="delete-btn">
+              <button class="delete-btn" on:click={() => removeUser(user)}>
                 <UserMinusIcon size="20" />
               </button>
             </div>
