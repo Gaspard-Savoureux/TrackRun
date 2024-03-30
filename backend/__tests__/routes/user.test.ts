@@ -11,7 +11,7 @@ import fs from 'fs';
 // Base user should always work
 const user = {
   username: 'test-user', 
-  password: '1234', 
+  password: 'Testuser1234', 
   email: 'testing@gmail.com',
   name: 'Test User',
   age: 30,
@@ -22,10 +22,10 @@ const user = {
 };
 
 // this user as the same name
-const user1 = {username: 'test-user', password: '4567', email: 'usertesting@gmail.com', name: 'Test User the 2nd'};
+const user1 = {username: 'test-user', password: 'Testuser1234', email: 'usertesting@gmail.com', name: 'Test User the 2nd'};
 
 // this user has the same email
-const user2 = {username: 'testing user', password: '4567',email: 'testing@gmail.com', name: 'Test User the 3nd'};
+const user2 = {username: 'testing user', password: 'Testuser1234',email: 'testing@gmail.com', name: 'Test User the 3nd'};
 
 let returnedUser: User;
 // let returnedUser1: User;
@@ -308,7 +308,6 @@ describe('User routes', () => {
         .attach('picture', Buffer.from('fake image data'), 'testImage.jpg')
         .set('Authorization', validToken);
 
-      console.log(res.text);
       expect(res.statusCode).toEqual(404);
     });
     
@@ -336,7 +335,7 @@ describe('User routes', () => {
       const res = await request(app)
         .put('/user/picture')
         .set('Authorization', validToken);
-      //console.log(res);
+        
       expect(res.statusCode).toEqual(400);
     });
 

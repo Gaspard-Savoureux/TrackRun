@@ -7,7 +7,7 @@ import { users } from '../../src/models/users';
 import { trainerUserAssociation } from '../../src/models/trainerUsersRelation';
 import { getUserByUsername } from '../../src/services/user.services';
 
-const user = {username: 'test-user', password: '1234', email: 'test.user@gmail.com', name: 'test user' };
+const user = {username: 'test-user', password: 'Testuser1234', email: 'test.user@gmail.com', name: 'test user' };
 const trainer = { username: 'superTrainer', password: 'weak-password', email: 'trainer@hardcore.com', name: 'Mr. trainer' };
 
 const basicAuthCredentials = Buffer.from(`${process.env.ADMIN_NAME ?? 'admin'}:${process.env.ADMIN_PASSWORD || 'defaultPassword'}`).toString('base64');
