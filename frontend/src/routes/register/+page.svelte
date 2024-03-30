@@ -26,7 +26,7 @@
 
     if (!email.trim()) {
       errors.email = 'Email address is required.';
-    } else if (!/^[a-zA-Z]{2,}@[a-zA-Z]{2,}\.[a-zA-Z]{2,}$/.test(email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = 'Email address is not valid.';
     }
 

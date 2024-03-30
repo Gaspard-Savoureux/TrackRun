@@ -27,7 +27,8 @@ export const emailValidation = (email: string) => {
   let errMsg;
   if (email === '') return errMsg;
   errMsg = '';
-  if (!/^[a-zA-Z]{2,}@[a-zA-Z]{2,}\.[a-zA-Z]{2,}$/.test(email)) errMsg = 'Must be a valid email';
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) errMsg = 'Must be a valid email';
   return errMsg;
 };
 
