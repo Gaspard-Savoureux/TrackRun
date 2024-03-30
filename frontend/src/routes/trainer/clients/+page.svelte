@@ -94,7 +94,7 @@
         <UserinfoField name="Username" value={currentUser?.username} />
         {#if currentUser?.img}
           <img
-            src={currentUser?.img}
+            src={API_URL + '/uploads/' + currentUser?.img}
             alt={currentUser?.username + 'image'}
             height="100px"
             width="100px"
