@@ -1,8 +1,17 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { activityType } from '$lib/plannedActivity/activity.js';
+  import { activityType, getISOFromDate, get24hFormatFromDate } from '$lib/plannedActivity/activity.js';
   
   export let form;
+  const today:Date = new Date();
+  const date: string = getISOFromDate(today);
+  const time: string = get24hFormatFromDate(roundTimeToNextHour(today));
+
+  function roundTimeToNextHour(date: Date): Date {
+    date.setHours(date.getHours() + 1);
+    date.setMinutes(0);
+    return date;
+  }
 </script>
 
 <svelte:head>
@@ -54,7 +63,7 @@
   } 
 </style>
 
-<body>
+<body>  
   <h2 class="header">Plan a new activity</h2>
     {#if form?.submitted}
       <div class=submit-box>
@@ -71,10 +80,10 @@
         </select>
 
       <label for="date">Date<span class="danger">*</span></label>
-      <input id="date" type="date" name="date"/>
+      <input id="date" type="date" name="date" value="{date}"/>
 
       <label for="time">Time<span class="danger">*</span></label>
-      <input id="time" type="time" name="time" step="1"/>
+      <input id="time" type="time" name="time" step="60" value="{time}"/>
 
       <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
       <input id="duration" type="number" name="duration" min="1"/>

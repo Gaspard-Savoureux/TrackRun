@@ -121,7 +121,7 @@
 								Details
 							</button>
 							<div class="activity-date">{getFormatDate(activity.date)} - {getFormatTime(activity.date)}</div>
-							<div class="activity-title">{activity.name || activity.type}</div>
+							<div class="activity-title">{activity.name}</div>
 							<div class="activity-duration">{getFormatDuration(activity.duration)}</div>
 							{#if activity.comment}
 								<div class="activity-comment">{activity.comment}</div>
