@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Trainer} from '../models/trainers';
-import { getTrainerUsers } from '../services/trainer.services'; // old version to be deleted
+import { getTrainerUsers, getAllUsersAssociatedWithoutTrainer } from '../services/trainer.services';
 import { deleteTrainerById, getTrainerById, getTrainerByUsername, getTrainerByEmail, insertTrainer, updateTrainerById, getAllTrainers, getTrainerUser, createTrainerUserRelation, deleteTrainerUserRelation, getUsersAssociatedTrainer } from '../services/trainer.services';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -200,14 +200,29 @@ export const getTrainerAssignedUsers = async (req: Request, res: Response) => {
   
   const usersIds = await getTrainerUsers(trainerId);
   const users: unknown[] = [];
-  // get the id of each user, and the get the full user object
-  // then return the full user object
 
   for (let i = 0; i < usersIds.length; i++) {
     const user = await getUserById(usersIds[i].userId);
     users[i] = user;
   }
   
+  res.status(200).json(users);
+};
+
+export const getAllAssignedUsersExceptRequestingTrainer = async (req: Request, res: Response) => {
+
+  const trainerId = req.trainer?.trainerId as number;
+
+  if (!trainerId) return res.status(405).json({error: 'Trainer not found'});
+
+  const usersIds = await getAllUsersAssociatedWithoutTrainer(trainerId);
+  const users: unknown[] = [];
+
+  for (let i = 0; i < usersIds.length; i++) {
+    const user = await getUserById(usersIds[i].userId);
+    users[i] = user;
+  }
+
   res.status(200).json(users);
 };
 

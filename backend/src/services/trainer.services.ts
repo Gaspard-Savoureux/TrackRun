@@ -2,7 +2,7 @@ import { trainerUserAssociation } from '../models/trainerUsersRelation';
 import { db } from '../db/db';
 import { Trainer, trainers } from '../models/trainers';
 import { users } from '../models/users';
-import { eq, getTableColumns, like } from 'drizzle-orm';
+import { eq, ne, getTableColumns, like } from 'drizzle-orm';
 
 export const getTrainerByUsername = async (username: string) : Promise<Trainer | undefined> => {
   const [ trainer ] = await db.select()
@@ -76,6 +76,12 @@ export const getTrainerUsers = async (trainerId: number) => {
   return await db.select()
     .from(trainerUserAssociation)
     .where(eq(trainerUserAssociation.trainerId, trainerId));
+};
+
+export const getAllUsersAssociatedWithoutTrainer = async (trainerId: number) => {
+  return await db.select()
+    .from(trainerUserAssociation)
+    .where(ne(trainerUserAssociation.trainerId, trainerId));
 };
 
 export const getUsersAssociatedTrainer = async (trainerId: number, searchString: string) => {

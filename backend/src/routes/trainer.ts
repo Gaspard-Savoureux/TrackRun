@@ -4,7 +4,7 @@ import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
 import { addUserToTrainer, removeUserFromTrainer, getUsersOfTrainer, searchUsers } from '../controllers/TrainerController';
-import { getTrainerAssignedUsers } from '../controllers/TrainerController';
+import { getTrainerAssignedUsers, getAllAssignedUsersExceptRequestingTrainer } from '../controllers/TrainerController';
 
 const router = express.Router();
 
@@ -214,9 +214,15 @@ router.get('/search/users',
  *       405:
  *         description: No corresponding trainer found
  */
-router.get('/users/assigned', verifyTrainerToken, getTrainerAssignedUsers);
+router.get('/users/assigned', 
+  verifyTrainerToken,  
+  getTrainerAssignedUsers
+);
 
-// TODO to not diplay option add user if user already assigned to another trainer
-// router.get('/users/assigned/other', verifyTrainerToken, getAllAssignedUsers);
+
+router.get('/users/assigned/other', 
+  verifyTrainerToken, 
+  getAllAssignedUsersExceptRequestingTrainer
+);
 
 export default router;
