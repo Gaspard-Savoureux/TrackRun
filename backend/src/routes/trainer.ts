@@ -3,7 +3,7 @@ import { getUser } from '../controllers/UserController';
 import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
-import { addUserToTrainer, removeUserFromTrainer } from '../controllers/TrainerController';
+import { addUserToTrainer, removeUserFromTrainer, getUsersOfTrainer, searchUsers  } from '../controllers/TrainerController';
 import { getTrainer } from '../controllers/TrainerController';
 
 const router = express.Router();
@@ -144,5 +144,63 @@ router.delete('/user/:userId',
   [param('userId').notEmpty().isNumeric().withMessage('userId must be given and numeric')],
   removeUserFromTrainer
 );
+
+/**
+ * @swagger
+ * /trainer/users:
+ *   get:
+ *     tags:
+ *       - trainer
+ *     summary: Trainer get the user data of his users depending on a string
+ *     security:
+ *       - BearerAuth: []
+ *     description: Route to get the data of a user containing a certain string associated to a trainer
+ *     parameters:
+ *       - in: query
+ *         name: searchString
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: String to search for in user data
+ *     responses:
+ *      200:
+ *        description: User successfully acquired
+ *      405:
+ *        description: No corresponding trainer found
+ */ 
+router.get('/users', 
+  verifyTrainerToken,
+  getUsersOfTrainer
+);
+
+/**
+ * @swagger
+ * /trainer/search/users:
+ *   get:
+ *     tags:
+ *       - trainer
+ *     summary: Trainer find users corresponding to searchString
+ *     security:
+ *       - BearerAuth: []
+ *     description: Route to get the data of a user containing a certain string 
+ *     parameters:
+ *       - in: query
+ *         name: searchString
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: String to search for in user data
+ *     responses:
+ *      200:
+ *        description: User successfully acquired
+ *      405:
+ *        description: No corresponding trainer found
+ */ 
+router.get('/search/users', 
+  verifyTrainerToken,
+  searchUsers
+);
+
+
 
 export default router;
