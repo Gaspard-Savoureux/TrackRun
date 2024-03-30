@@ -50,6 +50,8 @@ export const authenticateTrainer = async (req: Request, res: Response, next: Nex
     const secret: jwt.Secret = process.env.SECRET as string || 'petit_secret';
     const token = jwt.sign(payload, secret, { expiresIn: '1h' });
 
+    res.setHeader('Set-Cookie', `token=${token}; Max-Age=${60 * 60}; Path=/; HttpOnly; SameSite=Strict`);
+
     return res.status(200).json({ token });
   } catch (error) {
     next(error);
