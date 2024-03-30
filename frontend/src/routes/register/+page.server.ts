@@ -20,8 +20,6 @@ export const actions: object = {
       });
     }
 
-    // TODO implémenter validation mot de passe (pas encore présente car risque d'agaçer pendant les démos)
-    
     const validateEmail = emailValidation(email as string);
     if (validateEmail) return fail(400, {
       success: false,

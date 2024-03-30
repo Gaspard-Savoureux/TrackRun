@@ -2,7 +2,7 @@ import type { PageServerLoad, RequestEvent } from './$types';
 import { API_URL } from '../../constants';
 import type { User } from '$lib/types/user';
 import { fail, redirect } from '@sveltejs/kit';
-import { heightValidation, weightValidation } from '$lib/utils/userValidation';
+import { heightValidation, passwordValidation, weightValidation } from '$lib/utils/userValidation';
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
   const res = await fetch(`${API_URL}/user`, {
@@ -100,6 +100,12 @@ export const actions: object = {
     if (password !== confirmPassword) {
       return fail(400, { passwordSuccess: false, passwordMessage: 'Passwords do not match' });
     }
+
+    const validatePassword = passwordValidation(password as string);
+    if (validatePassword) return fail(400, {
+      passwordSuccess: false,
+      passwordMessage: validatePassword,
+    });
 
     const res = await fetch(`${API_URL}/user`, {
       method: 'PUT',
