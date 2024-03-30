@@ -5,7 +5,7 @@
 </script>
 
 {#if $isTrainer}
-  <Modal href="/trainer/client">
+  <Modal href="/trainer/clients">
     <div class="nav-item">
       <UserIcon />
       <p>Clients</p>
