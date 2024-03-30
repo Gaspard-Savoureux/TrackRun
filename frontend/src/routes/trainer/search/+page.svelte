@@ -1,26 +1,28 @@
 <script lang="ts">
-  import type { PageData } from './$types';
   import type { User } from '$lib/types/user';
   import { API_URL } from '../../../constants';
   import { onMount } from 'svelte';
   import { ArrowUpIcon } from 'svelte-feather-icons';
 
-  export let data: PageData;
-  $: ({ users } = data);
-
   let query = '';
+  let users: User[] = [];
   let assignedUsers: User[] = [];
-  onMount(fetchAssignedUsers);
 
-  // Filter the users list
-  $: filteredUsers = users.filter((user: User) => {
-    // filterer list by user name, name or email
-    return (
-      user.name?.toLowerCase().includes(query.toLowerCase()) ||
-      user.username?.toLowerCase().includes(query.toLowerCase()) ||
-      user.email?.toLowerCase().includes(query.toLowerCase())
-    );
-  });
+  async function fetchUsers() {
+    const res = await fetch(`${API_URL}/trainer/search/users?searchString=${encodeURIComponent(query)}`, {
+      credentials: 'include',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      users = data.users;
+    } else {
+      throw new Error('Failed to fetch users');
+    }
+  }
+
+  async function handleSubmit() {
+    await fetchUsers();
+  }
 
   async function addUserToTrainer(id: number) {
     const response = await fetch(`${API_URL}/trainer/user/${id}`, {
@@ -45,7 +47,6 @@
   }
 
   async function fetchAssignedUsers() {
-    // TODO changer routes
     const res = await fetch(`${API_URL}/trainer/users/assigned`, {
       method: 'GET',
       credentials: 'include',
@@ -55,6 +56,11 @@
       assignedUsers = await res.json();
     }
   }
+
+  onMount(async () => {
+    await fetchAssignedUsers();
+  });
+
 </script>
 
 <section>
@@ -62,7 +68,10 @@
     <div class="paper">
       <div class="paper-title">Search for users</div>
       <div class="paper-content">
-        <input type="text" class="textfield" bind:value={query} placeholder="Name / Username" />
+        <form on:submit|preventDefault={handleSubmit}>
+          <input type="text" class="textfield" bind:value={query} placeholder="Name / Username" />
+          <button type="submit">Submit</button>
+        </form>
         <p class="helper-text">
           You can enter either a username or a name to match corresponding users in the following
           list
@@ -97,7 +106,7 @@
       </tr>
     </thead>
     <tbody>
-      {#each filteredUsers as item (item.id)}
+      {#each users as item (item.id)}
         <tr>
           <td>{item.name}</td>
           <td>{item.username}</td>
@@ -176,7 +185,6 @@
   table {
     border-collapse: collapse;
     width: 100%;
-    /* border-radius: 4px; */
   }
 
   th,
@@ -195,7 +203,6 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    /* align-content: center; */
   }
 
   th > div:hover {
