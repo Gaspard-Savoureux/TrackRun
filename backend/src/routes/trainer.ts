@@ -4,14 +4,14 @@ import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
 import { addUserToTrainer, removeUserFromTrainer } from '../controllers/TrainerController';
-import { getTrainer } from '../controllers/TrainerController';
+// import { getTrainer } from '../controllers/TrainerController';
 import { getUsers } from '../controllers/UserController';
 import { getTrainerAssignedUsers } from '../controllers/TrainerController';
 
 const router = express.Router();
 
 /**TODO: DOC ET TEST */
-router.get('/', verifyTrainerToken, getTrainer);
+// router.get('/', verifyTrainerToken, getTrainer);
 
 /**TODO: DOC ET TEST */
 router.get('/users', verifyTrainerToken, getUsers);
