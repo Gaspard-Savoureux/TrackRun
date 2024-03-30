@@ -33,7 +33,14 @@
     displayInfo = !closing;
   };
 
-  const removeUser = async (user: User) => {
+  const removeUser = async (event: Event, user: User) => {
+    event.stopPropagation();
+    if (currentUser === user) {
+      setTimeout(() => {
+        currentUser = null;
+      }, 500);
+      displayInfo = false;
+    }
     await fetch(`${API_URL}/trainer/user/${user.id}`, {
       method: 'DELETE',
       credentials: 'include',
@@ -70,7 +77,7 @@
             <p class="username">{user.username}</p>
             <p class="name">{user.name ? user.name : 'Not specified'}</p>
             <div class="remove">
-              <button class="delete-btn" on:click={() => removeUser(user)}>
+              <button class="delete-btn" on:click={(event) => removeUser(event, user)}>
                 <UserMinusIcon size="20" />
               </button>
             </div>
