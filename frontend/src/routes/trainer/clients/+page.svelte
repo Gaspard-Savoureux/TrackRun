@@ -64,7 +64,7 @@
       <div class="top-section">
         <h3>Clients:</h3>
       </div>
-      <input type="text" placeholder="client name/username" bind:value={filter} />
+      <input type="text" placeholder="Name / Username" bind:value={filter} />
       <div class="list-column-names">
         <p class="username">Username</p>
         <p class="name">Name</p>
@@ -155,6 +155,10 @@
     flex-wrap: column;
     flex-direction: column;
     background-color: var(--bg-3);
+  }
+
+  input {
+    margin-bottom: 1rem;
   }
 
   .list-column-names {
