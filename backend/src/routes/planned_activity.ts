@@ -177,7 +177,7 @@ router.put('/:pActivityId',
   [
     body('type').optional({ values: 'null' }).isString().isLength({ max: 64 }),
     body('date').optional().isISO8601(),
-    body('duration').optional().isInt({ min: 0, max: 1024 }),
+    body('duration').optional().isInt({ min: 0, max: 86400 }),
     body('name').optional({ values: 'null' }).isString().isLength({ max: 64 }),
     body('comment').optional({ values: 'null' }).isString().isLength({ max: 256 }),
   ],

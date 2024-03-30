@@ -2,9 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { planned_activities, PlannedActivity } from '../models/planned_activities';
 import { User } from '../models/users';
 import { getUserById } from '../services/user.services';
-import { db } from '../db/db';
-import { and, eq, gte, lte } from 'drizzle-orm';
-import { deletePlannedActivityById, selectPlannedActivityById, updatePlannedActivityById } from '../services/planned_activity.services';
+import { eq, gte, lte } from 'drizzle-orm';
+import { deletePlannedActivityById, selectPlannedActivityById, updatePlannedActivityById, insertPlannedActivity, getPlannedActivitiesFromConditions } from '../services/planned_activity.services';
 
 export const getPlannedActivities = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -50,9 +49,7 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
       conditions.push(eq(planned_activities.type, activityType));
     }
 
-    const plannedActivities = await db.select()
-      .from(planned_activities)
-      .where(and(...conditions));
+    const plannedActivities = await getPlannedActivitiesFromConditions(conditions);
 
     return res.status(200).json({ plannedActivities });
 
@@ -111,10 +108,7 @@ export const getPlannedActivity = async (req: Request, res: Response, next: Next
     const user: User | undefined = await getUserById(userId);
     const pActivityId = Number(req.params?.pActivityId);
 
-    const [plannedActivity] = await db.select()
-      .from(planned_activities)
-      .where(and(eq(planned_activities.user_id, userId), eq(planned_activities.id, pActivityId)))
-      .limit(1);
+    const [plannedActivity] = await selectPlannedActivityById(pActivityId,userId);
 
     if (!plannedActivity) {
       return res.status(404).json({ message: 'No corresponding planned activity found' });
@@ -151,14 +145,15 @@ export const createPlannedActivity = async (req: Request, res: Response, next: N
 
     const userId = req.user?.userId as number;
 
-    const result = await db.insert(planned_activities).values([{
+    const result = await insertPlannedActivity({
       user_id: userId,
       type,
       date,
       duration,
       name,
       comment,
-    }]);
+    });
+
 
     if (!result) {
       // handle the error or throw an error
@@ -201,3 +196,4 @@ export const deletePlannedActivity = async (req: Request, res: Response, next: N
     next(error);
   }
 };
+

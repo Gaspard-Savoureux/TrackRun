@@ -8,13 +8,14 @@ services:
     depends_on:
       - backend
       - frontend
-    restart: always
+    restart: unless-stopped
 
   frontend:
     image: ${IMAGE_REPO}/frontend:${VERSION}
     container_name: tse-frontend
     ports:
       - "3000:3000"
+    restart: unless-stopped
 
   backend:
     image: ${IMAGE_REPO}/backend:${VERSION}
@@ -23,5 +24,9 @@ services:
       - "host.docker.internal:host-gateway"
     ports:
       - "5001:5001"
+    volumes:
+      - uploadsFiles:/app/uploads
+    restart: unless-stopped
 
-
+volumes:
+  uploadsFiles:

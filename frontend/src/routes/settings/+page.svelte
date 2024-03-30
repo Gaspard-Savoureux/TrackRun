@@ -4,10 +4,66 @@
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import type { ActionResult } from '@sveltejs/kit';
   import type { ActionData, PageServerData } from './$types';
+  import { UserIcon } from 'svelte-feather-icons';
+  import { API_URL } from '../../constants';
 
   export let data: PageServerData;
   export let form: ActionData;
 
+  /**Picture**/
+  let picture: File | null;
+  const handleFileChange = (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      picture = input.files[0];
+    }
+  };
+
+  let pictureResponseStatus = true;
+  let pictureResponseMsg = '';
+
+  const updatePicture = async () => {
+    if (!picture) {
+      pictureResponseStatus = false;
+      pictureResponseMsg = 'No image uploaded';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('picture', picture);
+
+    const res = await fetch(`${API_URL}/user/picture`, {
+      method: 'PUT',
+      credentials: 'include',
+      body: formData,
+    });
+
+    if (res.ok) {
+      pictureResponseStatus = true;
+      pictureResponseMsg = 'Picture updated successfully';
+      invalidateAll();
+    }
+  };
+
+  const deletePicture = async () => {
+    if (!data.user.img) {
+      pictureResponseStatus = false;
+      pictureResponseMsg = 'No image to delete';
+      return;
+    }
+    const res = await fetch(`${API_URL}/user/picture`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    if (res.ok) {
+      pictureResponseStatus = true;
+      pictureResponseMsg = 'Picture deleted successfully';
+      invalidateAll();
+    }
+  };
+
+  /**Update form**/
   let deleteConfirmation: string = '';
 
   const submitUpdateUser = async (event: { currentTarget: EventTarget & HTMLFormElement }) => {
@@ -35,6 +91,21 @@
 <section>
   <h1>Settings</h1>
   <h2>Update user profile</h2>
+  <div class="picture">
+    {#if data.user?.img}
+      <img src={API_URL + data.user?.img} alt={data.user?.username + 'image'} />
+    {:else}
+      <span class="user-icon"><UserIcon size="100" /> </span>
+    {/if}
+    <label>
+      Profile Picture
+      <input type="file" name="picture" accept="image/*" on:change={handleFileChange} />
+    </label>
+    <button on:click={() => updatePicture()}> Update Picture</button>
+    <button on:click={() => deletePicture()}> Delete Picture</button>
+    <p class:pictureResponseStatus>{pictureResponseMsg}</p>
+  </div>
+  <hr />
   <form method="POST" action="?/user" on:submit|preventDefault={submitUpdateUser}>
     <label>
       Username
@@ -148,6 +219,27 @@
   h2 {
     margin: 0 0 1.5rem 0;
   }
+
+  /**Profil pic**/
+  img {
+    border-radius: 4px;
+    margin: 0 auto;
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
+  }
+
+  .picture > button {
+    margin: 1rem 1rem 0 0;
+  }
+  .picture > p {
+    margin-top: 1rem;
+    color: var(--danger);
+  }
+  .picture > .pictureResponseStatus {
+    color: var(--success);
+  }
+  /****/
 
   label {
     display: flex;
