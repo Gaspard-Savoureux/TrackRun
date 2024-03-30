@@ -8,17 +8,19 @@
 <div class="user-card" style="--background-image: url({user.img});">
   <div class="background-shroud">
     <div class="user-card-values">
-      {#if user.img}
-        <img src={`${user.img}`} alt="profile" />
-      {:else}
-        <!-- <img src={`${user.img}`} alt="profile" /> -->
-        <span class="user-icon">
-          <UserIcon size="100" />
-        </span>
-      {/if}
+      <div class="img-container">
+        {#if user.img}
+          <img src={`${user.img}`} alt="profile" />
+        {:else}
+          <!-- <img src={`${user.img}`} alt="profile" /> -->
+          <span class="user-icon">
+            <UserIcon size="100" />
+          </span>
+        {/if}
+      </div>
       <hr />
-      <span class="name">{user?.name}</span>
-      <span class="username">{user?.username}</span>
+      <div class="name">{user?.name}</div>
+      <div class="username">{user?.username}</div>
       <div class="expand">
         <div class="user-info">
           <strong>Age</strong>
@@ -65,6 +67,7 @@
   }
 
   .background-shroud {
+    height: 100%;
     background: var(--bg-2);
     transition: var(--transition-delay);
   }
@@ -74,28 +77,39 @@
   }
 
   .user-card-values {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    height: 23.2rem;
+    height: 100%;
     padding: 1rem;
     background: linear-gradient(transparent 0%, var(--bg-2) 100%);
   }
 
-  img {
+  .img-container {
+    display: flex;
     align-self: center;
-    border-radius: 10rem;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    max-height: 100%;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+    transition: var(--transition-delay);
+  }
+
+  .user-card:hover .img-container {
+    height: 0;
+  }
+
+  img {
     height: 100%;
-    width: 100%;
     object-fit: cover;
     transition: var(--transition-delay);
   }
 
-  .user-card:hover img {
-    height: 0;
-  }
-
   .expand {
-    height: 0;
+    display: none;
+    /* height: 0; */
     padding: 0;
     transition: var(--transition-delay);
     transition-delay: padding var(--transition-delay);
@@ -104,7 +118,8 @@
   }
 
   .user-card:hover .expand {
-    height: 100%;
+    display: block;
+    /* height: 100%; */
     padding: 1rem 0 0 0;
     filter: opacity(1);
   }
@@ -120,12 +135,27 @@
   }
 
   .name {
+    flex-shrink: 0;
     font-size: 2rem;
     font-weight: bold;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .user-card:hover .name {
+    /* height: 100%; */
+    /* overflow-x: auto; */
+    /* text-overflow: initial; */
+    /* white-space: initial; */
   }
 
   .username {
+    flex-shrink: 0;
     font-size: 1.5rem;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: var(--text-light);
     transition: var(--transition-delay);
   }
@@ -148,5 +178,6 @@
 
   .user-description {
     padding-top: 0.5rem;
+
   }
 </style>
