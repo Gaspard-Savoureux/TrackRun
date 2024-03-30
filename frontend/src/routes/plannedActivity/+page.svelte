@@ -1,22 +1,16 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { activityType } from '$lib/plannedActivity/activity.js';
+  import { activityType, getISOFromDate, get24hFormatFromDate } from '$lib/plannedActivity/activity.js';
 
   export let form;
   export let data;
   export let deleteMsg;
 
-  $: ({ plannedActivity } = data);
+  $: ({ plannedActivity } = data);  
+  $: prev_date = new Date(plannedActivity.date);
+  $: date = getISOFromDate(prev_date);
+  $: time = get24hFormatFromDate(prev_date);
   $: duration = Math.floor(plannedActivity.duration / 60);
-
-  /* TODO: use this when date is fixed to right format
-   * (right timezone and formated as YYYY-MM-DD hh:mm:ss)
-   * $: date = plannedActivity.date.split(' ')[0];
-   * $: time = plannedActivity.date.split(' ')[1];
-   */
-  $: date = plannedActivity.date.split('T')[0];
-  $: time = plannedActivity.date.split('T')[1].substring(0,8);
-
 </script>
 
 <svelte:head>
@@ -61,7 +55,7 @@
         <input id="date" type="date" name="date" value={date ?? ''} />
 
         <label for="time">Time<span class="danger">*</span></label>
-        <input id="time" type="time" name="time" step="1" value={time ?? ''} />
+        <input id="time" type="time" name="time" step="60" value={time ?? ''} />
 
         <label for="duration">Duration (in minutes)<span class="danger">*</span></label>
         <input id="duration" type="number" name="duration" min="1" value={duration ?? ''} />
