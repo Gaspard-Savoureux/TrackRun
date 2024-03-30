@@ -24,7 +24,7 @@ export const verifyUserToken = (req: Request, res: Response, next: NextFunction)
     return res.status(401).json({ error: 'Unauthorized'});
   }
 
-  const token = cookieToken || authHeaders?.split(' ')[1] || '';
+  const token = authHeaders?.split(' ')[1] || cookieToken || '';
 
   try {
     const { userId } = jwt.verify(token, process.env.SECRET as string || 'petit_secret') as userPayload;
@@ -46,7 +46,7 @@ export const verifyTrainerToken = (req: Request, res: Response, next: NextFuncti
     return res.status(401).json({ error: 'Unauthorized'});
   }
 
-  const token = cookieToken || authHeaders?.split(' ')[1] || '';
+  const token = authHeaders?.split(' ')[1] || cookieToken || '';
 
   try {
     const { trainerId } = jwt.verify(token, process.env.SECRET as string || 'petit_secret') as trainerPayload;

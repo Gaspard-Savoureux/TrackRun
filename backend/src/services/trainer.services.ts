@@ -1,8 +1,8 @@
 import { trainerUserAssociation } from '../models/trainerUsersRelation';
 import { db } from '../db/db';
 import { Trainer, trainers } from '../models/trainers';
-import { User, users } from '../models/users';
-import { eq } from 'drizzle-orm';
+import { users } from '../models/users';
+import { eq, getTableColumns, like } from 'drizzle-orm';
 
 export const getTrainerByUsername = async (username: string) : Promise<Trainer | undefined> => {
   const [ trainer ] = await db.select()
@@ -77,4 +77,22 @@ export const getTrainerUsers = async (trainerId: number) => {
     .from(trainerUserAssociation)
     .where(eq(trainerUserAssociation.trainerId, trainerId));
   return users;
+};
+
+export const getUsersAssociatedTrainer = async (trainerId: number, searchString: string) => {
+  const { ...fields } = getTableColumns(users);
+  if (!searchString) {
+    return await db
+      .select({ ...fields })
+      .from(trainerUserAssociation)
+      .leftJoin(users, eq(trainerUserAssociation.userId, users.id))
+      .where(eq(trainerUserAssociation.trainerId, trainerId));
+  }
+
+  return await db
+    .select({ ...fields })
+    .from(trainerUserAssociation)
+    .leftJoin(users, eq(trainerUserAssociation.userId, users.id))
+    .where(eq(trainerUserAssociation.trainerId, trainerId) &&
+       (like(users.username,`%${searchString}%`) || like(users.name,`%${searchString}%`)));
 };
