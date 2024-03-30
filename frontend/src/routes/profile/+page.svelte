@@ -1,6 +1,6 @@
 <script lang="ts">
-  import UserInfo from '$lib/components/user-info.svelte';
   import type { PageData } from './$types';
+  import UserCard from '$lib/components/user-card.svelte';
 
   export let data: PageData;
 
@@ -12,18 +12,24 @@
 </svelte:head>
 
 <section>
-  <h1>Your Profile</h1>
-  <UserInfo {user} />
+  <div class="container">
+    <UserCard {user} />
+  </div>
 </section>
 
 <style>
-  section {
-    padding: 3rem 1.5rem;
+  :root {
+    --transition-delay: 0.3s;
   }
 
-  h1 {
-    font-size: 2.5rem;
-    margin: 0 0 1.5rem 0;
-    text-align: center;
+  section {
+    padding: 2rem 1.5rem;
+    /* max-width: 30rem; */
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: calc(2 * 1rem + 260px) 1fr;
+    gap: 1rem;
   }
 </style>
