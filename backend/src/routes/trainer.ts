@@ -4,16 +4,9 @@ import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
 import { addUserToTrainer, removeUserFromTrainer, getUsersOfTrainer, searchUsers } from '../controllers/TrainerController';
-// import { getTrainer } from '../controllers/TrainerController';
 import { getTrainerAssignedUsers } from '../controllers/TrainerController';
 
 const router = express.Router();
-
-/**TODO: DOC ET TEST */
-router.get('/users/assigned', verifyTrainerToken, getTrainerAssignedUsers);
-
-// TODO to not diplay option add user if user already assigned to another trainer
-// router.get('/users/assigned/other', verifyTrainerToken, getAllAssignedUsers);
 
 /**
  * @swagger
@@ -74,12 +67,12 @@ router.get('/users/assigned', verifyTrainerToken, getTrainerAssignedUsers);
  *       500:
  *         description: Server Error
  */
-router.get('/user/:userId', 
+router.get('/user/:userId',
   verifyTrainerToken,
   [param('userId').notEmpty().isNumeric().withMessage('userId must be given and numeric')],
   expressValidator,
   async (req: Request, res: Response, next: NextFunction) => {
-    req.user = { userId: Number(req.params.userId)};
+    req.user = { userId: Number(req.params.userId) };
     next();
   },
   getUser
@@ -112,7 +105,7 @@ router.get('/user/:userId',
  *       500:
  *         description: Server Error
  */
-router.post('/user/:userId', 
+router.post('/user/:userId',
   verifyTrainerToken,
   [param('userId').notEmpty().isNumeric().withMessage('userId must be given and numeric')],
   addUserToTrainer
@@ -143,7 +136,7 @@ router.post('/user/:userId',
  *       500:
  *         description: Server Error
  */
-router.delete('/user/:userId', 
+router.delete('/user/:userId',
   verifyTrainerToken,
   [param('userId').notEmpty().isNumeric().withMessage('userId must be given and numeric')],
   removeUserFromTrainer
@@ -171,8 +164,8 @@ router.delete('/user/:userId',
  *        description: User successfully acquired
  *      405:
  *        description: No corresponding trainer found
- */ 
-router.get('/users', 
+ */
+router.get('/users',
   verifyTrainerToken,
   getUsersOfTrainer
 );
@@ -199,12 +192,31 @@ router.get('/users',
  *        description: User successfully acquired
  *      405:
  *        description: No corresponding trainer found
- */ 
-router.get('/search/users', 
+ */
+router.get('/search/users',
   verifyTrainerToken,
   searchUsers
 );
 
+/**
+ * @swagger
+ * /trainer/users/assigned:
+ *   get:
+ *     tags:
+ *       - trainer
+ *     summary: Trainer get all assigned users
+ *     security:
+ *       - BearerAuth: []
+ *     description: Route to get all users assigned to a trainer
+ *     responses:
+ *       200:
+ *         description: Users successfully acquired
+ *       405:
+ *         description: No corresponding trainer found
+ */
+router.get('/users/assigned', verifyTrainerToken, getTrainerAssignedUsers);
 
+// TODO to not diplay option add user if user already assigned to another trainer
+// router.get('/users/assigned/other', verifyTrainerToken, getAllAssignedUsers);
 
 export default router;
