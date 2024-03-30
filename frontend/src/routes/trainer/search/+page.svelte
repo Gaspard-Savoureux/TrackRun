@@ -7,6 +7,7 @@
   let query = '';
   let users: User[] = [];
   let assignedUsers: User[] = [];
+  let assignedUsersToDiffTrainer: User[] = [];
 
   async function fetchUsers() {
     const res = await fetch(`${API_URL}/trainer/search/users?searchString=${encodeURIComponent(query)}`, {
@@ -47,12 +48,8 @@
     fetchAssignedUsers();
   }
 
-//   router.get('/search/users',
-//   verifyTrainerToken,
-//   searchUsers
-// );
-
   async function fetchAssignedUsers() {
+    // route not working on frontend
     // const res = await fetch(`${API_URL}/trainer/search/users`, {
     const res = await fetch(`${API_URL}/trainer/users/assigned`, {
       method: 'GET',
@@ -63,8 +60,19 @@
     }
   }
 
+  async function fetchAssignedUsersToDiffTrainer() {
+    const res = await fetch(`${API_URL}/trainer/users/assigned/other`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (res.ok) {
+      assignedUsersToDiffTrainer = await res.json();
+    }
+  }
+
   onMount(async () => {
     await fetchAssignedUsers();
+    await fetchAssignedUsersToDiffTrainer();
   });
 
 </script>
@@ -120,8 +128,10 @@
           <td>
             {#if assignedUsers.some((trainerUser) => trainerUser.id === item.id)}
               <button class="remove-button" on:click={() => removeUserFromTrainer(item.id)}
-                >Remove User</button
-              >
+                >Remove User</button>
+            {:else if
+              assignedUsersToDiffTrainer.some((trainerUser) => trainerUser.id === item.id)}
+              <button class="remove-button-disabled" disabled>Assigned to another trainer</button>
             {:else}
               <button class="add-button" on:click={() => addUserToTrainer(item.id)}>Add User</button
               >
@@ -247,4 +257,12 @@
   .remove-button:hover {
     background-color: var(--danger-darker);
   }
+
+  .remove-button-disabled {
+    background-color: var(--danger-darker);
+    width: 100%;
+    color: #fff;
+    cursor: not-allowed;
+  }
+
 </style>
