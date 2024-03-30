@@ -219,7 +219,22 @@ router.get('/users/assigned',
   getTrainerAssignedUsers
 );
 
-
+/**
+ * @swagger
+ * /trainer/users/assigned/other:
+ *   get:
+ *     tags:
+ *       - trainer
+ *     summary: Trainer get all assigned users except those assigned the requesting trainer
+ *     security:
+ *       - BearerAuth: []
+ *     description: Route to get all users assigned to a trainer except those assigned to the requesting trainer
+ *     responses:
+ *       200:
+ *         description: Users successfully acquired
+ *       405:
+ *         description: No corresponding trainer found
+ */
 router.get('/users/assigned/other', 
   verifyTrainerToken, 
   getAllAssignedUsersExceptRequestingTrainer
