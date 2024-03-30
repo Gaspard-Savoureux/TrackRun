@@ -417,3 +417,61 @@ describe('Tests route GET /trainer/search/users', () => {
   });
 
 });
+
+describe('Tests route GET /trainer/users/assigned', () => {
+  const route = '/trainer/users/assigned';
+  const authRoute = '/auth/trainer';
+
+  test('should return 200 and empty array', async () => {
+    await request(app)
+      .post('/admin/trainer')
+      .send(trainer)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `Basic ${basicAuthCredentials}`);
+
+    const getToken = await request(app)
+      .post(authRoute)
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const res = await request(app)
+      .get(route)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBeTruthy();
+    expect(res.body.length).toBe(0);
+  });
+});
+
+describe('Tests route GET /trainer/users/assigned/other', () => {
+  const route = '/trainer/users/assigned/other';
+  const authRoute = '/auth/trainer';
+
+  test('should return 200 and array length 3', async () => {
+    await request(app)
+      .post('/admin/trainer')
+      .send(trainer)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `Basic ${basicAuthCredentials}`);
+
+    const getToken = await request(app)
+      .post(authRoute)
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const res = await request(app)
+      .get(route)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBeTruthy();
+    expect(res.body.length).toBe(3);
+  });
+});
