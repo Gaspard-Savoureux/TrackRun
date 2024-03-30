@@ -12,6 +12,7 @@ import stub from './routes/stub';
 import auth from './routes/auth';
 import activity from './routes/activity';
 import admin from './routes/admin';
+import statistics from './routes/statistics';
 /****************/
 
 /*** Middlewares ***/
@@ -44,6 +45,7 @@ app.use('/trainer', trainer);
 app.use('/plannedactivities', planned_activities);
 app.use('/', stub);
 app.use('/activity', activity);
+app.use('/statistics', statistics);
 
 // Statics assets
 app.use('/uploads', express.static('uploads'));

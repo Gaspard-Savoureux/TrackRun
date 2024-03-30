@@ -1,6 +1,6 @@
 <script lang="ts">
   import Modal from '$lib/components/informative-modal.svelte';
-  import { ActivityIcon, UserIcon } from 'svelte-feather-icons';
+  import { ActivityIcon, UserIcon, ListIcon, BarChartIcon } from 'svelte-feather-icons';
   import { isTrainer } from '$lib/stores/trainer';
 </script>
 
@@ -16,6 +16,18 @@
     <div class="nav-item">
       <ActivityIcon />
       <p>Activities</p>
+    </div>
+  </Modal>
+  <Modal href="/plannedActivities">
+    <div class="nav-item">
+      <ListIcon />
+      <p>Planned Activities</p>
+    </div>
+  </Modal>
+  <Modal href="/statistics">
+    <div class="nav-item">
+      <BarChartIcon />
+      <p>Statistics</p>
     </div>
   </Modal>
 {/if}

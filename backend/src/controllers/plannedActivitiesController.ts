@@ -196,3 +196,4 @@ export const deletePlannedActivity = async (req: Request, res: Response, next: N
     next(error);
   }
 };
+

@@ -10,6 +10,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
   });
 
   const user: User = await res.json();
+  user.img = user.img ? `/uploads/${user.img}` : null;
   return { user };
 };
 
@@ -119,6 +120,7 @@ export const actions: object = {
 
     return fail(400, { passwordSuccess: false, passwordMessage: 'An error occured'});
   },
+  
   delete: async ({ cookies, locals, request }: RequestEvent) => {
     const data = await request.formData();
     const confirmation = data.get('confirmation') as string;
