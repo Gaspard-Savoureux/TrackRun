@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ fetch, locals, url }) => {
   });
 
   if (!response.ok) {
-    return error(404, { message: 'Could not load ressource.' });
+    return error(404, { message: 'Could not load planned Activity.' });
   }
 
   const json = await response.json();
