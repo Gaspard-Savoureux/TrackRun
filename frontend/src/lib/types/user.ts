@@ -1,5 +1,6 @@
 export type User = {
   id?: number;
+  trainerId?: number;
   username?: string;
   email?: string | null;
   name?: string | null;

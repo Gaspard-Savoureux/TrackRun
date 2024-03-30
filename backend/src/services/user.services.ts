@@ -3,7 +3,6 @@ import { db } from '../db/db';
 import { User, users } from '../models/users';
 import { eq, asc, like, getTableColumns } from 'drizzle-orm';
 
-
 export const getAllUsers = async (searchString: string) => {
   const { ...fields } = getTableColumns(users);
 
