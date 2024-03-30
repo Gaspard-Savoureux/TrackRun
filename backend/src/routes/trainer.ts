@@ -4,7 +4,6 @@ import { param } from 'express-validator';
 import { expressValidator } from '../middlewares/validation';
 import { verifyTrainerToken } from '../middlewares/authentication';
 import { addUserToTrainer, removeUserFromTrainer, getUsersOfTrainer, searchUsers } from '../controllers/TrainerController';
-import { getTrainerAssignedUsers, getAllAssignedUsersExceptRequestingTrainer } from '../controllers/TrainerController';
 
 const router = express.Router();
 
@@ -196,48 +195,6 @@ router.get('/users',
 router.get('/search/users',
   verifyTrainerToken,
   searchUsers
-);
-
-/**
- * @swagger
- * /trainer/users/assigned:
- *   get:
- *     tags:
- *       - trainer
- *     summary: Trainer get all assigned users
- *     security:
- *       - BearerAuth: []
- *     description: Route to get all users assigned to a trainer
- *     responses:
- *       200:
- *         description: Users successfully acquired
- *       405:
- *         description: No corresponding trainer found
- */
-router.get('/users/assigned', 
-  verifyTrainerToken,  
-  getTrainerAssignedUsers
-);
-
-/**
- * @swagger
- * /trainer/users/assigned/other:
- *   get:
- *     tags:
- *       - trainer
- *     summary: Trainer get all assigned users except those assigned the requesting trainer
- *     security:
- *       - BearerAuth: []
- *     description: Route to get all users assigned to a trainer except those assigned to the requesting trainer
- *     responses:
- *       200:
- *         description: Users successfully acquired
- *       405:
- *         description: No corresponding trainer found
- */
-router.get('/users/assigned/other', 
-  verifyTrainerToken, 
-  getAllAssignedUsersExceptRequestingTrainer
 );
 
 export default router;
