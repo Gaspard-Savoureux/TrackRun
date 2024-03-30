@@ -22,6 +22,7 @@
 
   async function handleSubmit() {
     await fetchUsers();
+    await fetchAssignedUsers();
   }
 
   async function addUserToTrainer(id: number) {
@@ -46,12 +47,17 @@
     fetchAssignedUsers();
   }
 
+//   router.get('/search/users',
+//   verifyTrainerToken,
+//   searchUsers
+// );
+
   async function fetchAssignedUsers() {
+    // const res = await fetch(`${API_URL}/trainer/search/users`, {
     const res = await fetch(`${API_URL}/trainer/users/assigned`, {
       method: 'GET',
       credentials: 'include',
     });
-
     if (res.ok) {
       assignedUsers = await res.json();
     }

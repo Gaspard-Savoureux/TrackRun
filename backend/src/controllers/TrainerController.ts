@@ -193,10 +193,11 @@ export const removeUserFromTrainer = async (req: Request, res: Response) => {
   res.status(200).json({ message: 'User removed from trainer' });
 };
 
-// old version to be deleted
 export const getTrainerAssignedUsers = async (req: Request, res: Response) => {
   const trainerId = req.trainer?.trainerId as number;
 
+  if (!trainerId) return res.status(405).json({error: 'Trainer not found'});
+  
   const usersIds = await getTrainerUsers(trainerId);
   const users: unknown[] = [];
   // get the id of each user, and the get the full user object
