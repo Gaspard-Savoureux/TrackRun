@@ -5,14 +5,18 @@
   import { ArrowUpIcon } from 'svelte-feather-icons';
 
   let query = '';
+  export let data;
+  $: ({ trainerId } = data);
+
   let users: User[] = [];
-  let assignedUsers: User[] = [];
-  let assignedUsersToDiffTrainer: User[] = [];
 
   async function fetchUsers() {
-    const res = await fetch(`${API_URL}/trainer/search/users?searchString=${encodeURIComponent(query)}`, {
-      credentials: 'include',
-    });
+    const res = await fetch(
+      `${API_URL}/trainer/search/users?searchString=${encodeURIComponent(query)}`,
+      {
+        credentials: 'include',
+      },
+    );
     if (res.ok) {
       const data = await res.json();
       users = data.users;
@@ -23,7 +27,6 @@
 
   async function handleSubmit() {
     await fetchUsers();
-    await fetchAssignedUsers();
   }
 
   async function addUserToTrainer(id: number) {
@@ -34,7 +37,7 @@
     if (response.status === 409) {
       alert('User already assigned to another trainer');
     }
-    fetchAssignedUsers();
+    fetchUsers();
   }
 
   async function removeUserFromTrainer(id: number) {
@@ -45,36 +48,12 @@
     if (response.status === 404) {
       alert('User not assigned to you, trainer');
     }
-    fetchAssignedUsers();
-  }
-
-  async function fetchAssignedUsers() {
-    // route not working on frontend
-    // const res = await fetch(`${API_URL}/trainer/search/users`, {
-    const res = await fetch(`${API_URL}/trainer/users/assigned`, {
-      method: 'GET',
-      credentials: 'include',
-    });
-    if (res.ok) {
-      assignedUsers = await res.json();
-    }
-  }
-
-  async function fetchAssignedUsersToDiffTrainer() {
-    const res = await fetch(`${API_URL}/trainer/users/assigned/other`, {
-      method: 'GET',
-      credentials: 'include',
-    });
-    if (res.ok) {
-      assignedUsersToDiffTrainer = await res.json();
-    }
+    fetchUsers();
   }
 
   onMount(async () => {
-    await fetchAssignedUsers();
-    await fetchAssignedUsersToDiffTrainer();
+    await fetchUsers();
   });
-
 </script>
 
 <section>
@@ -82,10 +61,13 @@
     <div class="paper">
       <div class="paper-title">Search for users</div>
       <div class="paper-content">
-        <form on:submit|preventDefault={handleSubmit}>
-          <input type="text" class="textfield" bind:value={query} placeholder="Name / Username" />
-          <button type="submit">Submit</button>
-        </form>
+        <input
+          type="text"
+          class="textfield"
+          bind:value={query}
+          on:input={handleSubmit}
+          placeholder="Name / Username"
+        />
         <p class="helper-text">
           You can enter either a username or a name to match corresponding users in the following
           list
@@ -120,21 +102,25 @@
       </tr>
     </thead>
     <tbody>
-      {#each users as item (item.id)}
+      {#each users as user (user.id)}
         <tr>
-          <td>{item.name}</td>
-          <td>{item.username}</td>
-          <td>{item.email}</td>
+          <td>{user.name}</td>
+          <td>{user.username}</td>
+          <td>{user.email}</td>
           <td>
-            {#if assignedUsers.some((trainerUser) => trainerUser.id === item.id)}
-              <button class="remove-button" on:click={() => removeUserFromTrainer(item.id)}
-                >Remove User</button>
-            {:else if
-              assignedUsersToDiffTrainer.some((trainerUser) => trainerUser.id === item.id)}
-              <button class="remove-button-disabled" disabled>Assigned to another trainer</button>
-            {:else}
-              <button class="add-button" on:click={() => addUserToTrainer(item.id)}>Add User</button
+            {#if trainerId === user.trainerId}
+              <button
+                class="remove-button"
+                on:click={() => user.id && removeUserFromTrainer(user.id)}
               >
+                Remove User
+              </button>
+            {:else if user.trainerId !== null}
+              <button class="no-button"> Already assigned to trainer </button>
+            {:else}
+              <button class="add-button" on:click={() => user.id && addUserToTrainer(user.id)}>
+                Add User
+              </button>
             {/if}
           </td>
         </tr>
@@ -258,11 +244,11 @@
     background-color: var(--danger-darker);
   }
 
-  .remove-button-disabled {
-    background-color: var(--danger-darker);
+  .no-button {
     width: 100%;
-    color: #fff;
-    cursor: not-allowed;
   }
 
+  .no-button:hover {
+    cursor: not-allowed;
+  }
 </style>
