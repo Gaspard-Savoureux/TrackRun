@@ -165,7 +165,7 @@ router.delete('/user/:userId',
  *     responses:
  *      200:
  *        description: User successfully acquired
- *      404:
+ *      405:
  *        description: No corresponding trainer found
  */ 
 router.get('/users', 
@@ -193,7 +193,7 @@ router.get('/users',
  *     responses:
  *      200:
  *        description: User successfully acquired
- *      404:
+ *      405:
  *        description: No corresponding trainer found
  */ 
 router.get('/search/users', 
