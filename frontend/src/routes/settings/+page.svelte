@@ -353,4 +353,8 @@
     margin: 1rem 0;
     color: var(--text-light);
   }
+
+  p {
+    white-space: pre-wrap;
+  }
 </style>

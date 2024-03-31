@@ -2,6 +2,12 @@
   import { enhance } from '$app/forms';
   import type { formDataRegister } from '$lib/types/registerForm.js';
   import type { registerFields } from '$lib/types/registerForm.js';
+  import {
+    birthdayValidation,
+    emailValidation,
+    passwordValidation,
+  } from '$lib/utils/userValidation';
+  // import { error } from '@sveltejs/kit';
   export let form: formDataRegister;
 
   let username = form?.username ?? '';
@@ -9,7 +15,7 @@
   let password = '';
   let lastname = form?.lastname ?? '';
   let firstname = form?.firstname ?? '';
-  let birthdate = form?.birthdate ?? '';
+  let birthdate: Date | string | null = form?.birthdate ?? null;
 
   let errors: registerFields = {};
 
@@ -20,7 +26,7 @@
 
     if (!email.trim()) {
       errors.email = 'Email address is required.';
-    } else if (!/^[a-zA-Z]{2,}@[a-zA-Z]{2,}\.[a-zA-Z]{2,}$/.test(email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = 'Email address is not valid.';
     }
 
@@ -30,9 +36,26 @@
 
     if (!firstname.trim()) errors.firstname = 'First name is required.';
 
-    if (!birthdate.trim()) errors.birthdate = 'Date of birth is required.';
+    if (!birthdate) errors.birthdate = 'Date of birth is required.';
 
     return Object.keys(errors).length === 0;
+  };
+
+  const handleEmailChange = (event: Event) => {
+    event.preventDefault();
+    errors.email = emailValidation(email);
+  };
+
+  const handlePasswordChange = (event: Event) => {
+    event.preventDefault();
+    errors.password = passwordValidation(password);
+  };
+
+  // const currentDate = new Date();
+  const handleDateChange = (event: Event) => {
+    event.preventDefault();
+    if (!birthdate) return (errors.birthdate = undefined);
+    else errors.birthdate = birthdayValidation(birthdate);
   };
 
   const handleSubmit = async (event: SubmitEvent) => {
@@ -47,45 +70,49 @@
 
 <section>
   <form class="container" method="POST" action="?/register" on:submit={handleSubmit} use:enhance>
-    {#if form?.success === false}<p style="color: red;">{form?.message}</p>{/if}
-
     <h1>Register</h1>
     <label>
       Username
       <input type="text" name="username" bind:value={username} />
-      {#if errors.username}<p style="color: red;">{errors.username}</p>{/if}
+      {#if errors.username}<p>{errors.username}</p>{/if}
     </label>
 
     <label>
       Email
-      <input type="email" name="email" bind:value={email} />
-      {#if errors.email}<p style="color: red;">{errors.email}</p>{/if}
+      <input type="email" name="email" bind:value={email} on:change={handleEmailChange} />
+      {#if errors.email}<p>{errors.email}</p>{/if}
     </label>
 
     <label>
       Password
-      <input type="password" name="password" bind:value={password} />
-      {#if errors.password}<p style="color: red;">{errors.password}</p>{/if}
+      <input
+        type="password"
+        name="password"
+        bind:value={password}
+        on:change={handlePasswordChange}
+      />
+      {#if errors.password}<p>{errors.password}</p>{/if}
     </label>
 
     <label>
       Last Name
       <input type="text" name="lastname" bind:value={lastname} />
-      {#if errors.lastname}<p style="color: red;">{errors.lastname}</p>{/if}
+      {#if errors.lastname}<p>{errors.lastname}</p>{/if}
     </label>
 
     <label>
       First Name
       <input type="text" name="firstname" bind:value={firstname} />
-      {#if errors.firstname}<p style="color: red;">{errors.firstname}</p>{/if}
+      {#if errors.firstname}<p>{errors.firstname}</p>{/if}
     </label>
 
     <label>
       Date of Birth
-      <input type="date" name="birthdate" bind:value={birthdate} />
-      {#if errors.birthdate}<p style="color: red;">{errors.birthdate}</p>{/if}
+      <input type="date" name="birthdate" bind:value={birthdate} on:change={handleDateChange} />
+      {#if errors.birthdate}<p>{errors.birthdate}</p>{/if}
     </label>
 
+    {#if form?.success === false}<p>{form?.message}</p>{/if}
     <button type="submit">Sign up</button>
     <a href="/login">Login</a>
   </form>
@@ -155,5 +182,10 @@
 
   button:hover {
     background-color: var(--blue-darker);
+  }
+
+  p {
+    color: var(--danger);
+    white-space: pre-wrap;
   }
 </style>

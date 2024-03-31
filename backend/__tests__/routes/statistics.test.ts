@@ -6,11 +6,11 @@ import request from 'supertest';
 import app from '../../src/app';
 
 const user = {
-    username: 'test-user',
-    password: '1234',
-    email: 'test@test.com',
-    name: 'Test'
-  };
+  username: 'test-user',
+  password: 'TestUser1234',
+  email: 'test@test.com',
+  name: 'Test'
+};
 
 const activity = {
   name: 'test',
@@ -29,10 +29,10 @@ beforeAll(async () => {
   await db.delete(activities);
   await db.delete(users);
   // Create user
-  let createRes = await request(app).post('/user').send(user);
-  console.log("return create : " + createRes);
-  let userRes = (await db.select().from(users).where(eq(users.username, user.username)))[0].id;
-  console.log("userRes: " + userRes);
+  const createRes = await request(app).post('/user').send(user);
+  console.log('return create : ' + createRes);
+  const userRes = (await db.select().from(users).where(eq(users.username, user.username)))[0].id;
+  console.log('userRes: ' + userRes);
   // Get auth token
   auth_token = (await request(app).post('/auth').send(user)).body['token'];
   console.log('Auth token: ' + auth_token);
@@ -53,19 +53,19 @@ describe('GET Statistics', () => {
   const noItemsDate = '2025-01-01';
 
   test('Should return 401: Unauthorized', async () => {
-      const res = await request(app)
-        .get(route);
-      expect(res.status).toBe(401);
+    const res = await request(app)
+      .get(route);
+    expect(res.status).toBe(401);
   });
 
   test('Should return nothing', async () => {
-  const res = await request(app)
+    const res = await request(app)
       .get(route)
       .query({
         date: noItemsDate,
       })
       .set('Authorization', 'Bearer ' + auth_token);
-      expect(res.body).toMatchObject({ activities: [] });
+    expect(res.body).toMatchObject({ activities: [] });
   });
 
   test('Should return 200', async () => {
@@ -78,11 +78,11 @@ describe('GET Statistics', () => {
     const res = await request(app)
       .get(route)
       .query({
-        date: date,
+        date,
       })
       .set('Authorization', 'Bearer ' + auth_token);
 
-    expect(res.statusCode).toBe(200)
+    expect(res.statusCode).toBe(200);
   });
 
   test('Should return activity statistics', async () => {

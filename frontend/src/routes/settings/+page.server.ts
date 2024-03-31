@@ -2,6 +2,7 @@ import type { PageServerLoad, RequestEvent } from './$types';
 import { API_URL } from '../../constants';
 import type { User } from '$lib/types/user';
 import { fail, redirect } from '@sveltejs/kit';
+import { heightValidation, passwordValidation, weightValidation } from '$lib/utils/userValidation';
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
   const res = await fetch(`${API_URL}/user`, {
@@ -25,20 +26,19 @@ const validateNewUser = (user: User) => {
     if (age < 0) return 'How can your age be negative?';
     if (age === 0) return 'Invalid age: Just born yet ready to train? Impressive determination for a 0 year old.';
     if (age > 122) return 'Invalid age: The oldest human died at 122 years old. You should consider applying here: https://www.guinnessworldrecords.com/contact/application-enquiry';
+    // TODO remplacer par une vrai date
   }
 
   // Height;
   if (height !== null && height !== undefined) {
-    if (height < 0) return 'Invalid Height: Are you a hole?';
-    if (height <= 30) return 'Invalid Height: Are you a gnome?';
-    if (height > 280) return 'Invalid Height: Why aren\'t you playing basketball?';
+    const invalidHeight = heightValidation(height);
+    if (invalidHeight) return invalidHeight;
   }
 
   // Weight
   if (weight !== null && weight !== undefined) {
-    if (weight < 0) return 'Invalid Weight: Matching IQ and weight? That\'s a rare sight!';
-    if (weight <= 20) return 'Invalid weight: I know our trainers are good, but not that good.';
-    if (weight > 650) return 'Invalid Weight: You do know the weight is in kg right? If you do I\'m gonna have to be real with you chief. I don\'t think we can help.';
+    const invalidWeight = weightValidation(weight);
+    if (invalidWeight) return invalidWeight;
   }
 
   return '';
@@ -101,6 +101,12 @@ export const actions: object = {
     if (password !== confirmPassword) {
       return fail(400, { passwordSuccess: false, passwordMessage: 'Passwords do not match' });
     }
+
+    const validatePassword = passwordValidation(password as string);
+    if (validatePassword) return fail(400, {
+      passwordSuccess: false,
+      passwordMessage: validatePassword,
+    });
 
     const res = await fetch(`${API_URL}/user`, {
       method: 'PUT',

@@ -8,10 +8,10 @@ import { trainerUserAssociation } from '../../src/models/trainerUsersRelation';
 import { getUserByUsername, insertUser } from '../../src/services/user.services';
 import { createTrainerUserRelation } from '../../src/services/trainer.services';
 
-const user = {username: 'test-user', password: '1234', email: 'test.user@gmail.com', name: 'test user' };
-const user1 = {id: 1, username: 'test-user1 ', password: '1234', email: 'test.user1@gmail.com', name: 'Jean' };
-const user2 = {id: 2, username: 'test-user2', password: '1234', email: 'test.user2@gmail.com', name: 'Pierre' };
-const user3 = {id: 3, username: 'test-user3', password: '1234', email: 'test.user3@gmail.com', name: 'Paul' };
+const user = {username: 'test-user', password: 'superTrainer', email: 'test.user@gmail.com', name: 'test user' };
+const user1 = {id: 1, username: 'test-user1 ', password: 'superTrainer', email: 'test.user1@gmail.com', name: 'Jean' };
+const user2 = {id: 2, username: 'test-user2', password: 'superTrainer', email: 'test.user2@gmail.com', name: 'Pierre' };
+const user3 = {id: 3, username: 'test-user3', password: 'superTrainer', email: 'test.user3@gmail.com', name: 'Paul' };
 
 const trainer = {id: 1, username: 'superTrainer', password: 'weak-password', email: 'trainer@hardcore.com', name: 'Mr. trainer' };
 
