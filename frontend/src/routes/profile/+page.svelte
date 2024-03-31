@@ -64,4 +64,10 @@
   .profile {
     grid-template-rows: var(--card-height);
   }
+
+  @media (width <= 712px) {
+    article {
+      grid-template-columns: 100%;
+    }
+  }
 </style>
