@@ -287,7 +287,7 @@ describe('get specified activities', () => {
       name: 'Morning',
       city: 'San Francisco',
       type: 'Running',
-      date: '2024-02-28 15:45:00.123456',
+      date: '2022-04-13T13:00:00Z',
       durationTotal: 30,
       distanceTotal: 7.5,
       comment: 'Felt good!',
@@ -307,7 +307,7 @@ describe('get specified activities', () => {
     expect(res.statusCode).toBe(201);
   });
 
-  test('#4 Should recover searched activities', async () => {
+  test('#4 Should recover searched activities by name', async () => {
     jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
 
     getToken = await request(app)
@@ -322,6 +322,345 @@ describe('get specified activities', () => {
 
     expect(res.body.activities.length).toEqual(1);
   });
+
+  test('#X Should recover searched activities by date', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?specificDate=2022-04-13T13:00:00Z`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(1);
+  });
+
+  test('#5 Should recover searched activities by distance', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?specificDistance=7.5`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(4);
+  });
+
+
+  test('#6 Should recover searched activities by duration', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?specificDuration=30`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(4);
+  });
+
+  test('#7 Should recover searched activities by name and distance', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?search=Morning&specificDistance=7.5`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(1);
+  });
+
+  test('#8 Should recover searched activities by name and duration', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?search=Morning&specificDuration=30`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(1);
+  });
+
+  test('#9 Should recover searched activities by name, distance and duration', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?search=Morning&specificDuration=30&specificDistance=7.5`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(1);
+  });
+
+  test('#X Should recover searched activities by date range', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?startDate=2022-03-13T13:00:00Z&endDate=2022-05-13T13:00:00Z`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(1);
+  });
+
+  test('#10 Should recover searched activities by name and distance range', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?search=Morning&startDistance=5&endDistance=8`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(1);
+  });
+
+  test('#11 Should recover searched activities by name and duration range', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?search=Morning&startDuration=20&endDuration=40`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(1);
+  });
+
+  test('#12 Should recover searched activities by name, duration range and distance range', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?search=Morning&startDistance=5&endDistance=8&startDuration=20&endDuration=40`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(1);
+  });
+
+  test('#X Should recover searched activities by name, date range, duration range and distance range', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?search=Morning&startDistance=5&endDistance=8
+          &startDuration=20&endDuration=40&startDate=2022-03-13T13:00:00Z&endDate=2022-05-13T13:00:00Z`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.body.activities.length).toEqual(1);
+  });
+
+  test('#13 Should not recover searched activities with a bad date', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?specificDate=2028`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('#14 Should not recover searched activities with a bad distance', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?specificDistance=-1`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('#15 Should not recover searched activities with a bad duration', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?specificDuration=-1`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('#16 Should not recover searched activities with a bad distances intervals', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?startDistance=bad distance&endDistance=23`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('#X Should not recover searched activities with a bad dates intervals', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?startDate=bad date&endDate=2022-05-13T13:00:00Z`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('#17 Should not recover searched activities with a bad distances intervals', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?startDistance=8&endDistance=b`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('#18 Should not recover searched activities with a bad durations intervals', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?startDuration=a&endDuration=21`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('#19 Should not recover searched activities with both distances intervals not filled', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?startDistance=5`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('#X Should not recover searched activities with both date intervals not filled', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?endDate=2022-05-13T13:00:00Z`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('#X Should not recover searched activities with both duration intervals not filled', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .get(`${route_reception_unique}?endDuration=23`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(400);
+  });
+
 });
 
 describe('GPX file related test', () => {
