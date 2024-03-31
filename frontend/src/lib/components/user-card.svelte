@@ -105,6 +105,7 @@
   .expand {
     display: none;
     padding: 0;
+    margin-top: 0.5rem;
     transition: var(--transition-delay);
     overflow: scroll;
     filter: opacity(0);

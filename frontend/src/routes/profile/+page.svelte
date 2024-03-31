@@ -17,7 +17,7 @@
     <UserCardStatic user={data.user} />
     <UserInfo user={data.user} />
   </article>
-  <article class="extras">
+  <article>
     <div>
       <h2>Trainer</h2>
       <div class="card-holder">
@@ -63,8 +63,5 @@
 
   .profile {
     grid-template-rows: var(--card-height);
-  }
-
-  .extras {
   }
 </style>
