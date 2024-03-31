@@ -782,6 +782,114 @@ describe('Delete activity', () => {
 });
 
 
+describe('Modify activity', () => {
+  const routeModification = '/activity/updateActivity';
+  const route_reception : string = '/activity/getActivity';
+  const route_creation : string = '/activity/manual';
+
+  test('#1 Should create a new activity', async () => {
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+
+    const res = await request(app)
+      .post(route_creation)
+      .set('Authorization', `Bearer ${token}`)
+      .send(activity);
+
+    expect(res.statusCode).toBe(201);
+  });
+
+  test('#2 Should return 400 or 404 for invalid activityId on modification', async () => {
+    getToken = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } =  getToken.body;
+  
+    const invalidActivityId = 'nonExistentId'; 
+    const updateResponse = await request(app)
+      .put(`/updateActivity/${invalidActivityId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .send({
+        name: 'Updated Activity',
+        city: 'New City',
+        type: 'running',
+        date: '2022-12-31',
+        durationTotal: 120,
+        distanceTotal: 15,
+        comment: 'Felt even better!'
+      });
+
+    expect([400, 404]).toContain(updateResponse.statusCode);
+  });
+  
+  test('#3 Should successfully create and then modify an activity', async () => {
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+
+    const getTokenResponse = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } = getTokenResponse.body;
+    const resRequest = await request(app)
+      .get(route_reception)
+      .set('Authorization', `Bearer ${token}`);
+    const updateData = {
+      name: 'Updated Activity Name',
+      city: 'New City',
+      type: 'cycling',
+      date: '2023-01-01',
+      durationTotal: 120,
+      distanceTotal: 30,
+      comment: 'This is an updated comment for the activity.'
+    };
+    for (let i = 0; i < resRequest.body.userActivities.length; i++) {
+      const updateResponse = await request(app)
+        .put(`${routeModification}/${resRequest.body.userActivities[i].id}`)
+        .send(updateData) 
+        .set('Authorization', `Bearer ${token}`)
+        .set('Content-Type', 'application/json'); 
+      expect(updateResponse.statusCode).toEqual(200);
+    }
+  });
+  
+  test('#4 Should return 404 when trying to modify a non-existent activity', async () => {
+    const nonExistentActivityId = '99999'; 
+    const updateData = {
+      name: 'Updated Activity Name',
+      city: 'New City',
+      type: 'cycling',
+      date: '2023-01-01',
+      durationTotal: 120,
+      distanceTotal: 30,
+      comment: 'This is an updated comment for the activity.'
+    };
+    jest.spyOn(actions, 'getUserById').mockImplementationOnce(() => Promise.resolve(returnedUser));
+  
+    const getTokenResponse = await request(app)
+      .post('/auth')
+      .send(user)
+      .set('Content-Type', 'application/json');
+    const { token } = getTokenResponse.body;
+  
+    const resRequest = await request(app)
+      .get(route_reception)
+      .set('Authorization', `Bearer ${token}`);
+  
+    const updateResponse = await request(app)
+      .put(`${routeModification}/${nonExistentActivityId}`)
+      .send(updateData) 
+      .set('Authorization', `Bearer ${token}`)
+      .set('Content-Type', 'application/json');
+
+    expect(updateResponse.statusCode).toBe(404);
+    expect(updateResponse.body.error).toBe('Activity not found');
+  });
+});
 
 
 
