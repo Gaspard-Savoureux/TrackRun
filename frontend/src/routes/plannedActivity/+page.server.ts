@@ -3,7 +3,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
 import type { PlannedActivity } from '$lib/types/plannedActivity';
 import { fail } from '@sveltejs/kit';
-import type { RequestEvent } from '../$types';
+import type { RequestEvent, ActionData } from '../$types';
 import { formatPlannedActivity } from '$lib/plannedActivity/activity';
 
 // Load data
@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ fetch, locals, url }) => {
   });
 
   if (!response.ok) {
-    return error(404, { message: 'Could not load ressource.' });
+    return error(404, { message: 'Could not load planned Activity.' });
   }
 
   const json = await response.json();
@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ fetch, locals, url }) => {
 
 
 // Update activity
-export const actions: object = {
+export const actions: ActionData = {
   save: async ({ cookies, fetch, request }: RequestEvent) => {
     const data = await request.formData();
 

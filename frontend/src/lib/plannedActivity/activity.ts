@@ -29,6 +29,10 @@ export function getFormatDate(dateString: string): string {
   });
 }
 
+export function get24hFormatFromDate(date: Date): string {
+  return date.toTimeString().substring(0,5);
+}
+
 export function getFormatTime(dateString: string): string {
   const date = new Date(dateString);
   const hours = date.getHours();

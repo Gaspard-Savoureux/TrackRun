@@ -8,7 +8,7 @@
 
 <div class="navbar">
   <div class="" style="display: flex;">
-    <Modal info="Home" href="/trainer/">
+    <Modal info="Home" href="/trainer">
       <div class="nav-item">
         <HomeIcon />
       </div>

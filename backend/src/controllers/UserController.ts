@@ -92,7 +92,6 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
