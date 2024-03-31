@@ -1,21 +1,17 @@
 <script lang="ts">
   import type { User } from '$lib/types/user';
-  import { UserIcon } from 'svelte-feather-icons';
 
   export let user: User;
 </script>
 
-<div class="user-card" style="--background-image: url({user.img});">
+<div class="user-card" style="--background-image: {user?.img && `url(${user.img})`};">
   <div class="background-shroud">
     <div class="user-card-values">
       <div class="img-container">
-        {#if user.img}
-          <img src={`${user.img}`} alt="profile" />
+        {#if user?.img}
+          <img src={user.img} alt="profile" />
         {:else}
-          <!-- <img src={`${user.img}`} alt="profile" /> -->
-          <span class="user-icon">
-            <UserIcon size="100" />
-          </span>
+          <img src="question-mark.png" alt="profile" />
         {/if}
       </div>
       <hr />
@@ -52,16 +48,15 @@
 
 <style>
   :root {
-    --transition-delay: 0.3s;
+    --transition-delay: 0.5s;
   }
 
   .user-card {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: var(--box-rounded);
     overflow: hidden;
-    height: 25.2rem;
     background: var(--background-image) center;
     background-size: cover;
   }
@@ -106,21 +101,18 @@
     object-fit: cover;
     transition: var(--transition-delay);
   }
-
+  
   .expand {
     display: none;
-    /* height: 0; */
     padding: 0;
     transition: var(--transition-delay);
-    transition-delay: padding var(--transition-delay);
-    overflow: hidden;
+    overflow: scroll;
     filter: opacity(0);
   }
 
   .user-card:hover .expand {
     display: block;
-    /* height: 100%; */
-    padding: 1rem 0 0 0;
+    padding-top: 1rem;
     filter: opacity(1);
   }
 
@@ -141,13 +133,6 @@
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .user-card:hover .name {
-    /* height: 100%; */
-    /* overflow-x: auto; */
-    /* text-overflow: initial; */
-    /* white-space: initial; */
   }
 
   .username {
@@ -176,8 +161,11 @@
     margin-left: 0.1rem;
   }
 
+  .user-info {
+    line-height: 1.8rem;
+  }
+
   .user-description {
     padding-top: 0.5rem;
-
   }
 </style>
