@@ -12,5 +12,5 @@ export const load: PageLoad = async ({ fetch }) => {
       users,
     };
     // eslint-disable-next-line no-empty
-  } catch (error: unknown) { }
+  } catch (error: unknown) { console.log(error); }
 };
