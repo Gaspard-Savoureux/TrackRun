@@ -24,6 +24,12 @@
     activities: Record<string, ActivityDetail>;
   };
 
+  type MonthSummary = {
+	  totalDistance: number;
+	  totalDuration: number;
+	  totalAmount: number;
+  };
+
   const colors: Record<string, { backgroundColor: string; borderColor: string }> = {
     running: {
       backgroundColor: 'rgba(253, 99, 43, 0.5)',
@@ -83,6 +89,7 @@
   }
 
   let processedData: ProcessedStat[] = processActivities(data.activitiesStats);
+  let monthSummary: MonthSummary = calculateMonthSummary(processedData);
 
   function processActivities(activities: ActivityStats[]): ProcessedStat[] {
     const weeksMap = new Map<string, ProcessedStat>();
@@ -107,6 +114,27 @@
     });
 
     return Array.from(weeksMap.values());
+  }
+
+  function calculateMonthSummary(processedStats: ProcessedStat[]): MonthSummary {
+	  let totalDistance = 0;
+	  let totalDuration = 0;
+	  let totalAmount = 0;
+
+	  // add stat of every week
+	  for (const weekStats of processedStats) {
+		  for (const activity in weekStats.activities) {
+			  const details = weekStats.activities[activity];
+			  totalDistance += details.distance;
+			  totalDuration += details.duration;
+			  totalAmount += details.amount;
+		  }
+	  }
+	  return {
+		  totalDistance,
+		  totalDuration,
+		  totalAmount,
+	  };
   }
 
   function getWeekNumber(date: Date) {
@@ -192,6 +220,7 @@
 
   $: if (dateParam || typeParam) {
     processedData = processActivities(data.activitiesStats); // Re-process data
+    monthSummary = calculateMonthSummary(processedData);
     updateCharts(); // Update charts with new data
   }
 
@@ -227,11 +256,27 @@
 				</button>
 			</div>
 		</div>
-    <div>
     <!-- End of filter block -->
-    <div>
-      <canvas id='distanceChart'/>
+    <div class="container summaryContainer">
+		<h2 class="summaryTitle">Summary</h2>
+		<div class="summaryStatContainer">
+			<div class="summaryStat">
+				<p class="summaryStatTitle">Total activities</p>
+				<p>{monthSummary.totalAmount}</p>
+			</div>
+			<div class="summaryStat">
+				<p class="summaryStatTitle">Total distance</p>
+				<p>{monthSummary.totalDistance} km</p>
+			</div>
+			<div class="summaryStat">
+				<p class="summaryStatTitle">Total time</p>
+				<p>{monthSummary.totalDuration} minutes</p>
+			</div>
     </div>
+		</div>
+		<div>
+			<canvas id='distanceChart'/>
+		</div>
     <div>
       <canvas id="durationChart"></canvas>
     </div>
@@ -249,6 +294,46 @@
     margin: auto;
     margin-top: 60px;
     border: #505050 solid 1px
+  }
+
+  .summaryContainer{
+	  margin-bottom: 50px;
+	  max-width: 800px;
+  }
+
+  .summaryTitle {
+	  color: var(--link);
+	  text-align: center;
+	  font-size: 22px;
+  }
+
+  .summaryStatContainer {
+	  padding-top: 10px;
+	  padding-bottom: 5px;
+	  display: grid;
+	  grid-template-columns: repeat(3, 1fr);
+	  gap: 1rem;
+  }
+
+  .summaryStatTitle {
+	  font-weight: bold;
+	  font-size: 18px;
+  }
+
+  @media (max-width: 600px) {
+	  .summaryStatContainer {
+		  grid-template-columns: repeat(2, 1fr);
+		  grid-template-rows: repeat(2, auto);
+	  }
+  }
+
+  .summaryStat{
+	  display: flex;
+	  flex-direction: column;
+  }
+
+  .summaryStat p{
+	  text-align: center;
   }
 
 	.arrow {
