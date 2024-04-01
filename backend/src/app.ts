@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 // allow different origin for development
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? 'http://tse.info.uqam.ca' : 'http://localhost:5173',
+  origin: process.env.NODE_ENV === 'production' ? ['http://tse.info.uqam.ca', 'http://backend:5001'] : 'http://localhost:5173',
   credentials: true,
 }));
 
