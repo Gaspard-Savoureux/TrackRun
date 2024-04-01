@@ -6,11 +6,13 @@ export const load: PageLoad = async ({ fetch }) => {
     const res = await fetch(`${API_URL}/user`, {
       credentials: 'include',
     });
+
     const user = await res.json();
+
     user.img = user.img ? `${API_URL}/uploads/${user.img}` : null;
+
     return {
       user,
-    
     };
   } catch (error: unknown) { console.log(error); }
 };
