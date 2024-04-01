@@ -86,8 +86,10 @@
   </div>
   <dialog bind:this={dialog}>
     <h1>Are you sure you want to delete this planned activity?</h1>
-    <button on:click={confirmDelete} type="button" class="btn-danger">Confirm</button>
-    <button on:click={() => dialog.close()}>Cancel</button>
+    <div class="dialog-buttons">
+      <button on:click={confirmDelete} type="button" class="btn-danger">Confirm</button>
+      <button on:click={() => dialog.close()}>Cancel</button>
+    </div>
   </dialog>
 </section>
 
@@ -143,6 +145,11 @@
 
   .btn-danger:hover {
     background-color: color-mix(in srgb, var(--danger), #000 15%);
+  }
+
+  .dialog-buttons {
+    padding-top: 20px;
+    text-align: end;
   }
 
   .header {
