@@ -1,7 +1,24 @@
+import { trainerUserAssociation } from '../models/trainerUsersRelation';
 import { db } from '../db/db';
 import { User, users } from '../models/users';
-import { eq } from 'drizzle-orm';
+import { eq, asc, like, getTableColumns } from 'drizzle-orm';
 
+export const getAllUsers = async (searchString: string) => {
+  const { ...fields } = getTableColumns(users);
+
+  if (!searchString) {
+    return await db.select({ ...fields, trainerId: trainerUserAssociation.trainerId })
+      .from(users)
+      .leftJoin(trainerUserAssociation, eq(trainerUserAssociation.userId, users.id))
+      .orderBy(asc(users.username));
+  }
+
+  return await db.select({ ...fields, trainerId: trainerUserAssociation.trainerId })
+    .from(users)
+    .leftJoin(trainerUserAssociation, eq(trainerUserAssociation.userId, users.id))
+    .orderBy(asc(users.username))
+    .where(like(users.username,`%${searchString}%`) || like(users.name,`%${searchString}%`));
+};
 
 export const getUserByUsername = async ( username: string) : Promise<User | undefined> => {
   const [ user ] = await db.select()
@@ -54,3 +71,4 @@ export const getUserImage = async (userId: number) => {
 export const updateUserImage = async (userId: number, imgName: string) => {
   return await db.update(users).set({ img: imgName }).where(eq(users.id, userId));
 };
+

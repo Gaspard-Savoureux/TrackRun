@@ -10,7 +10,7 @@ import { except } from 'drizzle-orm/mysql-core';
 
 const user = {
   username: 'test-user',
-  password: '1234',
+  password: 'Testuser1234',
   email: 'test@test.com',
   name: 'Test'
 };
@@ -22,10 +22,10 @@ beforeAll(async () => {
   await db.delete(planned_activities);
   await db.delete(users);
   // Create user
-  let createRes = await request(app).post('/user').send(user);
-  console.log("return create : " + createRes);
-  let userRes = (await db.select().from(users).where(eq(users.username, user.username)))[0].id;
-  console.log("userRes: " + userRes);
+  const createRes = await request(app).post('/user').send(user);
+  console.log('return create : ' + createRes);
+  const userRes = (await db.select().from(users).where(eq(users.username, user.username)))[0].id;
+  console.log('userRes: ' + userRes);
   // Get auth token
   auth_token = (await request(app).post('/auth').send(user)).body['token'];
   console.log('Auth token: ' + auth_token);
@@ -108,7 +108,7 @@ describe('PUT PlannedActivities', () => {
   test('Should return 401: Unauthorized', async () => {
 
     const res = await request(app)
-      .put(route + '/1')
+      .put(route + '/1');
     expect(res.status).toBe(401);
   });
 
@@ -128,7 +128,7 @@ describe('PUT PlannedActivities', () => {
 
     const pActivityId = resPost.body.id;
 
-    pActivity.name = "A run in the field";
+    pActivity.name = 'A run in the field';
     pActivity.duration = 666;
 
     const resPut = await request(app)
@@ -386,7 +386,7 @@ describe('DELETE PlannedActivities', () => {
       .set('Authorization', 'Bearer ' + auth_token);
 
     const createdActivityId = res.body.id;
-    console.log("delete + real id" + createdActivityId);
+    console.log('delete + real id' + createdActivityId);
     // const latestActivity = await db.select().from(planned_activities).limit(1);
     // const createdActivityId = latestActivity[0].id;
 
@@ -423,7 +423,7 @@ describe('DELETE PlannedActivities', () => {
       .set('Authorization', 'Bearer ' + auth_token);
 
     const createdActivityId = -1;
-    console.log("delete + wrong id" + createdActivityId);
+    console.log('delete + wrong id' + createdActivityId);
     // const latestActivity = await db.select().from(planned_activities).limit(1);
     // const createdActivityId = latestActivity[0].id + 2 ; // This id does not exist
 
@@ -455,7 +455,7 @@ describe('DELETE PlannedActivities', () => {
     // Create second user
     await request(app).post('/user').send(user2);
     // Get auth token
-    let auth_token2 = (await request(app).post('/auth').send(user)).body['token'];
+    const auth_token2 = (await request(app).post('/auth').send(user)).body['token'];
     console.log('Auth token user2: ' + auth_token);
 
     const pActivity = {
@@ -472,7 +472,7 @@ describe('DELETE PlannedActivities', () => {
       .set('Authorization', 'Bearer ' + auth_token2);
 
     const createdActivityId = res.body.id;
-    console.log("delete + wrong user" + createdActivityId);
+    console.log('delete + wrong user' + createdActivityId);
 
     res = await request(app)
       .delete(routeDELETE + '/' + createdActivityId)

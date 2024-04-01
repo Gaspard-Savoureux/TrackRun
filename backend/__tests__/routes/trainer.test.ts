@@ -5,10 +5,15 @@ import { closeDbConnection, db } from '../../src/db/db';
 import { eq } from 'drizzle-orm';
 import { users } from '../../src/models/users';
 import { trainerUserAssociation } from '../../src/models/trainerUsersRelation';
-import { getUserByUsername } from '../../src/services/user.services';
+import { getUserByUsername, insertUser } from '../../src/services/user.services';
+import { createTrainerUserRelation } from '../../src/services/trainer.services';
 
-const user = {username: 'test-user', password: '1234', email: 'test.user@gmail.com', name: 'test user' };
-const trainer = { username: 'superTrainer', password: 'weak-password', email: 'trainer@hardcore.com', name: 'Mr. trainer' };
+const user = {username: 'test-user', password: 'superTrainer', email: 'test.user@gmail.com', name: 'test user' };
+const user1 = {id: 1, username: 'test-user1 ', password: 'superTrainer', email: 'test.user1@gmail.com', name: 'Jean' };
+const user2 = {id: 2, username: 'test-user2', password: 'superTrainer', email: 'test.user2@gmail.com', name: 'Pierre' };
+const user3 = {id: 3, username: 'test-user3', password: 'superTrainer', email: 'test.user3@gmail.com', name: 'Paul' };
+
+const trainer = {id: 1, username: 'superTrainer', password: 'weak-password', email: 'trainer@hardcore.com', name: 'Mr. trainer' };
 
 const basicAuthCredentials = Buffer.from(`${process.env.ADMIN_NAME ?? 'admin'}:${process.env.ADMIN_PASSWORD || 'defaultPassword'}`).toString('base64');
 
@@ -222,5 +227,193 @@ describe('Tests route DELETE /trainer/user/{userId}', () => {
     expect(res.status).toBe(404);
     expect(res.text).toBe('{"error":"User not found"}');
   });
+
 });
 
+
+
+
+
+// Search tests
+describe('Tests route GET /trainer/users', () => {
+  const route = '/trainer/users';
+
+  test('Should return 200 and user data', async () => {
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const res = await request(app)
+      .get(route)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.users)).toBeTruthy();
+    expect(res.body.users.length).toBe(0);
+
+  });
+
+  test('Should return 200 and user data', async () => {
+
+    await insertUser(user1);
+    await createTrainerUserRelation(trainer.id, user1.id);
+
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const searchString = '';
+
+    const res = await request(app)
+      .get(`${route}?searchString=${searchString}`)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.users)).toBeTruthy();
+    expect(res.body.users.length).toBe(0);    // A fix
+
+  });
+
+
+  test('Should return 405 | No corresponding trainer found', async () => {
+    const invalidToken = 'Bearer invalid_token';
+
+    const res = await request(app)
+      .get(route)
+      .set('Authorization', invalidToken);
+
+    expect(res.status).toBe(401);
+  });
+
+  test('Should return 401 | Unauthorized', async () => {
+    const res = await request(app)
+      .get(route);
+    expect(res.status).toBe(401);
+  });
+
+});
+
+
+
+
+describe('Tests route GET /trainer/search/users', () => {
+  const route = '/trainer/search/users';
+
+
+  test('Should return 200 and user data for search string', async () => {
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const searchString = 'Test string';
+
+    const res = await request(app)
+      .get(`${route}?searchString=${searchString}`)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.users)).toBeTruthy();
+    expect(res.body.users.length).toBe(0);
+  });
+
+
+  // we search by name
+  test('Should return 200 and user data for search string', async () => {
+
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const searchString = 'test-user1';
+
+    const res = await request(app)
+      .get(`${route}?searchString=${searchString}`)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.users)).toBeTruthy();
+    expect(res.body.users.length).toBe(1);
+  });
+
+
+  test('Should return 200 and user data for search string', async () => {
+    
+    await insertUser(user2);
+    await createTrainerUserRelation(trainer.id, user2.id);
+
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const searchString = 'test-user2';
+
+    const res = await request(app)
+      .get(`${route}?searchString=${searchString}`)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.users)).toBeTruthy();
+    expect(res.body.users.length).toBe(1);
+  });
+
+  test('Should return 200 and user data for search string', async () => {
+
+    await insertUser(user3);
+    await createTrainerUserRelation(trainer.id, user3.id);
+
+    const getToken = await request(app)
+      .post('/auth/trainer')
+      .send({username: trainer.username, password: trainer.password})
+      .set('Content-Type', 'application/json');
+
+    const { token } = getToken.body;
+    const validToken = `Bearer ${token}`;
+
+    const searchString = 'test-user3';
+
+    const res = await request(app)
+      .get(`${route}?searchString=${searchString}`)
+      .set('Authorization', validToken);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.users)).toBeTruthy();
+    expect(res.body.users.length).toBe(1);
+  });
+
+  test('Should return 405 | No corresponding trainer found', async () => {
+    const invalidToken = 'Bearer invalid_token';
+
+    const res = await request(app)
+      .get(route)
+      .set('Authorization', invalidToken);
+
+    expect(res.status).toBe(401);
+  });
+
+  test('Should return 401 | Unauthorized', async () => {
+    const res = await request(app)
+      .get(route);
+    expect(res.status).toBe(401);
+  });
+
+});

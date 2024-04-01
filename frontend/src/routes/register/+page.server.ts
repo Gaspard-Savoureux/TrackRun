@@ -1,6 +1,7 @@
 import { redirect, fail } from '@sveltejs/kit';
 import type { RequestEvent } from '../$types';
 import { API_URL } from '../../constants';
+import { birthdayValidation, emailValidation, passwordValidation } from '$lib/utils/userValidation';
 
 export const actions: object = {
   register: async ({ cookies, fetch, request }: RequestEvent) => {
@@ -12,13 +13,30 @@ export const actions: object = {
     const firstname = data.get('firstname');
     const birthdate = data.get('birthdate');
 
-    
     if (!username || !email || !password || !lastname || !firstname || !birthdate) {
       return fail(400, {
         success: false,
         message: 'All fields are required',
       });
     }
+
+    const validateEmail = emailValidation(email as string);
+    if (validateEmail) return fail(400, {
+      success: false,
+      message: validateEmail,
+    });
+
+    const validatePassword = passwordValidation(password as string);
+    if (validatePassword) return fail(400, {
+      success: false,
+      message: validatePassword,
+    });
+
+    const validateBirthdate = birthdayValidation(birthdate as string);
+    if (validateBirthdate) return fail(400, {
+      success: false,
+      message: validateBirthdate,
+    });
 
     const name = `${firstname} ${lastname}`;
    
@@ -47,11 +65,10 @@ export const actions: object = {
       const resData = await res.json();
       return fail(res.status, {
         success: false,
-        message: resData.message || 'Username or email already exists',
+        message: resData.error || 'Username or email already exists',
         color: 'red',
       });
     }
-
 
     if (res.ok) {
       const resData = await res.json();

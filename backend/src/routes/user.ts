@@ -52,10 +52,10 @@ const router = express.Router();
  */
 router.post('/',
   [
-    body('username').isString(),
-    body('password').isString().isLength({min: 1, max: 72}),
+    body('username').isString().isLength({min: 1, max: 256}).withMessage('username must be a not empty string'),
+    body('password').isString().isLength({min: 8, max: 72}).withMessage('password must be a min of 8 chars and max 72 chars'),
     body('email').isString().isEmail(),
-    body('name').isString()
+    body('name').isLength({min: 1}).isString().withMessage('Name must be an non empty string')
   ],
   expressValidator,
   createUser
@@ -215,7 +215,7 @@ router.put('/',
     body('age').custom(isGivenTypeOrNull(evTypes.INT)).withMessage('Required, must be numerical value'),
     body('height').custom(isGivenTypeOrNull(evTypes.FLOAT)).withMessage('Required, must be numerical. The value is in cm'),
     body('weight').custom(isGivenTypeOrNull(evTypes.FLOAT)).withMessage('Required. Must be numerical. The value is in kg'),
-    body('sex').isString().matches(/\b(?:Homme|Femme|Autre)\b/).withMessage('Required, must be either Homme, Femme or Autre'),
+    body('sex').custom(isGivenTypeOrNull(evTypes.SEX)).withMessage('Required, must be either Homme, Femme or Autre'),
     body('description').custom(isGivenTypeOrNull(evTypes.STRING)).isLength({ min: 0, max: 1024 }).withMessage('Required, string with max length of 1024')
   ],
   expressValidator,
