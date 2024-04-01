@@ -61,11 +61,16 @@ export const getPlannedActivities = async (req: Request, res: Response, next: Ne
 export const modifyPlannedActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId as number;
-    const user: User | undefined = await getUserById(userId);
     const pActivityId = Number(req.params?.pActivityId);
 
+    const user: User | undefined = await getUserById(userId);
     if (!user) {
       return res.status(404).json({ error: 'No corresponding user' });
+    }
+
+    const activitiesToDelete = await selectPlannedActivityById(pActivityId, userId);
+    if (activitiesToDelete.length !== 1) {
+      return res.status(404).json({ error: "No corresponding activity" });
     }
 
     let { type, date, duration, name, comment } = req.body;
@@ -95,10 +100,14 @@ export const modifyPlannedActivity = async (req: Request, res: Response, next: N
 
     await updatePlannedActivityById(userId, pActivityId, updatedPlannedActivity);
 
-    return res.status(200).json({ message: 'Planned activity successfully updated' });
+    // Returns updated activity
+    const plannedActivity = (await selectPlannedActivityById(pActivityId,userId))[0];
+
+    return res.status(201).json({ plannedActivity });
 
   } catch (error) {
     console.log(error);
+    next(error);
   }
 };
 
@@ -183,8 +192,7 @@ export const deletePlannedActivity = async (req: Request, res: Response, next: N
       return res.status(400).json({ error: "Invalid activityId" });
     }
     const activitiesToDelete = await selectPlannedActivityById(activityId, userId);
-    // log to delete
-    console.log(activitiesToDelete);
+
     if (activitiesToDelete.length !== 1) {
       return res.status(404).json({ error: "No corresponding activity" });
     }

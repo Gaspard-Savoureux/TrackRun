@@ -3,9 +3,7 @@ import { users } from '../../src/models/users';
 import { planned_activities } from '../../src/models/planned_activities';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
-import bcrypt from 'bcrypt';
 import app from '../../src/app';
-import { except } from 'drizzle-orm/mysql-core';
 
 
 const user = {
@@ -23,12 +21,11 @@ beforeAll(async () => {
   await db.delete(users);
   // Create user
   const createRes = await request(app).post('/user').send(user);
-  console.log('return create : ' + createRes);
   const userRes = (await db.select().from(users).where(eq(users.username, user.username)))[0].id;
-  console.log('userRes: ' + userRes);
+
   // Get auth token
   auth_token = (await request(app).post('/auth').send(user)).body['token'];
-  console.log('Auth token: ' + auth_token);
+ 
 });
 
 afterAll(async () => {
@@ -386,9 +383,6 @@ describe('DELETE PlannedActivities', () => {
       .set('Authorization', 'Bearer ' + auth_token);
 
     const createdActivityId = res.body.id;
-    console.log('delete + real id' + createdActivityId);
-    // const latestActivity = await db.select().from(planned_activities).limit(1);
-    // const createdActivityId = latestActivity[0].id;
 
     res = await request(app)
       .delete(routeDELETE + '/' + createdActivityId)
@@ -423,9 +417,6 @@ describe('DELETE PlannedActivities', () => {
       .set('Authorization', 'Bearer ' + auth_token);
 
     const createdActivityId = -1;
-    console.log('delete + wrong id' + createdActivityId);
-    // const latestActivity = await db.select().from(planned_activities).limit(1);
-    // const createdActivityId = latestActivity[0].id + 2 ; // This id does not exist
 
     res = await request(app)
       .delete(routeDELETE + '/' + createdActivityId)
@@ -456,7 +447,6 @@ describe('DELETE PlannedActivities', () => {
     await request(app).post('/user').send(user2);
     // Get auth token
     const auth_token2 = (await request(app).post('/auth').send(user)).body['token'];
-    console.log('Auth token user2: ' + auth_token);
 
     const pActivity = {
       type: 'Running',
@@ -472,7 +462,6 @@ describe('DELETE PlannedActivities', () => {
       .set('Authorization', 'Bearer ' + auth_token2);
 
     const createdActivityId = res.body.id;
-    console.log('delete + wrong user' + createdActivityId);
 
     res = await request(app)
       .delete(routeDELETE + '/' + createdActivityId)
