@@ -28,6 +28,7 @@ const router = express.Router();
  *        name: from
  *        schema:
  *          type: string
+ *        required: true
  *        description: Filter results that are after the given date in format YYYY-MM-DD
  *      - in: query
  *        name: type
@@ -59,7 +60,9 @@ const router = express.Router();
  *                  comment:
  *                    type: string
  *                  activity_id:
- *                    type: integer  
+ *                    type: integer 
+ *      400:
+ *        description: Invalid request 
  *      401:
  *        description: User is not logged in         
  *      404:
@@ -166,10 +169,40 @@ router.get('/:pActivityId', verifyUserToken, getPlannedActivity);
  *    responses:
  *     201:
  *      description: Planned activity updated successfully
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              id:
+ *                type: integer
+ *                exemple: 1
+ *              type:
+ *                type: string
+ *                description: Type of the planned activity
+ *                example: Running
+ *              date:
+ *                type: string($date-time)
+ *                description: The date and time of the activity
+ *                example: 2024-02-26 16:30:00
+ *              duration:
+ *                type: integer
+ *                description: The total duration of the activity in seconds
+ *                example: 1823
+ *              name:
+ *                type: string
+ *                description: The name of the activity
+ *                example: A run in the park
+ *              comment:
+ *                type: string
+ *                description: The comment of the activity
+ *                example: Remember to focus on your breath the entire time!
  *     400:
  *      description: Bad request
  *     401:
  *      description: User is not logged in
+ *     404:
+ *      description: Ressource not found
  *     500:
  *      description: Server error
  */
@@ -264,6 +297,10 @@ router.post('/',
  *        description: Activity deleted successfully
  *      400:
  *        description: Invalid activityId
+ *      401:
+ *        description: User is not logged in
+ *      404:
+ *        description: No corresponding activity
  *      500:
  *        description: Server Error
  */

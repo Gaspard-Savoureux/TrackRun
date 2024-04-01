@@ -30,12 +30,10 @@ beforeAll(async () => {
   await db.delete(users);
   // Create user
   const createRes = await request(app).post('/user').send(user);
-  console.log('return create : ' + createRes);
   const userRes = (await db.select().from(users).where(eq(users.username, user.username)))[0].id;
-  console.log('userRes: ' + userRes);
+
   // Get auth token
   auth_token = (await request(app).post('/auth').send(user)).body['token'];
-  console.log('Auth token: ' + auth_token);
 });
 
 afterAll(async () => {
