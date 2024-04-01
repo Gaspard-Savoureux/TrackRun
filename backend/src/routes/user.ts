@@ -31,7 +31,7 @@ const router = express.Router();
  *              password:
  *                type: string
  *                description: The password of a user
- *                example: 1234
+ *                example: Motdepasse1234
  *              email:
  *                type: string
  *                description: The email of a user
@@ -251,7 +251,7 @@ router.put('/',
  *               password:
  *                 type: string
  *                 description: The password of a user
- *                 example: 1234
+ *                 example: Motdepasse1234
  *               email:
  *                 type: string
  *                 description: The username of a user
@@ -291,7 +291,7 @@ router.put('/',
 router.patch('/',
   [
     body('username').optional().isString().isLength({min: 1}).withMessage('Must be a string and cannot be null'),
-    body('password').optional().isString().isLength({ min: 1, max: 72 }).withMessage('Must be a string'),
+    body('password').optional().isString().isLength({min: 8, max: 72}).withMessage('password must be a min of 8 chars and max 72 chars'),
     body('email').optional().isString().isEmail().withMessage('Must be a valid email'),
     body('name').optional().isString().withMessage('Must be a string'),
     body('age').optional().isInt().withMessage('Must be numerical value'),
