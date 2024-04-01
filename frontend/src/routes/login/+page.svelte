@@ -50,6 +50,7 @@
     align-items: center;
     gap: 1rem;
   }
+
   section {
     padding: 3rem 1.5rem;
   }

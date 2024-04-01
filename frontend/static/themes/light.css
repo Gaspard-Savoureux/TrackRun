@@ -16,4 +16,5 @@
   --text-info: rgb(14, 48, 65);
   --link: hsl(212, 100%, 50%);
   --link-hover: hsl(212, 100%, 35%);
+  --shroud: rgba(255, 255, 255, 0.5);
 }
