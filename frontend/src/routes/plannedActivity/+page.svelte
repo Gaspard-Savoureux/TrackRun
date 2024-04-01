@@ -11,6 +11,13 @@
   $: date = getISOFromDate(prev_date);
   $: time = get24hFormatFromDate(prev_date);
   $: duration = Math.floor(plannedActivity.duration / 60);
+
+  let dialog;
+
+  function confirmDelete() {
+    document.querySelector('form').action = '?/delete';
+    document.querySelector('form').submit();
+  }
 </script>
 
 <svelte:head>
@@ -73,10 +80,17 @@
         {/if}
 
         <button type="submit">Save</button>
-        <button formaction="?/delete" class="btn-danger">Delete</button>
+        <button on:click={() => dialog.showModal()} type="button" class="btn-danger">Delete</button>
       </form>
     {/if}
   </div>
+  <dialog bind:this={dialog}>
+    <h1>Are you sure you want to delete this planned activity?</h1>
+    <div class="dialog-buttons">
+      <button on:click={confirmDelete} type="button" class="btn-danger">Confirm</button>
+      <button on:click={() => dialog.close()}>Cancel</button>
+    </div>
+  </dialog>
 </section>
 
 <style>
@@ -131,6 +145,11 @@
 
   .btn-danger:hover {
     background-color: color-mix(in srgb, var(--danger), #000 15%);
+  }
+
+  .dialog-buttons {
+    padding-top: 20px;
+    text-align: end;
   }
 
   .header {
