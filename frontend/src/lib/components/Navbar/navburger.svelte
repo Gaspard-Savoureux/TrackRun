@@ -31,7 +31,6 @@
   .navburger {
     display: flex;
     flex-direction: column;
-    position: relative;
     max-height: 1rem;
   }
 
@@ -40,12 +39,19 @@
     position: absolute;
     top: var(--heigth-offset);
     right: var(--width-offset);
-    transition: right 0.3s ease-in-out;
+    /* rotate: 360deg; */ /** Pour un effet goofy*/
+    opacity: 0;
+    transition:
+      right 0.3s ease-in-out,
+      opacity 0.3s ease-in-out;
+    /* rotate 0.3s ease-in-out, */ /** Pour un effet goofy*/
   }
 
   .active {
     top: 0;
     right: 0;
+    opacity: 1;
+    /* rotate: 0deg; */ /** Pour un effet goofy*/
     position: relative;
   }
 

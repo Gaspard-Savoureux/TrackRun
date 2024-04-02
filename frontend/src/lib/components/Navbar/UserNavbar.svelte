@@ -7,7 +7,7 @@
 </script>
 
 <div class="navbar">
-  <div class="" style="display: flex;">
+  <div style="display: flex;">
     <Modal info="Home" href="/">
       <div class="nav-item">
         <HomeIcon />
@@ -55,11 +55,10 @@
   }
 
   .nav-burger {
-    display: flex;
     display: none;
   }
 
-  @media (max-width: 576px) {
+  @media (max-width: 680px) {
     .navbar {
       height: auto;
     }

@@ -49,13 +49,13 @@
     filter: invert(100%);
   }
 
-  @media (width >= 576px) {
+  @media (width >= 680px) {
     a:hover {
       background-color: var(--blue);
     }
   }
 
-  @media (max-width: 576px) {
+  @media (max-width: 680px) {
     .modal {
       display: none;
     }
